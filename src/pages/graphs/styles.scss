@@ -1,0 +1,16 @@
+.d3-node {
+    width: 100vw;
+    margin: auto;
+    background-color: transparent;
+}
+
+.node {
+    font-size: 35px;
+}
+
+.node:hover {
+    stroke: #000 !important;
+    stroke-width: 5px !important;
+    opacity: 1 !important;
+    fill-opacity: 0.8 !important;
+}

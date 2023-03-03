@@ -3,6 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@codemirror/lang-json": "^6.0.1",
+    "@codemirror/legacy-modes": "^6.3.1",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@fontsource/roboto": "^4.5.8",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/material": "^5.11.8",
+    "@mui/x-data-grid": "^5.17.22",
+    "@mui/x-data-grid-pro": "^5.17.25",
+    "@rdfjs/data-model": "^2.0.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -10,9 +20,18 @@
     "@types/node": "^16.18.12",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
+    "@uiw/react-codemirror": "^4.19.9",
+    "axios": "^1.3.2",
+    "codemirror-lang-sparql": "^0.1.1",
+    "d3": "^7.8.2",
+    "graphdb": "^2.0.2",
+    "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-draggable": "^4.4.5",
+    "react-google-charts": "^4.0.0",
     "react-scripts": "5.0.1",
+    "sass": "^1.58.3",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
@@ -39,5 +58,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.0"
   }
 }
