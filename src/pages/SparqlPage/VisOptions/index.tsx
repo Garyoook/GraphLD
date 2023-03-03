@@ -28,9 +28,9 @@ function paperComponent(props: PaperProps) {
 }
 
 enum ChartType {
-    UNSET,
-    BAR_CHART,
-    PIE_CHART,
+    UNSET = "Visulisation Unset",
+    BAR_CHART = "Bar Chart",
+    PIE_CHART = "Pie Chart",
 }
 
 function VisOptions(props) {
@@ -65,13 +65,13 @@ function VisOptions(props) {
                 <ListItem
                     button
                     onClick={() => handleVisOpen(ChartType.BAR_CHART)}>
-                    <ListItemText primary='Bar Chart' />
+                    <ListItemText primary={ChartType.BAR_CHART} />
                 </ListItem>
                 <Divider />
                 <ListItem
                     button
                     onClick={() => handleVisOpen(ChartType.PIE_CHART)}>
-                    <ListItemText primary='Bubble Chart' />
+                    <ListItemText primary={ChartType.PIE_CHART} />
                 </ListItem>
             </List>
             <Dialog
@@ -83,7 +83,7 @@ function VisOptions(props) {
                 <DialogTitle
                     style={{ cursor: "move" }}
                     id='draggable-dialog-title'>
-                    Choose your visualisation
+                    {chartType}
                 </DialogTitle>
                 <DialogContent>{displayChart(chartType, data)}</DialogContent>
                 <DialogActions>
