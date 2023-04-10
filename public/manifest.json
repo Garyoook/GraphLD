@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Semantic Web Visualiser",
+  "name": "Linked data query and visualise lll",
   "icons": [
     {
       "src": "favicon.ico",
