@@ -133,6 +133,7 @@ function SchemaPage() {
                     }}
                     open={loading}>
                     <CircularProgress color='inherit' />
+                    <div style={{ marginLeft: 20 }}> Loading Schema ... </div>
                 </Backdrop>
             )}
         </Grid>

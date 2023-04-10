@@ -2,6 +2,7 @@ import { StreamLanguage } from "@codemirror/language";
 import { sparql } from "@codemirror/legacy-modes/mode/sparql";
 import CloseIcon from "@mui/icons-material/Close";
 import {
+    Alert,
     AppBar,
     Backdrop,
     Button,
@@ -47,8 +48,10 @@ WHERE {
     const [columns, setColumns] = useState([]);
     const [dataSource, setDataSource] = useState([]);
     const [loading, setLoading] = useState(false);
-
     const [openVis, setOpenVisOption] = useState(false);
+
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertText, setAlertText] = useState("");
 
     const handleVisOpen = () => {
         setOpenVisOption(true);
@@ -100,8 +103,14 @@ WHERE {
             );
             console.log("datasource: ", data);
             setDataSource(data);
+            setShowAlert(false);
         } catch (e) {
-            console.log("Error", e);
+            console.error("Error", e.response.data);
+            setShowAlert(true);
+            setAlertText(
+                e.response.data ||
+                    "Error: please check your query and try again."
+            );
         } finally {
             setLoading(false);
         }
@@ -176,6 +185,11 @@ WHERE {
                             }}
                             open={loading}>
                             <CircularProgress color='inherit' />
+
+                            <div style={{ marginLeft: 20 }}>
+                                {" "}
+                                Processing query ...{" "}
+                            </div>
                         </Backdrop>
                     )}
                 </Grid>
@@ -234,20 +248,28 @@ WHERE {
                             sx={{
                                 height: "100vh",
                             }}>
-                            <DataGridPro
-                                rows={dataSource}
-                                columns={columns}
-                                pagination
-                                rowSpacingType='border'
-                                showCellRightBorder
-                                rowsPerPageOptions={[100, 200, 1000]}
-                                // onRowClick={(params) => {
-                                //     fetchStatementsFromRepo(
-                                //         (params.row as IRepository)
-                                //             .title
-                                //     );
-                                // }}
-                            />
+                            {showAlert ? (
+                                <Alert
+                                    severity='error'
+                                    style={{ height: "100%" }}>
+                                    {alertText}
+                                </Alert>
+                            ) : (
+                                <DataGridPro
+                                    rows={dataSource}
+                                    columns={columns}
+                                    pagination
+                                    rowSpacingType='border'
+                                    showCellRightBorder
+                                    rowsPerPageOptions={[100, 200, 1000]}
+                                    // onRowClick={(params) => {
+                                    //     fetchStatementsFromRepo(
+                                    //         (params.row as IRepository)
+                                    //             .title
+                                    //     );
+                                    // }}
+                                />
+                            )}
                         </Paper>
                     </Grid>
                 </Grid>
