@@ -1,0 +1,3114 @@
+[
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#hasHeadq",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Organization"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#City"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Estuary",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:Nf5d3302db3e7461c810f0725847c7cb7"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Place"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#disjointWith": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Area"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nf5d3302db3e7461c810f0725847c7cb7",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#cardinality": [
+            {
+                "@value": 1
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#hasEstuary-"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Mountain",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Place"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#PoliticalOrGeographicalThing",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#PoliticalThing"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#GeographicalThing"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#hadPopulation",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#InverseFunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "_:Nb0b1b91b6d7448bba62b29c00c7c8103"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#PopulationCount"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nb0b1b91b6d7448bba62b29c00c7c8103",
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Province"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#City"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#carCode",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#string"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#established",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Organization"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#date"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#gdpServ",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#PoliticalThing",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#disjointUnionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#NonGeographicalPoliticalThing"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#City"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#hasProvince",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#InverseFunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Province"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#isProvinceOf"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#locatedOnIsland",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "_:Na9c3f784783d4bd9b6657ba2c16fd42e"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Island"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#locatedIn"
+            }
+        ]
+    },
+    {
+        "@id": "_:Na9c3f784783d4bd9b6657ba2c16fd42e",
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#City"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Mountain"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#River"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Lake"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#hasEstuary-",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#ofMember",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Membership"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#isInMembership"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Place",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#disjointWith": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Area"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#locatedAt",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#City"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Water"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#belongsToArchipelago",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Island"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Archipelago"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#encompassedArea",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Encompassed"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#EncompassedArea"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#encompassedByInfo"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#elevation",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Location"
+            },
+            {
+                "@id": "_:Nc2994227beb347a9b7448723bf3675b4"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nc2994227beb347a9b7448723bf3675b4",
+        "http://www.w3.org/2002/07/owl#intersectionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Location"
+                    },
+                    {
+                        "@id": "_:Nc676d0ee9fba410a9fc491aab12f235a"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "_:Nc676d0ee9fba410a9fc491aab12f235a",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Desert"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#YearlyMeasurement",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:Nbfd3276be6d9496b898c67dee3a0ab65"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Measurement"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#TimeSeriesElement"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nbfd3276be6d9496b898c67dee3a0ab65",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#cardinality": [
+            {
+                "@value": 1
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#year"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#name",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "_:N6709a05e1d7743faba8891b2e8af5ee8"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#string"
+            }
+        ]
+    },
+    {
+        "@id": "_:N6709a05e1d7743faba8891b2e8af5ee8",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#intersectionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#MondialThing"
+                    },
+                    {
+                        "@id": "_:N05d8b393a56b4b3d83a084bf9f582382"
+                    },
+                    {
+                        "@id": "_:N93735cc138014f0fb6ad0c1acfdb4298"
+                    },
+                    {
+                        "@id": "_:N1533a665da934797b7758dd32fd1e720"
+                    },
+                    {
+                        "@id": "_:Nb9c21c63c03b42b2873ffb616ed48ee3"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "_:N05d8b393a56b4b3d83a084bf9f582382",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#ReifiedThing"
+            }
+        ]
+    },
+    {
+        "@id": "_:N93735cc138014f0fb6ad0c1acfdb4298",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Border"
+            }
+        ]
+    },
+    {
+        "@id": "_:N1533a665da934797b7758dd32fd1e720",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Source"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nb9c21c63c03b42b2873ffb616ed48ee3",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Estuary"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#government",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#string"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#MondialThing",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#disjointUnionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#PoliticalOrGeographicalThing"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#AnthropoGeographicalThing"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#ReifiedThing"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Language",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#AnthropoGeographicalThing"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#belongToEthnicGroup",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#EthnicGroup"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#liveInCountry"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#hasSource",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#InverseFunctionalProperty",
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#River"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Source"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#hasSource-"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#inMountains",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "_:Nddfcdb292f1840bc9a1ca7aa2b83d773"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#MountainRange"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nddfcdb292f1840bc9a1ca7aa2b83d773",
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Mountain"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Source"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#onLanguage",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#SpokenBy"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Language"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#spokenInInfo"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#GeographicalNonPoliticalThing",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#disjointUnionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Continent"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Water"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Source"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Estuary"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Desert"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Island"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Mountain"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Archipelago"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#MountainRange"
+                    }
+                ]
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#disjointWith": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#PoliticalThing"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#religionInfo",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#InverseFunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#BelievedBy"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#religionInfo-"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#ReifiedThing",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#disjointUnionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Membership"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Encompassed"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#SpokenBy"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#BelievedBy"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#EthnicProportion"
+                    }
+                ]
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#disjointWith": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Geometrical"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Encompassed",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#ReifiedThing"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#onEthnicGroup",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#EthnicProportion"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#EthnicGroup"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#liveInInfo"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Organization",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#disjointWith": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Geometrical"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#borders",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#LargeArea"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#LargeArea"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#dependentOf",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Island",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#SmallArea"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#River",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:Na686b9d43118495185615d80bab4e50c"
+            },
+            {
+                "@id": "_:N4c17e49fa6f5493a8ee9fae9909575cc"
+            },
+            {
+                "@id": "_:N69f7ba06be564c4baf51cb1af6d277f3"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Line"
+            }
+        ]
+    },
+    {
+        "@id": "_:Na686b9d43118495185615d80bab4e50c",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#cardinality": [
+            {
+                "@value": 1
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#hasEstuary"
+            }
+        ]
+    },
+    {
+        "@id": "_:N4c17e49fa6f5493a8ee9fae9909575cc",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#cardinality": [
+            {
+                "@value": 1
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#hasSource"
+            }
+        ]
+    },
+    {
+        "@id": "_:N69f7ba06be564c4baf51cb1af6d277f3",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#allValuesFrom": [
+            {
+                "@id": "_:Ncac9be95b63245b4b782b0b59551358a"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#locatedIn"
+            }
+        ]
+    },
+    {
+        "@id": "_:Ncac9be95b63245b4b782b0b59551358a",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#City"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#hasCity",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#AdministrativeArea"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#City"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#cityIn"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#SpokenBy",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#AnthropoGeographicalRelationship"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#population",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "_:Nd7e2298261cb48338b6f1a60e050b487"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nd7e2298261cb48338b6f1a60e050b487",
+        "http://www.w3.org/2002/07/owl#intersectionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Area"
+                    },
+                    {
+                        "@id": "_:Ncaf02611e38442afb7d87e6dc61660ac"
+                    },
+                    {
+                        "@id": "_:N814cf44cb6934f61a7fb22fea5383add"
+                    },
+                    {
+                        "@id": "_:N0e44d09d9bba4742a9e386807b4623f8"
+                    },
+                    {
+                        "@id": "_:Nc0e27434974b4dfdaf49a60486748e7e"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "_:Ncaf02611e38442afb7d87e6dc61660ac",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Continent"
+            }
+        ]
+    },
+    {
+        "@id": "_:N814cf44cb6934f61a7fb22fea5383add",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Desert"
+            }
+        ]
+    },
+    {
+        "@id": "_:N0e44d09d9bba4742a9e386807b4623f8",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Water"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nc0e27434974b4dfdaf49a60486748e7e",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#MountainRange"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Area",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#disjointUnionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#SmallArea"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#LargeArea"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#localname",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "_:N882de74ef07d4a139c35ed0c595fc216"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#string"
+            }
+        ]
+    },
+    {
+        "@id": "_:N882de74ef07d4a139c35ed0c595fc216",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Province"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#City"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Archipelago",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#SmallArea"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#onReligion",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#BelievedBy"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Religion"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#followedInInfo"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#capital",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#AdministrativeArea"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#City"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#isCapitalOf"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#mergesWith",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#SymmetricProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Sea"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Sea"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#borders"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#TimeSeriesElement",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:N469648840bb5450ab930b3faf7a9ec3c"
+            }
+        ]
+    },
+    {
+        "@id": "_:N469648840bb5450ab930b3faf7a9ec3c",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#maxCardinality": [
+            {
+                "@value": 1
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#year"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#abbrev",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Organization"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#string"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#wasDependentOf",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#PoliticalBody"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#GeographicalThing",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#disjointUnionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#City"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#GeographicalNonPoliticalThing"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "_:N9769d79bd253403bbfc74e3fa61d4fa1",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:Nd342caf14ef34e2b8fb8bc04f4e6965d"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Mountain"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#River"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Lake"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "_:Nd342caf14ef34e2b8fb8bc04f4e6965d",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#maxCardinality": [
+            {
+                "@value": 1
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#locatedOnIsland"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#othername",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "_:N161d1db4c76c4075b9ede37ce8475936"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#string"
+            }
+        ]
+    },
+    {
+        "@id": "_:N161d1db4c76c4075b9ede37ce8475936",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#intersectionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#MondialThing"
+                    },
+                    {
+                        "@id": "_:N5daf03cbdd0b4d839fc465b2207a034d"
+                    },
+                    {
+                        "@id": "_:Ne7e38f02d620426a8e539e7def18f906"
+                    },
+                    {
+                        "@id": "_:Nd2f99079671f4148ac50d71bb1181d0d"
+                    },
+                    {
+                        "@id": "_:N8db2de5b96814aba8021d5439bfd6b61"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "_:N5daf03cbdd0b4d839fc465b2207a034d",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#ReifiedThing"
+            }
+        ]
+    },
+    {
+        "@id": "_:Ne7e38f02d620426a8e539e7def18f906",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Border"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nd2f99079671f4148ac50d71bb1181d0d",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Source"
+            }
+        ]
+    },
+    {
+        "@id": "_:N8db2de5b96814aba8021d5439bfd6b61",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Estuary"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Source",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:N169364916533433489d754966f4d3a29"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Place"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#disjointWith": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Area"
+            }
+        ]
+    },
+    {
+        "@id": "_:N169364916533433489d754966f4d3a29",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#cardinality": [
+            {
+                "@value": 1
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#hasSource-"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#EthnicProportion",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#AnthropoGeographicalRelationship"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Volcano",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Mountain"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#encompassed",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#EncompassedArea"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Continent"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#encompasses"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#hasSource-",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#ethnicInfo",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#InverseFunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#EthnicProportion"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#ethnicInfo-"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#depth",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "_:Nf1b1949de9ac44a9873f8579db132093"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nf1b1949de9ac44a9873f8579db132093",
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Sea"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Lake"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Continent",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:Nb8f66c8fa59f437e940cdd9e924a45ac"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#LargeArea"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#disjointWith": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Province"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nb8f66c8fa59f437e940cdd9e924a45ac",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#allValuesFrom": [
+            {
+                "@id": "http://www.w3.org/2002/07/owl#Nothing"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#locatedIn"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#EncompassedArea",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#equivalentClass": [
+            {
+                "@id": "_:N32365c4353c54dff9b5584856bbbccff"
+            }
+        ]
+    },
+    {
+        "@id": "_:N32365c4353c54dff9b5584856bbbccff",
+        "http://www.w3.org/2002/07/owl#intersectionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#LargeArea"
+                    },
+                    {
+                        "@id": "_:Nd1bc319699ad428b9ab41a9667b1b341"
+                    },
+                    {
+                        "@id": "_:Nb43c3082b6dc4a899c338cc231729b71"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "_:Nd1bc319699ad428b9ab41a9667b1b341",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Continent"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nb43c3082b6dc4a899c338cc231729b71",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Sea"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Location",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#disjointUnionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Place"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#SmallArea"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#isBorderOf",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Border"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#hasBorder"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#City",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:N48a94371ec17445690e5ca23f88a142a"
+            },
+            {
+                "@id": "_:N57ab860cbd9d47aab4f2213a455766bd"
+            },
+            {
+                "@id": "_:Na010935b47544aadb48f25f410034b15"
+            },
+            {
+                "@id": "_:Ne6cb3cfd76424e5fa0d705cf2d265e3e"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#AdministrativeSubdivision"
+            },
+            {
+                "@id": "_:N8309fca6cef04ab9885e2b10ce5b7900"
+            },
+            {
+                "@id": "_:Ned87092774924f81a0de11fed4e7f312"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#SmallArea"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#GeographicalThing"
+            }
+        ]
+    },
+    {
+        "@id": "_:N48a94371ec17445690e5ca23f88a142a",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#cardinality": [
+            {
+                "@value": 0
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#area"
+            }
+        ]
+    },
+    {
+        "@id": "_:N57ab860cbd9d47aab4f2213a455766bd",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#maxQualifiedCardinality": [
+            {
+                "@value": 1
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onClass": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#isCapitalOf"
+            }
+        ]
+    },
+    {
+        "@id": "_:Na010935b47544aadb48f25f410034b15",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#onClass": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#locatedIn"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#qualifiedCardinality": [
+            {
+                "@value": 1
+            }
+        ]
+    },
+    {
+        "@id": "_:Ne6cb3cfd76424e5fa0d705cf2d265e3e",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#maxQualifiedCardinality": [
+            {
+                "@value": 1
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onClass": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Province"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#locatedIn"
+            }
+        ]
+    },
+    {
+        "@id": "_:N8309fca6cef04ab9885e2b10ce5b7900",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#maxQualifiedCardinality": [
+            {
+                "@value": 1
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onClass": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Province"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#cityIn"
+            }
+        ]
+    },
+    {
+        "@id": "_:Ned87092774924f81a0de11fed4e7f312",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#onClass": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#cityIn"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#qualifiedCardinality": [
+            {
+                "@value": 1
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#type",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "_:Nf8647e99fc994ac9951af1cf6f7baad3"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#string"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nf8647e99fc994ac9951af1cf6f7baad3",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#intersectionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "_:N323f12811ee945e88e84543d3673eaaa"
+                    },
+                    {
+                        "@id": "_:N177968277b2d4844bd86828a23eb7ace"
+                    },
+                    {
+                        "@id": "_:N5d58a09ef33b4c4a83608052694a2845"
+                    },
+                    {
+                        "@id": "_:N8a8b2df6866a411d8955653aa44536f8"
+                    },
+                    {
+                        "@id": "_:N42aa88b7fadd479b8d1332ab7bc345c9"
+                    },
+                    {
+                        "@id": "_:N2130848035e74206a46b480bf48510e1"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "_:N323f12811ee945e88e84543d3673eaaa",
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#GeographicalThing"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Membership"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "_:N177968277b2d4844bd86828a23eb7ace",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Continent"
+            }
+        ]
+    },
+    {
+        "@id": "_:N5d58a09ef33b4c4a83608052694a2845",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#River"
+            }
+        ]
+    },
+    {
+        "@id": "_:N8a8b2df6866a411d8955653aa44536f8",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Source"
+            }
+        ]
+    },
+    {
+        "@id": "_:N42aa88b7fadd479b8d1332ab7bc345c9",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Estuary"
+            }
+        ]
+    },
+    {
+        "@id": "_:N2130848035e74206a46b480bf48510e1",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#City"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#AnthropoGeographicalRelationship",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#disjointUnionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#SpokenBy"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#BelievedBy"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#EthnicProportion"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#AdministrativeArea",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#disjointUnionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Province"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Water",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:N7c91d6514f544cae8fb21b73dead0a24"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#disjointUnionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#River"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Lake"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Sea"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "_:N7c91d6514f544cae8fb21b73dead0a24",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#maxCardinality": [
+            {
+                "@value": 1
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#flowsInto"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#neighbor",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#SymmetricProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#borders"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Desert",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:N623e51ecb56d4b4e8739084cbf09614d"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#SmallArea"
+            }
+        ]
+    },
+    {
+        "@id": "_:N623e51ecb56d4b4e8739084cbf09614d",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#allValuesFrom": [
+            {
+                "@id": "_:N549dd0a51db84cd4a6fb20d1c31ffd8d"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#locatedIn"
+            }
+        ]
+    },
+    {
+        "@id": "_:N549dd0a51db84cd4a6fb20d1c31ffd8d",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#City"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#MountainRange",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:N3723fa6615dd410eb59ae9ce9f141ef3"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#SmallArea"
+            }
+        ]
+    },
+    {
+        "@id": "_:N3723fa6615dd410eb59ae9ce9f141ef3",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#allValuesFrom": [
+            {
+                "@id": "_:N618a3378695f4c8b887dfbb9d0a0cd16"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#locatedIn"
+            }
+        ]
+    },
+    {
+        "@id": "_:N618a3378695f4c8b887dfbb9d0a0cd16",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#City"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#encompasses",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Membership",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#ReifiedThing"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#encompassedBy",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Encompassed"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Continent"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#encompassesInfo"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#isMember",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Organization"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#hasMember"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#longitude",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Location"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#independenceDate",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#date"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#isCapitalOf",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#unemployment",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#inflation",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+            }
+        ]
+    },
+    {
+        "@id": "_:N9b45962aef364a5e865c7132e42caa7e",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:N9b94cf5a314746d0baf33aad876ed9f7"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#intersectionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#PopulationCount"
+                    },
+                    {
+                        "@id": "_:N3c74440cce3c409ebd9e8818e642938c"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "_:N9b94cf5a314746d0baf33aad876ed9f7",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "_:N29f813d65c5e4cbfbf927edb956afc75"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#someValuesFrom": [
+            {
+                "@id": "http://www.w3.org/2002/07/owl#Thing"
+            }
+        ]
+    },
+    {
+        "@id": "_:N29f813d65c5e4cbfbf927edb956afc75",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#hadPopulation"
+            }
+        ]
+    },
+    {
+        "@id": "_:N3c74440cce3c409ebd9e8818e642938c",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#ofObject"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#someValuesFrom": [
+            {
+                "@id": "http://www.w3.org/2002/07/owl#Thing"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#year",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#YearlyMeasurement"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#gYear"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Country",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#LargeArea"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#flowsThrough",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#InverseFunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#River"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Lake"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#hasBorder",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#flowsInto",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "_:N211ef9c05e684596a4bd9406643964d6"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Water"
+            }
+        ]
+    },
+    {
+        "@id": "_:N211ef9c05e684596a4bd9406643964d6",
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#River"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Lake"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "_:N9106a3e64cef47b9aba26ac2e10f0112",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:N631de6c17ce8478db34ddd2d6d1a9317"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#intersectionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#GeographicalThing"
+                    },
+                    {
+                        "@id": "_:Nd62664a22e1f426d967cbe8ee7bf4fec"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "_:N631de6c17ce8478db34ddd2d6d1a9317",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#minQualifiedCardinality": [
+            {
+                "@value": 1
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onClass": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#locatedIn"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nd62664a22e1f426d967cbe8ee7bf4fec",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Continent"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#latitude",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Location"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#value",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Measurement"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Geometrical",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Place"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Area"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Line"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#gdpInd",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#cityIn",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#believeInReligion",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Religion"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#believedInCountry"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#EthnicGroup",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#AnthropoGeographicalThing"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#locatedIn",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "_:N13fde0dabaca47b6964f7318b789c981"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#GeographicalThing"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Area"
+            }
+        ]
+    },
+    {
+        "@id": "_:N13fde0dabaca47b6964f7318b789c981",
+        "http://www.w3.org/2002/07/owl#intersectionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#GeographicalThing"
+                    },
+                    {
+                        "@id": "_:N8f05e8e4655447a2afcfe20252198976"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "_:N8f05e8e4655447a2afcfe20252198976",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Continent"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#area",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "_:Nd2ca6d001a0d4f2a832da8c261c77476"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nd2ca6d001a0d4f2a832da8c261c77476",
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Area"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#River"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#infantMortality",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#isProvinceOf",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#belongsTo"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Religion",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#AnthropoGeographicalThing"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#PoliticalBody",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#PoliticalThing"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#disjointUnionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Organization"
+                    }
+                ]
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#disjointWith": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#AdministrativeSubdivision"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#languageInfo",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#InverseFunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#SpokenBy"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#languageInfo-"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#lastEruption",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Volcano"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#date"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Lake",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:N363a335deb9a4e5ab67fdaa840e92ed0"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#SmallArea"
+            }
+        ]
+    },
+    {
+        "@id": "_:N363a335deb9a4e5ab67fdaa840e92ed0",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#allValuesFrom": [
+            {
+                "@id": "_:N21c34e684b62493189f69fa5c1329068"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#locatedIn"
+            }
+        ]
+    },
+    {
+        "@id": "_:N21c34e684b62493189f69fa5c1329068",
+        "http://www.w3.org/2002/07/owl#complementOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Lake"
+            }
+        ]
+    },
+    {
+        "@id": "_:N25af1890388d473a8d0e6b0a947b5e9b",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#ofObject"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#hadPopulation"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#populationGrowth",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#gdpTotal",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#AnthropoGeographicalThing",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#disjointUnionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Language"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Religion"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#EthnicGroup"
+                    }
+                ]
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#disjointWith": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Geometrical"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#length",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Line"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Border",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:N7e7df5e9f51b45e59de57646361e03b6"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Line"
+            }
+        ]
+    },
+    {
+        "@id": "_:N7e7df5e9f51b45e59de57646361e03b6",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#cardinality": [
+            {
+                "@value": 2
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#isBorderOf"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#NonGeographicalPoliticalThing",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#disjointUnionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Province"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Organization"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Border"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Sea",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:Nf1c9bb1baa104cf388e6d8539d1e88d1"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#LargeArea"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#disjointWith": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Province"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nf1c9bb1baa104cf388e6d8539d1e88d1",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#allValuesFrom": [
+            {
+                "@id": "_:Nf178acd12cc5409bace48fd917af9801"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#locatedIn"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nf178acd12cc5409bace48fd917af9801",
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Province"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Continent"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#locatedInWater",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Island"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Water"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#hasEstuary",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#InverseFunctionalProperty",
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#River"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Estuary"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#hasEstuary-"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#speakLanguage",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Language"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#spokenInCountry"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#hasMember",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#AdministrativeSubdivision",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:Naf2142548d2849248f7ab4a9273b5645"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#disjointUnionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Province"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#City"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "_:Naf2142548d2849248f7ab4a9273b5645",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#onClass": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#belongsTo"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#qualifiedCardinality": [
+            {
+                "@value": 1
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#BelievedBy",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#AnthropoGeographicalRelationship"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#inOrganization",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#ObjectProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Membership"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Organization"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#inverseOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#hasMembership"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#percent",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "_:Nee50aa04be654c21ada5b69fb5ee645f"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+            }
+        ]
+    },
+    {
+        "@id": "_:Nee50aa04be654c21ada5b69fb5ee645f",
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#SpokenBy"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#BelievedBy"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#EthnicProportion"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Encompassed"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Province",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#LargeArea"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#LargeArea",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Area"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#PopulationCount",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "_:N6da477e0ae26487fba2456ebae171e79"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#YearlyMeasurement"
+            }
+        ]
+    },
+    {
+        "@id": "_:N6da477e0ae26487fba2456ebae171e79",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Restriction"
+        ],
+        "http://www.w3.org/2002/07/owl#allValuesFrom": [
+            {
+                "@id": "_:N39e0ac9549034225baddc072942a3db4"
+            }
+        ],
+        "http://www.w3.org/2002/07/owl#onProperty": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#ofObject"
+            }
+        ]
+    },
+    {
+        "@id": "_:N39e0ac9549034225baddc072942a3db4",
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#Province"
+                    },
+                    {
+                        "@id": "http://www.semwebtech.org/mondial/10/meta#City"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#gdpAgri",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty",
+            "http://www.w3.org/2002/07/owl#DatatypeProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Country"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Measurement",
+        "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#TimeSeriesElement"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#ofObject",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#FunctionalProperty"
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#domain": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Measurement"
+            }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#range": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#MondialThing"
+            }
+        ]
+    },
+    {
+        "@id": "http://www.semwebtech.org/mondial/10/meta#Line",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#disjointWith": [
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Place"
+            },
+            {
+                "@id": "http://www.semwebtech.org/mondial/10/meta#Area"
+            }
+        ]
+    }
+]
