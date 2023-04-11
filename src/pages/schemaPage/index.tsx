@@ -26,7 +26,7 @@ function SchemaPage() {
       const head = queryRes.head.vars;
       const results_bindings = queryRes.results.bindings;
 
-      const columns = head.map((h) => ({
+      const columns = head.map((h: any) => ({
         field: h,
         headerName: h,
         minWidth: 300,
@@ -34,12 +34,12 @@ function SchemaPage() {
       }));
       setColumns(columns);
 
-      const colKeys = columns.map((col) => col.field);
+      const colKeys = columns.map((col: any) => col.field);
       console.log('colKeys: ', colKeys);
 
       const data = results_bindings
         .map((data_binding: any, index: number) => {
-          const obj = {};
+          const obj: any = {};
           for (const key of colKeys) {
             const value = data_binding[key].value;
             const value_split = value.split('#');
