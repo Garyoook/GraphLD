@@ -71,7 +71,7 @@ WHERE {
       const head = queryRes.head.vars;
       const results_bindings = queryRes.results.bindings;
 
-      const columns = head.map((h) => ({
+      const columns = head.map((h: any) => ({
         field: h,
         headerName: h,
         minWidth: 300,
@@ -79,10 +79,10 @@ WHERE {
       }));
       setColumns(columns);
 
-      const colKeys = columns.map((col) => col.field);
+      const colKeys = columns.map((col: any) => col.field);
 
       const data = results_bindings.map((data_binding: any, index: number) => {
-        const obj = {};
+        const obj: any = {};
         for (const key of colKeys) {
           const value = data_binding[key].value;
           const value_split = value.split('#');
@@ -100,7 +100,7 @@ WHERE {
       console.log('datasource: ', data);
       setDataSource(data);
       setShowAlert(false);
-    } catch (e) {
+    } catch (e: any) {
       console.error('Error', e.response.data);
       setShowAlert(true);
       setAlertText(
@@ -111,12 +111,12 @@ WHERE {
     }
   };
 
-  const onChange = useCallback((value, viewUpdate) => {
+  const onChange = useCallback((value: string, viewUpdate: any) => {
     setQuery(value);
   }, []);
 
-  function preprocessData(dataSource: any[]) {
-    const headers = [];
+  function preprocessVisData(dataSource: any[]) {
+    const headers: string[] = [];
     if (dataSource.length > 0) {
       const firstRow = dataSource[0];
       const keys = Object.keys(firstRow);
@@ -217,7 +217,7 @@ WHERE {
               </Toolbar>
             </AppBar>
             <DialogContent>
-              <VisOptions data={preprocessData(dataSource)} />
+              <VisOptions data={preprocessVisData(dataSource)} />
             </DialogContent>
           </Dialog>
         </Grid>

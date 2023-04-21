@@ -6,12 +6,22 @@ import { sendSPARQLquery } from '../services/api';
 
 function SchemaPage() {
   const query = `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-		PREFIX mons: <http://www.semwebtech.org/mondial/10/meta#>
-		SELECT DISTINCT ?class ?superclass
-		WHERE {
-		  ?class a rdfs:Class .
-		  OPTIONAL { ?class rdfs:subClassOf ?superclass . }
-		}`;
+  PREFIX mons: <http://www.semwebtech.org/mondial/10/meta#>
+  PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  PREFIX owl: <http://www.w3.org/2002/07/owl#>
+  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  SELECT DISTINCT ?class ?sclass
+  WHERE {
+      {
+          ?class rdf:type owl:Class .
+          ?class rdfs:subClassOf ?sclass . 
+          ?sclass rdfs:subClassOf ?ssclass . 
+      }
+      FILTER(!isBlank(?class) && !isBlank(?sclass) && !isBlank(?ssclass))
+      FILTER(STRSTARTS(STR(?class), STR(mons:)))
+      FILTER(!STRSTARTS(STR(?sclass), STR(owl:Thing)))
+  #    FILTER(?class != ?sclass && ?sclass != ?ssclass)
+  }`;
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
