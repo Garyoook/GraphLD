@@ -1,20 +1,22 @@
-import { useEffect } from 'react';
-import { convertPrefixToNamespace } from '../utils';
 import Dashboard from './dashBoard';
 import './index.css';
-import mondial_metadata_ from './mondial-meta.json';
 
 function HomePage() {
-  const mondial_metadata = mondial_metadata_;
+  // ! START experimental code:
+  // import mondial_metadata_ from './mondial-meta.json';
+  // import { useEffect } from 'react';
+  // import { convertPrefixToNamespace } from '../utils';
 
-  useEffect(() => {
-    const mondial_metadata_clone: any = [];
-    for (const item of mondial_metadata) {
-      convertPrefixToNamespace(item);
-      mondial_metadata_clone.push(item);
-    }
-    console.log('modified', mondial_metadata_clone);
-  }, []);
+  // const mondial_metadata = mondial_metadata_;
+  // useEffect(() => {
+  //   const mondial_metadata_clone: any = [];
+  //   for (const item of mondial_metadata) {
+  //     convertPrefixToNamespace(item);
+  //     mondial_metadata_clone.push(item);
+  //   }
+  //   console.log('modified', mondial_metadata_clone);
+  // }, []);
+  // ! END experimental code
 
   return (
     <div className="App">
