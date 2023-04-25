@@ -19,6 +19,11 @@ function TreeMap(props: VisDataProps) {
   const [renderMode, setRenderMode] = useState(0);
   const [reset, setReset] = useState(false);
 
+  function showFullTooltip(row: any, size: string, value: any) {
+    return `<div style="z-index: 99999999999;position: relative; background:#d0f0ff; border-radius: 10px; padding:10px; border-style:solid">
+            <span style="font-family:Courier"> ${headers[2]}: <div style="font-weight: 800;">${size}</div> </span> </div>`;
+  }
+
   const options = {
     minColor: '#CCE5FF',
     midColor: '#66b2ff',
@@ -27,9 +32,11 @@ function TreeMap(props: VisDataProps) {
     fontColor: 'black',
     showScale: true,
     useWeightedAverageForAggregation: true,
+    showTooltips: true,
+    generateTooltip: showFullTooltip,
   };
 
-  function renderMode0() {
+  function renderByGroup(headers: string[], data: (number | string)[][]) {
     const groupSet: any[] = [];
     for (const [id, group, value] of data) {
       if (!groupSet.includes(group)) {
@@ -40,8 +47,6 @@ function TreeMap(props: VisDataProps) {
     // initialise the global group:
     // format: [id, parent, value, color]
     dataTmp.push(['all', null, 0, 0]);
-    console.log('groupSet: ', groupSet);
-
     for (const group of groupSet) {
       dataTmp.push([group, 'all', 0, groupSet.lastIndexOf(group)]);
     }
@@ -63,25 +68,17 @@ function TreeMap(props: VisDataProps) {
     setDataSource(preprocessedData);
   }
 
-  function renderMode1() {
+  function renderAll(headers: string[], data: (number | string)[][]) {
+    // display all data in the same group
     const groupSet: any[] = [];
     for (const [id, group, value] of data) {
       if (!groupSet.includes(group)) {
         groupSet.push(group);
       }
     }
-    const dataTmp = [];
-    // initialise the global group:
-    // format: [id, parent, value, color]
+    const dataTmp: any[][] = [];
     dataTmp.push(['all', null, 0, 0]);
-    console.log('groupSet: ', groupSet);
-
-    // for (const group of groupSet) {
-    //   dataTmp.push([group, 'all', 0, groupSet.lastIndexOf(group)]);
-    // }
-
     const header = [...headers, 'color'];
-
     const coloredData = data.map((item) => {
       const [id, group, value] = item;
       return [id, 'all', value, groupSet.lastIndexOf(group)];
@@ -98,11 +95,25 @@ function TreeMap(props: VisDataProps) {
     setDataSource(preprocessedData);
   }
 
-  const renderModes = [renderMode0, renderMode1];
+  function swapColumns() {
+    // if cannot render, try swap id col(0) and parent col(1)
+    const swappedHeaders = [headers[1], headers[0], headers[2]];
+    const swappedData = data.map((item) => {
+      return [item[1], item[0], item[2]];
+    });
+    console.log('swapped datasource: ', [swappedHeaders, ...swappedData]);
+    // setDataSource([swappedHeaders, ...swappedData]);
+    renderModes.at(renderMode)?.renderer(swappedHeaders, swappedData);
+  }
+
+  const renderModes = [
+    { name: 'Groups', renderer: renderByGroup },
+    { name: 'Overview', renderer: renderAll },
+  ];
 
   useEffect(() => {
-    renderModes[renderMode]();
-  }, [data, reset, renderMode]);
+    renderModes.at(renderMode)?.renderer(headers, data);
+  }, [reset, renderMode]);
 
   return (
     <Grid
@@ -116,10 +127,7 @@ function TreeMap(props: VisDataProps) {
           variant="outlined"
           size="large"
           style={{ textTransform: 'none' }}
-          onClick={
-            // swapColumns
-            () => {}
-          }
+          onClick={() => swapColumns()}
         >
           Swap columns
         </Button>
@@ -133,8 +141,8 @@ function TreeMap(props: VisDataProps) {
               setRenderMode(Number(e.target.value));
             }}
           >
-            {renderModes.map((_, index) => {
-              return <MenuItem value={index}>Mode{index}</MenuItem>;
+            {renderModes.map((item, index) => {
+              return <MenuItem value={index}>{item.name}</MenuItem>;
             })}
           </Select>
           <FormHelperText>Select Render Mode</FormHelperText>
