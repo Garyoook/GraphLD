@@ -1,6 +1,8 @@
 import { StreamLanguage } from '@codemirror/language';
 import { sparql } from '@codemirror/legacy-modes/mode/sparql';
+import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import CloseIcon from '@mui/icons-material/Close';
+import SendIcon from '@mui/icons-material/Send';
 import {
   Alert,
   AppBar,
@@ -23,6 +25,11 @@ import { forwardRef, useCallback, useState } from 'react';
 import { prefix_mapping } from '../../utils';
 import { sendSPARQLquery } from '../services/api';
 import VisOptions from './VisOptions';
+
+export interface VisDataProps {
+  headers: string[];
+  data: (number | string)[][];
+}
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -115,7 +122,9 @@ WHERE {
     setQuery(value);
   }, []);
 
-  function preprocessVisData(dataSource: any[]) {
+  function preprocessVisData(dataSource: any[]): VisDataProps {
+    console.log('original data: ', dataSource);
+
     const headers: string[] = [];
     if (dataSource.length > 0) {
       const firstRow = dataSource[0];
@@ -146,9 +155,9 @@ WHERE {
       return dataRow;
     });
 
-    console.log('data: ', [headers, ...data]);
+    console.log('preprocessed data: ', { headers, data });
 
-    return [headers, ...data];
+    return { headers, data };
   }
 
   return (
@@ -162,7 +171,12 @@ WHERE {
       <Grid container spacing={2}>
         <Grid item xs={12}></Grid>
         <Grid item xs={4}>
-          <Button variant="contained" disabled={loading} onClick={handleQuery}>
+          <Button
+            variant="contained"
+            disabled={loading}
+            onClick={handleQuery}
+            endIcon={<SendIcon />}
+          >
             Execute query
           </Button>
           {loading && (
@@ -183,16 +197,19 @@ WHERE {
         <Grid item xs={12}></Grid>
 
         <Grid item xs>
-          <Button variant="outlined" disabled={loading} onClick={handleVisOpen}>
+          <Button
+            variant="outlined"
+            disabled={loading || dataSource.length == 0}
+            onClick={handleVisOpen}
+            endIcon={<AutoGraphIcon />}
+          >
             Visualisation Options
           </Button>
           <Dialog
             open={openVis}
             onClose={handleVisClose}
-            // PaperComponent={paperComponent}
             fullScreen
             TransitionComponent={Transition}
-            aria-labelledby="draggable-dialog-title"
           >
             <AppBar sx={{ position: 'relative' }}>
               <Toolbar>
