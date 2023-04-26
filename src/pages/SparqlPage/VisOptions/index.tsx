@@ -1,5 +1,6 @@
 import ScatterPlot from '@/pages/graphs/ScatterPlot';
 import TreeMap from '@/pages/graphs/TreeMap';
+import LineChart from '@/pages/graphs/lineChart';
 import CloseIcon from '@mui/icons-material/Close';
 import {
   AppBar,
@@ -40,11 +41,13 @@ enum ChartType {
   BAR_CHART = 'Bar Chart',
   PIE_CHART = 'Pie Chart',
   SCATTER_PLOT = 'Scatter Plot',
+  LINE_CHART = 'Line Chart',
   TREE_MAP = 'Tree Map',
 }
 
-function VisOptions(props: { data: VisDataProps }) {
+function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
   const { data, headers } = props.data;
+  const { originalData } = props;
 
   const [openVis, setOpenVis] = useState(false);
   const [chartType, setChartType] = useState(ChartType.UNSET);
@@ -66,6 +69,8 @@ function VisOptions(props: { data: VisDataProps }) {
         return <PieChart headers={headers} data={data} />;
       case ChartType.SCATTER_PLOT:
         return <ScatterPlot headers={headers} data={data} />;
+      case ChartType.LINE_CHART:
+        return <LineChart headers={headers} data={originalData} />;
       case ChartType.TREE_MAP:
         return <TreeMap headers={headers} data={data} />;
       default:
@@ -86,6 +91,10 @@ function VisOptions(props: { data: VisDataProps }) {
         <Divider />
         <ListItem button onClick={() => handleVisOpen(ChartType.SCATTER_PLOT)}>
           <ListItemText primary={ChartType.SCATTER_PLOT} />
+        </ListItem>
+        <Divider />
+        <ListItem button onClick={() => handleVisOpen(ChartType.LINE_CHART)}>
+          <ListItemText primary={ChartType.LINE_CHART} />
         </ListItem>
         <Divider />
         <ListItem button onClick={() => handleVisOpen(ChartType.TREE_MAP)}>

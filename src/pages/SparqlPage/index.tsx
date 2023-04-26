@@ -234,7 +234,10 @@ WHERE {
               </Toolbar>
             </AppBar>
             <DialogContent>
-              <VisOptions data={preprocessVisData(dataSource)} />
+              <VisOptions
+                data={preprocessVisData(dataSource)}
+                originalData={dataSource}
+              />
             </DialogContent>
           </Dialog>
         </Grid>
