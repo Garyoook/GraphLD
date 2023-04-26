@@ -1,6 +1,7 @@
+import LineChart from '@/pages/graphs/LineChart';
 import ScatterPlot from '@/pages/graphs/ScatterPlot';
 import TreeMap from '@/pages/graphs/TreeMap';
-import LineChart from '@/pages/graphs/lineChart';
+import MultipleLineChart from '@/pages/graphs/multipleLineChart';
 import CloseIcon from '@mui/icons-material/Close';
 import {
   AppBar,
@@ -41,7 +42,8 @@ enum ChartType {
   BAR_CHART = 'Bar Chart',
   PIE_CHART = 'Pie Chart',
   SCATTER_PLOT = 'Scatter Plot',
-  LINE_CHART = 'Line Chart',
+  LINE_CHART = 'line chart (GoogleCharts format)',
+  MULTI_LINE_CHART = 'Multiple Line Chart (ANTV format)',
   TREE_MAP = 'Tree Map',
 }
 
@@ -70,7 +72,9 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
       case ChartType.SCATTER_PLOT:
         return <ScatterPlot headers={headers} data={data} />;
       case ChartType.LINE_CHART:
-        return <LineChart headers={headers} data={originalData} />;
+        return <LineChart headers={headers} data={data} />;
+      case ChartType.MULTI_LINE_CHART:
+        return <MultipleLineChart headers={headers} data={originalData} />;
       case ChartType.TREE_MAP:
         return <TreeMap headers={headers} data={data} />;
       default:
@@ -93,8 +97,11 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
           <ListItemText primary={ChartType.SCATTER_PLOT} />
         </ListItem>
         <Divider />
-        <ListItem button onClick={() => handleVisOpen(ChartType.LINE_CHART)}>
-          <ListItemText primary={ChartType.LINE_CHART} />
+        <ListItem
+          button
+          onClick={() => handleVisOpen(ChartType.MULTI_LINE_CHART)}
+        >
+          <ListItemText primary={ChartType.MULTI_LINE_CHART} />
         </ListItem>
         <Divider />
         <ListItem button onClick={() => handleVisOpen(ChartType.TREE_MAP)}>
