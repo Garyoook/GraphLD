@@ -1,7 +1,7 @@
-import LineChart from '@/pages/graphs/LineChart';
-import ScatterPlot from '@/pages/graphs/ScatterPlot';
-import TreeMap from '@/pages/graphs/TreeMap';
-import MultipleLineChart from '@/pages/graphs/multipleLineChart';
+import MultipleLineChart from '@/pages/graphs/ANTVCharts/multipleLineChart';
+import LineChart from '@/pages/graphs/GoogleCharts/LineChart';
+import ScatterPlot from '@/pages/graphs/GoogleCharts/ScatterPlot';
+import TreeMap from '@/pages/graphs/GoogleCharts/TreeMap';
 import CloseIcon from '@mui/icons-material/Close';
 import {
   AppBar,
@@ -22,8 +22,8 @@ import {
 import { useState } from 'react';
 import Draggable from 'react-draggable';
 import { VisDataProps } from '..';
-import BarChart from '../../graphs/BarChart';
-import PieChart from '../../graphs/PieChart';
+import BarChart from '../../graphs/GoogleCharts/BarChart';
+import PieChart from '../../graphs/GoogleCharts/PieChart';
 
 // draggable rendering area for the dialog
 function draggablePaper(props: PaperProps) {

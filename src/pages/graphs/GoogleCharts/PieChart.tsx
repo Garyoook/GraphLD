@@ -1,5 +1,5 @@
 import { Chart } from 'react-google-charts';
-import { VisDataProps } from '../SparqlPage';
+import { VisDataProps } from '../../SparqlPage';
 
 const options = {};
 
