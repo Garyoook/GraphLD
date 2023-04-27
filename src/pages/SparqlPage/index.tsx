@@ -143,7 +143,10 @@ WHERE {
       const dataRow = [];
       for (const key of headers) {
         const value = row[key];
-        if (value.match(/http:\/\/www\.semwebtech\.org\/mondial\/10\/(.*)/)) {
+        if (
+          typeof value == 'string' &&
+          value.match(/http:\/\/www\.semwebtech\.org\/mondial\/10\/(.*)/)
+        ) {
           const newValue = value.split('/').reverse()[1];
           dataRow.push(newValue);
         } else if (!isNaN(value)) {
