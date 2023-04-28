@@ -1,3 +1,7 @@
+import BarChartAntV from '@/pages/graphs/ANTVCharts/BarChartAntV';
+import LineChartAntV from '@/pages/graphs/ANTVCharts/LineChartAntV';
+import PieChartAntV from '@/pages/graphs/ANTVCharts/PieChartAntV';
+import ScatterPlotAntV from '@/pages/graphs/ANTVCharts/ScatterPlotAntV';
 import MultipleLineChart from '@/pages/graphs/ANTVCharts/multipleLineChart';
 import LineChart from '@/pages/graphs/GoogleCharts/LineChart';
 import ScatterPlot from '@/pages/graphs/GoogleCharts/ScatterPlot';
@@ -42,9 +46,13 @@ enum ChartType {
   BAR_CHART = 'Bar Chart',
   PIE_CHART = 'Pie Chart',
   SCATTER_PLOT = 'Scatter Plot',
-  LINE_CHART = 'line chart (GoogleCharts format)',
-  MULTI_LINE_CHART = 'Multiple Line Chart (ANTV format)',
+  LINE_CHART = 'line chart',
   TREE_MAP = 'Tree Map',
+  LINE_CHART_ANTV = 'line chart (ANTV)',
+  MULTI_LINE_CHART = 'Multiple Line Chart (ANTV)',
+  BARCHART_ANTV = 'Bar Chart (ANTV)',
+  PIE_CHART_ANTV = 'Pie Chart (ANTV)',
+  SCATTER_PLOT_ANTV = 'Scatter Plot (ANTV)',
 }
 
 function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
@@ -73,42 +81,60 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
         return <ScatterPlot headers={headers} data={data} />;
       case ChartType.LINE_CHART:
         return <LineChart headers={headers} data={data} />;
-      case ChartType.MULTI_LINE_CHART:
-        return <MultipleLineChart headers={headers} data={originalData} />;
       case ChartType.TREE_MAP:
         return <TreeMap headers={headers} data={data} />;
+      case ChartType.BARCHART_ANTV:
+        return <BarChartAntV headers={headers} data={originalData} />;
+      case ChartType.LINE_CHART_ANTV:
+        return <LineChartAntV headers={headers} data={originalData} />;
+      case ChartType.MULTI_LINE_CHART:
+        return <MultipleLineChart headers={headers} data={originalData} />;
+      case ChartType.PIE_CHART_ANTV:
+        return <PieChartAntV headers={headers} data={originalData} />;
+      case ChartType.SCATTER_PLOT_ANTV:
+        return <ScatterPlotAntV headers={headers} data={originalData} />;
+
       default:
-        return null;
+        return 'You specified an invalid chart type, please check the code';
     }
+  }
+
+  const VisOptions_GoogleCharts = [
+    ChartType.BAR_CHART,
+    ChartType.PIE_CHART,
+    ChartType.SCATTER_PLOT,
+    ChartType.LINE_CHART,
+    ChartType.TREE_MAP,
+  ];
+
+  const VisOptions_ANTV = [
+    ChartType.BARCHART_ANTV,
+    ChartType.PIE_CHART_ANTV,
+    ChartType.SCATTER_PLOT_ANTV,
+    ChartType.LINE_CHART_ANTV,
+    ChartType.MULTI_LINE_CHART,
+  ];
+
+  function renderVisOptions(options: ChartType[]) {
+    return options.map((chartType) => {
+      return (
+        <>
+          <ListItem button onClick={() => handleVisOpen(chartType)}>
+            <ListItemText primary={chartType} />
+          </ListItem>
+          <Divider />
+        </>
+      );
+    });
   }
 
   return (
     <div>
-      <List>
-        <ListItem button onClick={() => handleVisOpen(ChartType.BAR_CHART)}>
-          <ListItemText primary={ChartType.BAR_CHART} />
-        </ListItem>
-        <Divider />
-        <ListItem button onClick={() => handleVisOpen(ChartType.PIE_CHART)}>
-          <ListItemText primary={ChartType.PIE_CHART} />
-        </ListItem>
-        <Divider />
-        <ListItem button onClick={() => handleVisOpen(ChartType.SCATTER_PLOT)}>
-          <ListItemText primary={ChartType.SCATTER_PLOT} />
-        </ListItem>
-        <Divider />
-        <ListItem
-          button
-          onClick={() => handleVisOpen(ChartType.MULTI_LINE_CHART)}
-        >
-          <ListItemText primary={ChartType.MULTI_LINE_CHART} />
-        </ListItem>
-        <Divider />
-        <ListItem button onClick={() => handleVisOpen(ChartType.TREE_MAP)}>
-          <ListItemText primary={ChartType.TREE_MAP} />
-        </ListItem>
-      </List>
-
+      Google Charts:
+      <List>{renderVisOptions(VisOptions_GoogleCharts)}</List>
+      AntV:
+      <Divider />
+      <List>{renderVisOptions(VisOptions_ANTV)}</List>
       <Dialog
         open={openVis}
         onClose={handleVisClose}

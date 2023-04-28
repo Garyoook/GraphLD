@@ -1,30 +1,8 @@
-// import { Chart } from 'react-google-charts';
-// import { VisDataProps } from '../SparqlPage';
-
-// function LineChart(props: VisDataProps) {
-//   const { headers, data } = props;
-
-//   const options = {
-//     hAxis: { title: headers[0] },
-//     vAxis: { title: headers[1] },
-//   };
-
-//   return (
-//     <Chart
-//       chartType="LineChart"
-//       width="100%"
-//       height="400px"
-//       data={data.length > 0 ? [headers, ...data] : []}
-//       options={options}
-//     />
-//   );
-// }
-
 import { VisDataProps } from '@/pages/SparqlPage';
-import { Line } from '@ant-design/plots';
+import { Scatter } from '@ant-design/plots';
 import { useEffect, useState } from 'react';
 
-function MultipleLineChart(props: VisDataProps) {
+const ScatterPlotAntV = (props: VisDataProps) => {
   const { headers, data } = props;
 
   const [dataSource, setDataSource] = useState<any[]>([]);
@@ -32,12 +10,10 @@ function MultipleLineChart(props: VisDataProps) {
   // axis, set to states t=for future column switching requirements
   const [xField, setXField] = useState<string>('');
   const [yField, setYField] = useState<string>('');
-  const [seriesField, setSeriesField] = useState<string>('');
 
   useEffect(() => {
-    setSeriesField(headers[0]);
-    setXField(headers[1]);
-    setYField(headers[2]);
+    setXField(headers[0]);
+    setYField(headers[1]);
 
     const typedData = data
       .map((item: any) => {
@@ -64,26 +40,40 @@ function MultipleLineChart(props: VisDataProps) {
 
     setDataSource(typedData);
   }, [headers, data]);
-
   const config = {
+    appendPadding: 10,
     data: dataSource,
     xField,
     yField,
-    seriesField,
-    // xAxis: {
-    //   type: 'time',
-    // },
+    shape: 'circle',
+    // colorField: '',
+    size: 4,
     yAxis: {
-      type: 'log',
-      label: {
-        // reformat the y axis
-        formatter: (v: string) =>
-          `${v}`.replace(/\d{1,3}(?=(\d{3})+$)/g, (s) => `${s},`),
+      nice: true,
+      line: {
+        style: {
+          stroke: '#aaa',
+        },
+      },
+    },
+    xAxis: {
+      //   min: 0,
+      grid: {
+        line: {
+          style: {
+            stroke: '#eee',
+          },
+        },
+      },
+      line: {
+        style: {
+          stroke: '#aaa',
+        },
       },
     },
   };
 
-  return <Line {...config} />;
-}
+  return <Scatter {...config} />;
+};
 
-export default MultipleLineChart;
+export default ScatterPlotAntV;
