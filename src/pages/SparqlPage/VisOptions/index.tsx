@@ -2,6 +2,7 @@ import BarChartAntV from '@/pages/graphs/ANTVCharts/BarChartAntV';
 import LineChartAntV from '@/pages/graphs/ANTVCharts/LineChartAntV';
 import PieChartAntV from '@/pages/graphs/ANTVCharts/PieChartAntV';
 import ScatterPlotAntV from '@/pages/graphs/ANTVCharts/ScatterPlotAntV';
+import TreeMapAntV from '@/pages/graphs/ANTVCharts/TreeMapAntV';
 import MultipleLineChart from '@/pages/graphs/ANTVCharts/multipleLineChart';
 import LineChart from '@/pages/graphs/GoogleCharts/LineChart';
 import ScatterPlot from '@/pages/graphs/GoogleCharts/ScatterPlot';
@@ -41,6 +42,7 @@ function draggablePaper(props: PaperProps) {
   );
 }
 
+// TODO: add more charts enums
 enum ChartType {
   UNSET = 'Visulisation Unset',
   BAR_CHART = 'Bar Chart',
@@ -53,6 +55,7 @@ enum ChartType {
   BARCHART_ANTV = 'Bar Chart (ANTV)',
   PIE_CHART_ANTV = 'Pie Chart (ANTV)',
   SCATTER_PLOT_ANTV = 'Scatter Plot (ANTV)',
+  TREE_MAP_ANTV = 'Tree Map (ANTV)',
 }
 
 function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
@@ -71,6 +74,7 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
     setOpenVis(false);
   };
 
+  // TODO: add more charts render slots
   function displayChart(chartType: ChartType, data: (string | number)[][]) {
     switch (chartType) {
       case ChartType.BAR_CHART:
@@ -93,12 +97,15 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
         return <PieChartAntV headers={headers} data={originalData} />;
       case ChartType.SCATTER_PLOT_ANTV:
         return <ScatterPlotAntV headers={headers} data={originalData} />;
+      case ChartType.TREE_MAP_ANTV:
+        return <TreeMapAntV headers={headers} data={originalData} />;
 
       default:
         return 'You specified an invalid chart type, please check the code';
     }
   }
 
+  // TODO add more charts options here
   const VisOptions_GoogleCharts = [
     ChartType.BAR_CHART,
     ChartType.PIE_CHART,
@@ -113,6 +120,7 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
     ChartType.SCATTER_PLOT_ANTV,
     ChartType.LINE_CHART_ANTV,
     ChartType.MULTI_LINE_CHART,
+    ChartType.TREE_MAP_ANTV,
   ];
 
   function renderVisOptions(options: ChartType[]) {

@@ -1,0 +1,15 @@
+.container {
+  padding: 16px 0px;
+  width: 160px;
+  display: flex;
+  flex-direction: column;
+}
+.title {
+  font-weight: bold;
+}
+.tooltip-item {
+  margin-top: 12px;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
