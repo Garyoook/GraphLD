@@ -8,14 +8,9 @@ const TreeMapAntV = (props: VisDataProps) => {
 
   const [dataSource, setDataSource] = useState<any[]>([]);
 
-  // axis, set to states t=for future column switching requirements
   const [categoryCol, setCatogoryCol] = useState<string>('');
   const [idCol, setIdCol] = useState<string>('');
   const [valueCol, setValueCol] = useState<string>('');
-
-  const [treeData, setTreeData] = useState<any[]>([]);
-
-  console.log('props data:', props);
 
   useEffect(() => {
     setCatogoryCol(headers[0]); // continent
@@ -45,8 +40,6 @@ const TreeMapAntV = (props: VisDataProps) => {
       return item;
     });
 
-    console.log('typedData', typedData);
-
     const catogories = Array.from(
       new Set(typedData.map((item: any) => item[categoryCol])),
     );
@@ -62,28 +55,22 @@ const TreeMapAntV = (props: VisDataProps) => {
       );
 
       branchObj['children'] = leafData.map((item: any) => {
-        const leafObj: { name: string; value: number } = {};
+        const leafObj: any = {};
         leafObj.name = item[idCol] || 'unknown';
-        leafObj[idCol] = item[idCol] || 'unknown';
         leafObj.value = item[valueCol] || 0;
         return leafObj.name ? leafObj : item;
       });
       treeData.push(branchObj);
     });
-
-    console.log('treeData', treeData);
-
-    //   .sort((a: any, b: any) => a[headers[1]] - b[headers[1]]);
-
     // setTreeData(treeData);
-    setDataSource({
-      name: 'root',
-      children: treeData,
-    });
+    setDataSource(treeData);
   }, [idCol, categoryCol, valueCol, data]);
 
   const config = {
-    data: dataSource,
+    data: {
+      name: 'root',
+      children: dataSource,
+    },
     colorField: categoryCol,
     // 为矩形树图增加缩放,拖拽交互
     interactions: [
