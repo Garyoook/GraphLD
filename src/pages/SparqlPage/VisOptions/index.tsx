@@ -1,4 +1,5 @@
 import BarChartAntV from '@/pages/graphs/ANTVCharts/BarChartAntV';
+import ChordAntV from '@/pages/graphs/ANTVCharts/ChordAntV';
 import LineChartAntV from '@/pages/graphs/ANTVCharts/LineChartAntV';
 import PieChartAntV from '@/pages/graphs/ANTVCharts/PieChartAntV';
 import ScatterPlotAntV from '@/pages/graphs/ANTVCharts/ScatterPlotAntV';
@@ -50,12 +51,13 @@ enum ChartType {
   SCATTER_PLOT = 'Scatter Plot',
   LINE_CHART = 'line chart',
   TREE_MAP = 'Tree Map',
-  LINE_CHART_ANTV = 'line chart (ANTV)',
-  MULTI_LINE_CHART = 'Multiple Line Chart (ANTV)',
-  BARCHART_ANTV = 'Bar Chart (ANTV)',
-  PIE_CHART_ANTV = 'Pie Chart (ANTV)',
-  SCATTER_PLOT_ANTV = 'Scatter Plot (ANTV)',
-  TREE_MAP_ANTV = 'Tree Map (ANTV)',
+  LINE_CHART_ANTV = 'line chart',
+  MULTI_LINE_CHART = 'Multiple Line Chart',
+  BARCHART_ANTV = 'Bar Chart',
+  PIE_CHART_ANTV = 'Pie Chart',
+  SCATTER_PLOT_ANTV = 'Scatter Plot',
+  TREE_MAP_ANTV = 'Tree Map',
+  CHORD_DIAGRAM_ANTV = 'Chord Diagram',
 }
 
 function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
@@ -99,6 +101,8 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
         return <ScatterPlotAntV headers={headers} data={originalData} />;
       case ChartType.TREE_MAP_ANTV:
         return <TreeMapAntV headers={headers} data={originalData} />;
+      case ChartType.CHORD_DIAGRAM_ANTV:
+        return <ChordAntV headers={headers} data={originalData} />;
 
       default:
         return 'You specified an invalid chart type, please check the code';
@@ -121,6 +125,7 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
     ChartType.LINE_CHART_ANTV,
     ChartType.MULTI_LINE_CHART,
     ChartType.TREE_MAP_ANTV,
+    ChartType.CHORD_DIAGRAM_ANTV,
   ];
 
   function renderVisOptions(options: ChartType[]) {
