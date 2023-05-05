@@ -7,7 +7,7 @@ const BarChartAntV = (props: VisDataProps) => {
 
   const [dataSource, setDataSource] = useState<any[]>([]);
 
-  // axis, set to states t=for future column switching requirements
+  // axis, set to states for future column switching requirements
   const [xField, setXField] = useState<string>('');
   const [yField, setYField] = useState<string>('');
 

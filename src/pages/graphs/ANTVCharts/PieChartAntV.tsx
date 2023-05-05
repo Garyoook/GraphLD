@@ -7,7 +7,7 @@ const PieChartAntV = (props: VisDataProps) => {
 
   const [dataSource, setDataSource] = useState<any[]>([]);
 
-  // axis, set to states t=for future column switching requirements
+  // axis, set to states for future column switching requirements
   const [angleField, setAngleField] = useState<string>('');
   const [colorField, setColorField] = useState<string>('');
 
