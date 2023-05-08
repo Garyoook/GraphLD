@@ -5,6 +5,7 @@ import LineChartAntV from '@/pages/graphs/ANTVCharts/LineChartAntV';
 import PieChartAntV from '@/pages/graphs/ANTVCharts/PieChartAntV';
 import ScatterPlotAntV from '@/pages/graphs/ANTVCharts/ScatterPlotAntV';
 import TreeMapAntV from '@/pages/graphs/ANTVCharts/TreeMapAntV';
+import WordCloudAntV from '@/pages/graphs/ANTVCharts/WordCloudAntV';
 import MultipleLineChart from '@/pages/graphs/ANTVCharts/multipleLineChart';
 import LineChart from '@/pages/graphs/GoogleCharts/LineChart';
 import ScatterPlot from '@/pages/graphs/GoogleCharts/ScatterPlot';
@@ -60,6 +61,7 @@ enum ChartType {
   TREE_MAP_ANTV = 'Tree Map ',
   CHORD_DIAGRAM_ANTV = 'Chord Diagram ',
   BUBBLE_CHART_ANTV = 'Bubble Chart ',
+  WORD_CLOUD_ANTV = 'Word Cloud ',
 }
 
 function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
@@ -107,6 +109,8 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
         return <ChordAntV headers={headers} data={originalData} />;
       case ChartType.BUBBLE_CHART_ANTV:
         return <BubbleChartAntV headers={headers} data={originalData} />;
+      case ChartType.WORD_CLOUD_ANTV:
+        return <WordCloudAntV headers={headers} data={originalData} />;
 
       default:
         return 'You specified an invalid chart type, please check the code';
@@ -131,6 +135,7 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
     ChartType.TREE_MAP_ANTV,
     ChartType.CHORD_DIAGRAM_ANTV,
     ChartType.BUBBLE_CHART_ANTV,
+    ChartType.WORD_CLOUD_ANTV,
   ];
 
   function renderVisOptions(options: ChartType[]) {
