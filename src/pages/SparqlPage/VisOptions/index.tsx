@@ -51,13 +51,13 @@ enum ChartType {
   SCATTER_PLOT = 'Scatter Plot',
   LINE_CHART = 'line chart',
   TREE_MAP = 'Tree Map',
-  LINE_CHART_ANTV = 'line chart',
-  MULTI_LINE_CHART = 'Multiple Line Chart',
-  BARCHART_ANTV = 'Bar Chart',
-  PIE_CHART_ANTV = 'Pie Chart',
-  SCATTER_PLOT_ANTV = 'Scatter Plot',
-  TREE_MAP_ANTV = 'Tree Map',
-  CHORD_DIAGRAM_ANTV = 'Chord Diagram',
+  LINE_CHART_ANTV = 'line chart ',
+  MULTI_LINE_CHART = 'Multiple Line Chart ',
+  BARCHART_ANTV = 'Bar Chart ',
+  PIE_CHART_ANTV = 'Pie Chart ',
+  SCATTER_PLOT_ANTV = 'Scatter Plot ',
+  TREE_MAP_ANTV = 'Tree Map ',
+  CHORD_DIAGRAM_ANTV = 'Chord Diagram ',
 }
 
 function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
