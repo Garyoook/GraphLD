@@ -132,15 +132,15 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
 
   const VisOptions_ANTV = [
     ChartType.BARCHART_ANTV,
-    ChartType.PIE_CHART_ANTV,
     ChartType.SCATTER_PLOT_ANTV,
+    ChartType.BUBBLE_CHART_ANTV,
     ChartType.LINE_CHART_ANTV,
     ChartType.MULTI_LINE_CHART,
-    ChartType.TREE_MAP_ANTV,
+    ChartType.PIE_CHART_ANTV,
     ChartType.CHORD_DIAGRAM_ANTV,
-    ChartType.BUBBLE_CHART_ANTV,
     ChartType.WORD_CLOUD_ANTV,
     ChartType.TREE_ANTV,
+    ChartType.TREE_MAP_ANTV,
   ];
 
   function renderVisOptions(options: ChartType[]) {
