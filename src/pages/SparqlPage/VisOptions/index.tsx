@@ -1,4 +1,5 @@
 import BarChartAntV from '@/pages/graphs/ANTVCharts/BarChartAntV';
+import BubbleChartAntV from '@/pages/graphs/ANTVCharts/BubbleChartAntV';
 import ChordAntV from '@/pages/graphs/ANTVCharts/ChordAntV';
 import LineChartAntV from '@/pages/graphs/ANTVCharts/LineChartAntV';
 import PieChartAntV from '@/pages/graphs/ANTVCharts/PieChartAntV';
@@ -58,6 +59,7 @@ enum ChartType {
   SCATTER_PLOT_ANTV = 'Scatter Plot ',
   TREE_MAP_ANTV = 'Tree Map ',
   CHORD_DIAGRAM_ANTV = 'Chord Diagram ',
+  BUBBLE_CHART_ANTV = 'Bubble Chart ',
 }
 
 function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
@@ -103,6 +105,8 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
         return <TreeMapAntV headers={headers} data={originalData} />;
       case ChartType.CHORD_DIAGRAM_ANTV:
         return <ChordAntV headers={headers} data={originalData} />;
+      case ChartType.BUBBLE_CHART_ANTV:
+        return <BubbleChartAntV headers={headers} data={originalData} />;
 
       default:
         return 'You specified an invalid chart type, please check the code';
@@ -126,6 +130,7 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
     ChartType.MULTI_LINE_CHART,
     ChartType.TREE_MAP_ANTV,
     ChartType.CHORD_DIAGRAM_ANTV,
+    ChartType.BUBBLE_CHART_ANTV,
   ];
 
   function renderVisOptions(options: ChartType[]) {
@@ -143,11 +148,11 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
 
   return (
     <div>
-      Google Charts:
-      <List>{renderVisOptions(VisOptions_GoogleCharts)}</List>
       AntV:
       <Divider />
       <List>{renderVisOptions(VisOptions_ANTV)}</List>
+      Google Charts:
+      <List>{renderVisOptions(VisOptions_GoogleCharts)}</List>
       <Dialog
         open={openVis}
         onClose={handleVisClose}

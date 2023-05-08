@@ -36,6 +36,11 @@ const ScatterPlotAntV = (props: VisDataProps) => {
   const [yField, setYField] = useState<string>('');
   const [regressionType, setRegressionType] = useState(Regression_Type.NONE);
 
+  const [fieldsAll, setFieldsAll] = useState<string[]>([]);
+  useEffect(() => {
+    setFieldsAll(headers);
+  }, [headers]);
+
   useEffect(() => {
     setXField(headers[0]);
     setYField(headers[1]);
@@ -112,25 +117,73 @@ const ScatterPlotAntV = (props: VisDataProps) => {
 
   return (
     <Grid>
-      <Grid item>
-        <Tooltip title="Select for regression line" arrow placement="right">
-          <FormControl sx={{ m: 1, minWidth: 120 }}>
-            Regression Plot
-            <Select
-              value={regressionType}
-              onChange={(e) => {
-                setRegressionType(Number(e.target.value));
-              }}
-            >
-              {regressionTypes.map((item, index) => {
-                return <MenuItem value={index}>{item}</MenuItem>;
-              })}
-            </Select>
-            {/* <FormHelperText>Select Render Mode</FormHelperText> */}
-          </FormControl>
-        </Tooltip>
+      <Scatter {...config} />
+
+      <Grid container spacing={2}>
+        <Grid item>
+          <Tooltip
+            title="Select input source for x axis"
+            arrow
+            placement="bottom"
+          >
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              source for x axis
+              <Select
+                value={fieldsAll.indexOf(xField)}
+                onChange={(e) => {
+                  setXField(fieldsAll[Number(e.target.value)]);
+                }}
+              >
+                {fieldsAll.map((item, index) => {
+                  return <MenuItem value={index}>{item}</MenuItem>;
+                })}
+              </Select>
+            </FormControl>
+          </Tooltip>
+        </Grid>
+
+        <Grid item>
+          <Tooltip
+            title="Select input source for y axis"
+            arrow
+            placement="bottom"
+          >
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              source for y axis
+              <Select
+                value={fieldsAll.indexOf(yField)}
+                onChange={(e) => {
+                  setYField(fieldsAll[Number(e.target.value)]);
+                }}
+              >
+                {fieldsAll.map((item, index) => {
+                  return <MenuItem value={index}>{item}</MenuItem>;
+                })}
+              </Select>
+            </FormControl>
+          </Tooltip>
+        </Grid>
+
+        {/* regression plot options */}
+        <Grid item xs={12}>
+          <Tooltip title="Select for regression line" arrow placement="right">
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              Regression Plot
+              <Select
+                value={regressionType}
+                onChange={(e) => {
+                  setRegressionType(Number(e.target.value));
+                }}
+              >
+                {regressionTypes.map((item, index) => {
+                  return <MenuItem value={index}>{item}</MenuItem>;
+                })}
+              </Select>
+              {/* <FormHelperText>Select Render Mode</FormHelperText> */}
+            </FormControl>
+          </Tooltip>
+        </Grid>
       </Grid>
-      <Scatter {...config} />;
     </Grid>
   );
 };
