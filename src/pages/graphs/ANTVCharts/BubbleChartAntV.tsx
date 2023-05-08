@@ -62,7 +62,7 @@ const BubbleChartAntV = (props: VisDataProps) => {
     sizeField,
     colorField,
     color: ['#ffd500', '#82cab2', '#193442', '#d18768', '#7e827a'],
-    size: [4, 40],
+    size: [4, 40] as any,
     shape: 'circle',
     pointStyle: {
       fillOpacity: 0.8,
