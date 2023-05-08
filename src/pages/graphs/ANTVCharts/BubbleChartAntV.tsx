@@ -48,9 +48,6 @@ const BubbleChartAntV = (props: VisDataProps) => {
       })
       .sort((a: any, b: any) => a[headers[1]] - b[headers[1]]);
 
-    console.log('headers: ', headers);
-    console.log('data: ', typedData);
-
     setDataSource(typedData);
   }, [headers, data]);
 
@@ -119,7 +116,7 @@ const BubbleChartAntV = (props: VisDataProps) => {
     // },
   };
 
-  return (
+  return dataSource.length > 0 ? (
     <Grid>
       <Scatter {...config} />
 
@@ -195,6 +192,8 @@ const BubbleChartAntV = (props: VisDataProps) => {
         </Grid>
       </Grid>
     </Grid>
+  ) : (
+    <div>Loading...</div>
   );
 };
 

@@ -115,17 +115,13 @@ const ScatterPlotAntV = (props: VisDataProps) => {
     },
   };
 
-  return (
+  return dataSource.length > 0 ? (
     <Grid>
       <Scatter {...config} />
 
       <Grid container spacing={2}>
         <Grid item>
-          <Tooltip
-            title="Select input source for x axis"
-            arrow
-            placement="bottom"
-          >
+          <Tooltip title="Select input source for x axis" arrow placement="top">
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               source for x axis
               <Select
@@ -143,11 +139,7 @@ const ScatterPlotAntV = (props: VisDataProps) => {
         </Grid>
 
         <Grid item>
-          <Tooltip
-            title="Select input source for y axis"
-            arrow
-            placement="bottom"
-          >
+          <Tooltip title="Select input source for y axis" arrow placement="top">
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               source for y axis
               <Select
@@ -185,6 +177,8 @@ const ScatterPlotAntV = (props: VisDataProps) => {
         </Grid>
       </Grid>
     </Grid>
+  ) : (
+    <div>Loading...</div>
   );
 };
 

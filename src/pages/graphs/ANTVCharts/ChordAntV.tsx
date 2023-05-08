@@ -1,5 +1,6 @@
 import { VisDataProps } from '@/pages/SparqlPage';
 import { Chord } from '@ant-design/plots';
+import { FormControl, Grid, MenuItem, Select } from '@mui/material';
 import { useEffect, useState } from 'react';
 
 const ChordAntV = (props: VisDataProps) => {
@@ -11,6 +12,11 @@ const ChordAntV = (props: VisDataProps) => {
   const [sourceField, setSourceField] = useState<string>('');
   const [targetField, setTargetField] = useState<string>('');
   const [weightField, setWeightField] = useState<string>('');
+
+  const [fieldsAll, setFieldsAll] = useState<string[]>([]);
+  useEffect(() => {
+    setFieldsAll(headers);
+  }, [headers]);
 
   useEffect(() => {
     setSourceField(headers[0]);
@@ -70,7 +76,62 @@ const ChordAntV = (props: VisDataProps) => {
     },
   };
 
-  return dataSource.length > 0 ? <Chord {...config} /> : <></>;
+  return dataSource.length > 0 ? (
+    <Grid>
+      <Chord {...config} />
+      <Grid container spacing={2}>
+        <Grid item>
+          <FormControl sx={{ m: 1, minWidth: 120 }}>
+            source field
+            <Select
+              value={fieldsAll.indexOf(sourceField)}
+              onChange={(e) => {
+                setSourceField(fieldsAll[Number(e.target.value)]);
+              }}
+            >
+              {fieldsAll.map((item, index) => {
+                return <MenuItem value={index}>{item}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid item>
+          <FormControl sx={{ m: 1, minWidth: 120 }}>
+            target field
+            <Select
+              value={fieldsAll.indexOf(targetField)}
+              onChange={(e) => {
+                setTargetField(fieldsAll[Number(e.target.value)]);
+              }}
+            >
+              {fieldsAll.map((item, index) => {
+                return <MenuItem value={index}>{item}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid item>
+          <FormControl sx={{ m: 1, minWidth: 120 }}>
+            weight field
+            <Select
+              value={fieldsAll.indexOf(weightField)}
+              onChange={(e) => {
+                setWeightField(fieldsAll[Number(e.target.value)]);
+              }}
+            >
+              {fieldsAll.map((item, index) => {
+                return <MenuItem value={index}>{item}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+        </Grid>
+      </Grid>
+    </Grid>
+  ) : (
+    <div>Loading ... </div>
+  );
 };
 
 export default ChordAntV;

@@ -1,13 +1,6 @@
 import { VisDataProps } from '@/pages/SparqlPage';
 import { Treemap } from '@ant-design/plots';
-import {
-  Button,
-  FormControl,
-  Grid,
-  MenuItem,
-  Select,
-  Tooltip,
-} from '@mui/material';
+import { FormControl, Grid, MenuItem, Select, Tooltip } from '@mui/material';
 import { useEffect, useState } from 'react';
 import './TreeMapAntV.scss';
 
@@ -22,6 +15,11 @@ const TreeMapAntV = (props: VisDataProps) => {
 
   const [renderMode, setRenderMode] = useState(0);
   const [drillDownOpen, setDrillDownOpen] = useState(false);
+
+  const [fieldsAll, setFieldsAll] = useState<string[]>([]);
+  useEffect(() => {
+    setFieldsAll(headers);
+  }, [headers]);
 
   const renderModes = [
     { name: 'Overview', drillDown: false },
@@ -134,48 +132,96 @@ const TreeMapAntV = (props: VisDataProps) => {
 
   return (
     <Grid>
-      <Grid item>
-        <Tooltip
-          title="If you find visualisation incorrect, please try to fix by swapping columns"
-          arrow
-          placement="right"
-        >
-          <Button
-            variant="outlined"
-            size="large"
-            style={{ textTransform: 'none' }}
-            onClick={() => swapColumns()}
-          >
-            Swap columns
-          </Button>
-        </Tooltip>
-      </Grid>
-
-      <Grid item>
-        <Tooltip
-          title="Change render mode: Overview or Layers"
-          arrow
-          placement="right"
-        >
-          <FormControl sx={{ m: 1, minWidth: 120 }}>
-            Render Mode
-            <Select
-              value={renderMode}
-              onChange={(e) => {
-                setRenderMode(Number(e.target.value));
-                setDrillDownOpen(renderModes[Number(e.target.value)].drillDown);
-              }}
-            >
-              {renderModes.map((item, index) => {
-                return <MenuItem value={index}>{item.name}</MenuItem>;
-              })}
-            </Select>
-            {/* <FormHelperText>Select Render Mode</FormHelperText> */}
-          </FormControl>
-        </Tooltip>
-      </Grid>
-
       <Treemap {...config} />
+
+      <Grid container spacing={2}>
+        <Grid item>
+          <Tooltip
+            title="For catogorise data by different colors"
+            arrow
+            placement="top"
+          >
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              source for catogories field
+              <Select
+                value={fieldsAll.indexOf(categoryCol)}
+                onChange={(e) => {
+                  setCatogoryCol(fieldsAll[Number(e.target.value)]);
+                }}
+              >
+                {fieldsAll.map((item, index) => {
+                  return <MenuItem value={index}>{item}</MenuItem>;
+                })}
+              </Select>
+            </FormControl>
+          </Tooltip>
+        </Grid>
+
+        <Grid item>
+          <Tooltip
+            title="For the displayed id of the visualised data"
+            arrow
+            placement="top"
+          >
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              source for identification field
+              <Select
+                value={fieldsAll.indexOf(idCol)}
+                onChange={(e) => {
+                  setIdCol(fieldsAll[Number(e.target.value)]);
+                }}
+              >
+                {fieldsAll.map((item, index) => {
+                  return <MenuItem value={index}>{item}</MenuItem>;
+                })}
+              </Select>
+            </FormControl>
+          </Tooltip>
+        </Grid>
+
+        {/* <Grid item xs={12}>
+          <Tooltip
+            title="If you find visualisation incorrect, please try to fix by swapping columns"
+            arrow
+            placement="right"
+          >
+            <Button
+              variant="outlined"
+              size="large"
+              style={{ textTransform: 'none' }}
+              onClick={() => swapColumns()}
+            >
+              Swap columns
+            </Button>
+          </Tooltip>
+        </Grid> */}
+
+        <Grid item xs={12}>
+          <Tooltip
+            title="Change render mode: Overview or Layers"
+            arrow
+            placement="right"
+          >
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              Render Mode
+              <Select
+                value={renderMode}
+                onChange={(e) => {
+                  setRenderMode(Number(e.target.value));
+                  setDrillDownOpen(
+                    renderModes[Number(e.target.value)].drillDown,
+                  );
+                }}
+              >
+                {renderModes.map((item, index) => {
+                  return <MenuItem value={index}>{item.name}</MenuItem>;
+                })}
+              </Select>
+              {/* <FormHelperText>Select Render Mode</FormHelperText> */}
+            </FormControl>
+          </Tooltip>
+        </Grid>
+      </Grid>
     </Grid>
   );
 };
