@@ -48,34 +48,21 @@ const BubbleChartAntV = (props: VisDataProps) => {
       })
       .sort((a: any, b: any) => a[headers[1]] - b[headers[1]]);
 
+    console.log('headers: ', headers);
+    console.log('data: ', typedData);
+
     setDataSource(typedData);
   }, [headers, data]);
 
-  const [datad, setData] = useState([]);
-
-  useEffect(() => {
-    asyncFetch();
-  }, []);
-
-  const asyncFetch = () => {
-    fetch(
-      'https://gw.alipayobjects.com/os/bmw-prod/0b37279d-1674-42b4-b285-29683747ad9a.json',
-    )
-      .then((response) => response.json())
-      .then((json) => setData(json))
-      .catch((error) => {
-        console.log('fetch data failed', error);
-      });
-  };
   const config = {
     appendPadding: 30,
-    data: datad,
+    data: dataSource,
     xField,
     yField,
     sizeField,
     colorField,
     color: ['#ffd500', '#82cab2', '#193442', '#d18768', '#7e827a'],
-    size: [4, 30],
+    size: [4, 40],
     shape: 'circle',
     pointStyle: {
       fillOpacity: 0.8,
@@ -104,6 +91,14 @@ const BubbleChartAntV = (props: VisDataProps) => {
         },
       },
     },
+    brush: {
+      enabled: true,
+      mask: {
+        style: {
+          fill: 'rgba(0.15,0,0,255)',
+        },
+      },
+    },
     // quadrant: {
     //   xBaseline: 0,
     //   yBaseline: 0,
@@ -126,8 +121,10 @@ const BubbleChartAntV = (props: VisDataProps) => {
 
   return (
     <Grid>
-      <Grid item>
-        <Tooltip title="Select input source for x axis" arrow placement="right">
+      <Scatter {...config} />
+
+      <Grid container spacing={2}>
+        <Grid item>
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for x axis
             <Select
@@ -141,9 +138,62 @@ const BubbleChartAntV = (props: VisDataProps) => {
               })}
             </Select>
           </FormControl>
-        </Tooltip>
+        </Grid>
+
+        <Grid item>
+          <FormControl sx={{ m: 1, minWidth: 120 }}>
+            source for y axis
+            <Select
+              value={fieldsAll.indexOf(yField)}
+              onChange={(e) => {
+                setYField(fieldsAll[Number(e.target.value)]);
+              }}
+            >
+              {fieldsAll.map((item, index) => {
+                return <MenuItem value={index}>{item}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid item>
+          <FormControl sx={{ m: 1, minWidth: 120 }}>
+            source for size field
+            <Select
+              value={fieldsAll.indexOf(sizeField)}
+              onChange={(e) => {
+                setSizeField(fieldsAll[Number(e.target.value)]);
+              }}
+            >
+              {fieldsAll.map((item, index) => {
+                return <MenuItem value={index}>{item}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid item>
+          <Tooltip
+            title="Used for catorization of data points (if applicable)"
+            arrow
+            placement="top"
+          >
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              source for color field
+              <Select
+                value={fieldsAll.indexOf(colorField)}
+                onChange={(e) => {
+                  setColorField(fieldsAll[Number(e.target.value)]);
+                }}
+              >
+                {fieldsAll.map((item, index) => {
+                  return <MenuItem value={index}>{item}</MenuItem>;
+                })}
+              </Select>
+            </FormControl>
+          </Tooltip>
+        </Grid>
       </Grid>
-      <Scatter {...config} />
     </Grid>
   );
 };
