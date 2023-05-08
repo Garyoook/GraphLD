@@ -1,6 +1,30 @@
 import { VisDataProps } from '@/pages/SparqlPage';
 import { Scatter } from '@ant-design/plots';
+import { FormControl, Grid, MenuItem, Select, Tooltip } from '@mui/material';
 import { useEffect, useState } from 'react';
+
+enum Regression_Type {
+  // linear, exp, loess, log, poly, pow, quad
+  NONE,
+  LINEAR,
+  EXP,
+  LOESS,
+  LOG,
+  POLY,
+  POW,
+  QUAD,
+}
+
+const regressionTypes = [
+  'No Regression',
+  'linear',
+  'exp',
+  'loess',
+  'log',
+  'poly',
+  'pow',
+  'quad',
+];
 
 const ScatterPlotAntV = (props: VisDataProps) => {
   const { headers, data } = props;
@@ -10,6 +34,7 @@ const ScatterPlotAntV = (props: VisDataProps) => {
   // axis, set to states for future column switching requirements
   const [xField, setXField] = useState<string>('');
   const [yField, setYField] = useState<string>('');
+  const [regressionType, setRegressionType] = useState(Regression_Type.NONE);
 
   useEffect(() => {
     setXField(headers[0]);
@@ -40,6 +65,7 @@ const ScatterPlotAntV = (props: VisDataProps) => {
 
     setDataSource(typedData);
   }, [headers, data]);
+
   const config = {
     appendPadding: 10,
     data: dataSource,
@@ -71,9 +97,42 @@ const ScatterPlotAntV = (props: VisDataProps) => {
         },
       },
     },
+    brush: {
+      enabled: true,
+      mask: {
+        style: {
+          fill: 'rgba(0.15,0,0,255)',
+        },
+      },
+    },
+    regressionLine: {
+      type: regressionTypes[regressionType], // linear, exp, loess, log, poly, pow, quad
+    },
   };
 
-  return <Scatter {...config} />;
+  return (
+    <Grid>
+      <Grid item>
+        <Tooltip title="Select for regression line" arrow placement="right">
+          <FormControl sx={{ m: 1, minWidth: 120 }}>
+            Regression Plot
+            <Select
+              value={regressionType}
+              onChange={(e) => {
+                setRegressionType(Number(e.target.value));
+              }}
+            >
+              {regressionTypes.map((item, index) => {
+                return <MenuItem value={index}>{item}</MenuItem>;
+              })}
+            </Select>
+            {/* <FormHelperText>Select Render Mode</FormHelperText> */}
+          </FormControl>
+        </Tooltip>
+      </Grid>
+      <Scatter {...config} />;
+    </Grid>
+  );
 };
 
 export default ScatterPlotAntV;
