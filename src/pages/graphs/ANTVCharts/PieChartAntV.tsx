@@ -22,10 +22,23 @@ const PieChartAntV = (props: VisDataProps) => {
     setColorField(headers[0]);
     setAngleField(headers[1]);
 
-    const typedData = preprocessData(data);
+    const typedData = preprocessData(data).sort(
+      (a: any, b: any) => a[headers[1]] - b[headers[1]],
+    );
 
     setDataSource(typedData);
   }, [headers, data]);
+
+  useEffect(() => {
+    if (dataSource.length !== 0) {
+      const orderedData = dataSource.sort(
+        (a: any, b: any) => a[angleField] - b[angleField],
+      );
+
+      setDataSource(orderedData);
+    }
+  }, [colorField, angleField]);
+
   const config = {
     appendPadding: 10,
     data: dataSource,
@@ -54,11 +67,11 @@ const PieChartAntV = (props: VisDataProps) => {
       <Grid container spacing={2}>
         <Grid item>
           <FormControl sx={{ m: 1, minWidth: 120 }}>
-            source for quantity field
+            source for catorization field
             <Select
-              value={fieldsAll.indexOf(angleField)}
+              value={fieldsAll.indexOf(colorField)}
               onChange={(e) => {
-                setAngleField(fieldsAll[Number(e.target.value)]);
+                setColorField(fieldsAll[Number(e.target.value)]);
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -70,11 +83,11 @@ const PieChartAntV = (props: VisDataProps) => {
 
         <Grid item>
           <FormControl sx={{ m: 1, minWidth: 120 }}>
-            source for catorization field
+            source for quantity field
             <Select
-              value={fieldsAll.indexOf(colorField)}
+              value={fieldsAll.indexOf(angleField)}
               onChange={(e) => {
-                setColorField(fieldsAll[Number(e.target.value)]);
+                setAngleField(fieldsAll[Number(e.target.value)]);
               }}
             >
               {fieldsAll.map((item, index) => {

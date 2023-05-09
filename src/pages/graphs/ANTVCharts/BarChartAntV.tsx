@@ -22,11 +22,22 @@ const BarChartAntV = (props: VisDataProps) => {
     setXField(headers[0]);
     setYField(headers[1]);
 
-    const typedData = preprocessData(data);
-    // .sort((a: any, b: any) => a[headers[1]] - b[headers[1]]);
+    const typedData = preprocessData(data).sort(
+      (a: any, b: any) => a[headers[1]] - b[headers[1]],
+    );
 
     setDataSource(typedData);
   }, [headers, data]);
+
+  // useEffect(() => {
+  //   if (dataSource.length !== 0) {
+  //     const orderedData = dataSource.sort(
+  //       (a: any, b: any) => a[xField] - b[xField],
+  //     );
+
+  //     setDataSource(orderedData);
+  //   }
+  // }, [xField, yField]);
 
   const config = {
     data: dataSource,

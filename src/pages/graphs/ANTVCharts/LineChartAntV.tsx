@@ -22,10 +22,22 @@ const LineChartAntV = (props: VisDataProps) => {
     setXField(headers[0]);
     setYField(headers[1]);
 
-    const typedData = preprocessData(data);
+    const typedData = preprocessData(data).sort(
+      (a: any, b: any) => a[headers[0]] - b[headers[0]],
+    );
 
     setDataSource(typedData);
   }, [headers, data]);
+
+  useEffect(() => {
+    if (dataSource.length !== 0) {
+      const orderedData = dataSource.sort(
+        (a: any, b: any) => a[xField] - b[xField],
+      );
+
+      setDataSource(orderedData);
+    }
+  }, [xField, yField]);
 
   const config = {
     data: dataSource,
