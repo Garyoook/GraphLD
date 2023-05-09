@@ -1,6 +1,7 @@
 import BarChartAntV from '@/pages/graphs/ANTVCharts/BarChartAntV';
 import BubbleChartAntV from '@/pages/graphs/ANTVCharts/BubbleChartAntV';
 import ChordAntV from '@/pages/graphs/ANTVCharts/ChordAntV';
+import CirclePackingAntV from '@/pages/graphs/ANTVCharts/CirclePackingAntV';
 import LineChartAntV from '@/pages/graphs/ANTVCharts/LineChartAntV';
 import PieChartAntV from '@/pages/graphs/ANTVCharts/PieChartAntV';
 import ScatterPlotAntV from '@/pages/graphs/ANTVCharts/ScatterPlotAntV';
@@ -64,6 +65,7 @@ enum ChartType {
   BUBBLE_CHART_ANTV = 'Bubble Chart ',
   WORD_CLOUD_ANTV = 'Word Cloud ',
   TREE_ANTV = 'Hierarchy Tree ',
+  CIRCLE_PACKING_ANTV = 'Circle Packing ',
 }
 
 function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
@@ -115,6 +117,8 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
         return <WordCloudAntV headers={headers} data={originalData} />;
       case ChartType.TREE_ANTV:
         return <TreeAntV headers={headers} data={originalData} />;
+      case ChartType.CIRCLE_PACKING_ANTV:
+        return <CirclePackingAntV headers={headers} data={originalData} />;
 
       default:
         return 'You specified an invalid chart type, please check the code';
@@ -141,6 +145,7 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
     ChartType.WORD_CLOUD_ANTV,
     ChartType.TREE_ANTV,
     ChartType.TREE_MAP_ANTV,
+    ChartType.CIRCLE_PACKING_ANTV,
   ];
 
   function renderVisOptions(options: ChartType[]) {
