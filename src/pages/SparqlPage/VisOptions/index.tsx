@@ -5,6 +5,7 @@ import CirclePackingAntV from '@/pages/graphs/ANTVCharts/CirclePackingAntV';
 import LineChartAntV from '@/pages/graphs/ANTVCharts/LineChartAntV';
 import PieChartAntV from '@/pages/graphs/ANTVCharts/PieChartAntV';
 import ScatterPlotAntV from '@/pages/graphs/ANTVCharts/ScatterPlotAntV';
+import SunBurst from '@/pages/graphs/ANTVCharts/SunBurstAntV';
 import TreeAntV from '@/pages/graphs/ANTVCharts/TreeAntV';
 import TreeMapAntV from '@/pages/graphs/ANTVCharts/TreeMapAntV';
 import WordCloudAntV from '@/pages/graphs/ANTVCharts/WordCloudAntV';
@@ -66,6 +67,7 @@ enum ChartType {
   WORD_CLOUD_ANTV = 'Word Cloud ',
   TREE_ANTV = 'Hierarchy Tree ',
   CIRCLE_PACKING_ANTV = 'Circle Packing ',
+  SUNBURST_ANTV = 'Sunburst Chart',
 }
 
 function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
@@ -119,6 +121,8 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
         return <TreeAntV headers={headers} data={originalData} />;
       case ChartType.CIRCLE_PACKING_ANTV:
         return <CirclePackingAntV headers={headers} data={originalData} />;
+      case ChartType.SUNBURST_ANTV:
+        return <SunBurst headers={headers} data={originalData} />;
 
       default:
         return 'You specified an invalid chart type, please check the code';
@@ -146,6 +150,7 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
     ChartType.TREE_ANTV,
     ChartType.TREE_MAP_ANTV,
     ChartType.CIRCLE_PACKING_ANTV,
+    ChartType.SUNBURST_ANTV,
   ];
 
   function renderVisOptions(options: ChartType[]) {
