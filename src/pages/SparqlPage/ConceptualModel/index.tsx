@@ -35,6 +35,21 @@ function ConceptualModelPage(props: any) {
     await findRanges();
 
     await findClasses();
+
+    // const DP_Range_mapping = await getRangeMapping();
+    // console.log('DP-T Map: ', DP_Range_mapping);
+
+    // const classesList = await getClasses();
+    // console.log('Classes: ', classesList);
+
+    // const FunctionalPropsList = await getFunctionalProperties();
+    // console.log('Functional Props: ', FunctionalPropsList);
+
+    // const ObjectPropsList = await getObjectProperties();
+    // console.log('Object Props: ', ObjectPropsList);
+
+    // const DP_domain_mapping = await getDomainMapping();
+    // console.log('DP-Domain Map: ', DP_domain_mapping);
   }
 
   async function findRanges() {
@@ -46,14 +61,14 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-SELECT ?DPA ?TA
+SELECT ?DP ?T
 WHERE {
     {
-        ?DPA rdfs:range ?TA .
-        ?DPA rdf:type owl:FunctionalProperty .
+        ?DP rdfs:range ?T .
+        ?DP rdf:type owl:FunctionalProperty .
     }
-    FILTER (!isBlank(?DPA))
-    FILTER(STRSTARTS(STR(?TA), STR(xsd:)) || STRSTARTS(STR(?TA), STR(:)))
+    FILTER (!isBlank(?DP))
+    FILTER(STRSTRTS(STR(?T), STR(xsd:)) || STRSTRTS(STR(?T), STR(:)))
 }`;
 
       setLoading(true);
@@ -90,6 +105,7 @@ WHERE {
         };
       });
 
+      // TODO: add list to store all the ranges
       console.log('Ranges datasource: ', data);
       setRangePropsDataSource(data);
       //   setShowAlert(false);
@@ -149,6 +165,9 @@ WHERE {
         };
       });
 
+      // TODO: add list to store all the classes
+      console.log('Classes datasource: ', data);
+
       setClassesDataSource(data);
       //   setShowAlert(false);
     } catch (error: any) {
@@ -166,12 +185,12 @@ WHERE {
 	  PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 	  PREFIX owl: <http://www.w3.org/2002/07/owl#>
 	  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
-	  SELECT ?DPA
+	  SELECT ?DP
 	  WHERE {
 		  {
-			  ?DPA rdf:type owl:FunctionalProperty .
+			  ?DP rdf:type owl:FunctionalProperty .
 		  }
-		  FILTER (!isBlank(?DPA))
+		  FILTER (!isBlank(?DP))
 	  }`;
 
       setLoading(true);
@@ -207,7 +226,9 @@ WHERE {
           ...obj,
         };
       });
-      console.log('PAB: ', data);
+
+      // TODO: add list to store all the functional properties
+      console.log('FPs: ', data);
       setFunctionalPropsDataSource(data);
       //   setShowAlert(false);
     } catch (error: any) {
@@ -265,6 +286,10 @@ WHERE {
           ...obj,
         };
       });
+
+      // TODO: add list to store all the object properties
+      console.log('OPs: ', data);
+
       setObjectPropsDataSource(data);
       //   setShowAlert(false);
     } catch (error: any) {
