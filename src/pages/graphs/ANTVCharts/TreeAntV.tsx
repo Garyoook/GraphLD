@@ -2,6 +2,7 @@ import { VisDataProps } from '@/pages/SparqlPage';
 import { RadialTreeGraph } from '@ant-design/graphs';
 import { FormControl, Grid, MenuItem, Select, Tooltip } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { preprocessData } from './utils';
 
 const TreeAntV = (props: VisDataProps) => {
   const { headers, data } = props;
@@ -24,26 +25,7 @@ const TreeAntV = (props: VisDataProps) => {
   }, [headers]);
 
   useEffect(() => {
-    const typedData = data.map((item: any) => {
-      for (const key in item) {
-        if (item.hasOwnProperty(key)) {
-          const element = item[key];
-          if (!isNaN(element)) {
-            item[key] = Number(element);
-          }
-
-          // below code is used to remove LD PREFIX from the data
-          if (
-            typeof element == 'string' &&
-            element.match(/http:\/\/www\.semwebtech\.org\/mondial\/10\/(.*)/)
-          ) {
-            const newValue = element.split('/').reverse()[1];
-            item[key] = newValue;
-          }
-        }
-      }
-      return item;
-    });
+    const typedData = preprocessData(data);
 
     const catogories = Array.from(
       new Set(typedData.map((item: any) => item[categoryCol])),
@@ -61,7 +43,9 @@ const TreeAntV = (props: VisDataProps) => {
 
       branchObj['children'] = leafData.map((item: any) => {
         const leafObj: any = {};
-        leafObj.id = item[idCol] || String(Date.now() + Math.random());
+        leafObj.id =
+          item[idCol] ||
+          String(Date.now() + Math.random() * (Math.random() * 1000000));
         leafObj.value = item[idCol] || 0;
         return leafObj.id ? leafObj : item;
       });

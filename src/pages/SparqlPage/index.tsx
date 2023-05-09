@@ -75,6 +75,8 @@ WHERE {
       setLoading(true);
       const queryRes = await sendSPARQLquery(repositoryID, query);
 
+      console.log('original queryRes', queryRes);
+
       const head = queryRes.head.vars;
       const results_bindings = queryRes.results.bindings;
 
@@ -104,6 +106,8 @@ WHERE {
           ...obj,
         };
       });
+
+      console.log('remapped data', data);
       setDataSource(data);
       setShowAlert(false);
     } catch (e: any) {
@@ -122,8 +126,6 @@ WHERE {
   }, []);
 
   function preprocessDataForGoogleCharts(dataSource: any[]): VisDataProps {
-    console.log('original data of the query: ', dataSource);
-
     const headers: string[] = [];
     if (dataSource.length > 0) {
       const firstRow = dataSource[0];
@@ -156,9 +158,7 @@ WHERE {
       }
       return dataRow;
     });
-
-    console.log('preprocessed data of the query: ', { headers, data });
-
+    console.log('preprocessed data for Google Charts: ', { headers, data });
     return { headers, data };
   }
 

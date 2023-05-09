@@ -2,6 +2,7 @@ import { VisDataProps } from '@/pages/SparqlPage';
 import { Chord } from '@ant-design/plots';
 import { FormControl, Grid, MenuItem, Select } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { preprocessData } from './utils';
 
 const ChordAntV = (props: VisDataProps) => {
   const { headers, data } = props;
@@ -23,26 +24,7 @@ const ChordAntV = (props: VisDataProps) => {
     setTargetField(headers[1]);
     setWeightField(headers[2]);
 
-    const typedData = data.map((item: any) => {
-      for (const key in item) {
-        if (item.hasOwnProperty(key)) {
-          const element = item[key];
-          if (!isNaN(element)) {
-            item[key] = Number(element);
-          }
-
-          // below code is used to remove LD PREFIX from the data
-          if (
-            typeof element == 'string' &&
-            element.match(/http:\/\/www\.semwebtech\.org\/mondial\/10\/(.*)/)
-          ) {
-            const newValue = element.split('/').reverse()[1];
-            item[key] = newValue;
-          }
-        }
-      }
-      return item;
-    });
+    const typedData = preprocessData(data);
 
     setDataSource(typedData);
   }, [data, headers]);
