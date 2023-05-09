@@ -80,11 +80,11 @@ const CirclePackingAntV = (props: VisDataProps) => {
       stroke: 'rgb(183, 55, 121)',
       lineWidth: 0.5,
     },
-    legend: false,
+    // legend: false,
     drilldown: {
       enabled: true,
       breadCrumb: {
-        position: 'top-left',
+        position: 'top-left' as 'top-left',
       },
     },
     label: {
