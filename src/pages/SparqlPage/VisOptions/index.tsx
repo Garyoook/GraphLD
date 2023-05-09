@@ -4,6 +4,7 @@ import ChordAntV from '@/pages/graphs/ANTVCharts/ChordAntV';
 import CirclePackingAntV from '@/pages/graphs/ANTVCharts/CirclePackingAntV';
 import LineChartAntV from '@/pages/graphs/ANTVCharts/LineChartAntV';
 import PieChartAntV from '@/pages/graphs/ANTVCharts/PieChartAntV';
+import SankeyAntV from '@/pages/graphs/ANTVCharts/SankeyAntV';
 import ScatterPlotAntV from '@/pages/graphs/ANTVCharts/ScatterPlotAntV';
 import SunBurst from '@/pages/graphs/ANTVCharts/SunBurstAntV';
 import TreeAntV from '@/pages/graphs/ANTVCharts/TreeAntV';
@@ -68,6 +69,7 @@ enum ChartType {
   TREE_ANTV = 'Hierarchy Tree ',
   CIRCLE_PACKING_ANTV = 'Circle Packing ',
   SUNBURST_ANTV = 'Sunburst Chart',
+  SANKEY_ANTV = 'Sankey Chart',
 }
 
 function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
@@ -123,6 +125,8 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
         return <CirclePackingAntV headers={headers} data={originalData} />;
       case ChartType.SUNBURST_ANTV:
         return <SunBurst headers={headers} data={originalData} />;
+      case ChartType.SANKEY_ANTV:
+        return <SankeyAntV headers={headers} data={originalData} />;
 
       default:
         return 'You specified an invalid chart type, please check the code';
@@ -146,6 +150,7 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
     ChartType.MULTI_LINE_CHART,
     ChartType.PIE_CHART_ANTV,
     ChartType.CHORD_DIAGRAM_ANTV,
+    ChartType.SANKEY_ANTV,
     ChartType.WORD_CLOUD_ANTV,
     ChartType.TREE_ANTV,
     ChartType.TREE_MAP_ANTV,
