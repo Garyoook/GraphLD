@@ -44,7 +44,6 @@ const ChordAntV = (props: VisDataProps) => {
       return item;
     });
 
-    console.log('ChordAntV: typedData', typedData);
     setDataSource(typedData);
   }, [data, headers]);
 

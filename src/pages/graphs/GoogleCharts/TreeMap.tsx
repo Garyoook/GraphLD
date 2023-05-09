@@ -57,11 +57,11 @@ function TreeMap(props: VisDataProps) {
       return [...item, groupSet.lastIndexOf(item[1])];
     });
 
-    console.log('data after preprocessing: ', [
-      header,
-      ...coloredData,
-      ...dataTmp,
-    ]);
+    // console.log('data after preprocessing: ', [
+    //   header,
+    //   ...coloredData,
+    //   ...dataTmp,
+    // ]);
 
     const preprocessedData = [header, ...coloredData, ...dataTmp];
 
@@ -84,11 +84,11 @@ function TreeMap(props: VisDataProps) {
       return [id, 'all', value, groupSet.lastIndexOf(group)];
     });
 
-    console.log('data after preprocessing: ', [
-      header,
-      ...coloredData,
-      ...dataTmp,
-    ]);
+    // console.log('data after preprocessing: ', [
+    //   header,
+    //   ...coloredData,
+    //   ...dataTmp,
+    // ]);
 
     const preprocessedData = [header, ...coloredData, ...dataTmp];
 
@@ -101,8 +101,7 @@ function TreeMap(props: VisDataProps) {
     const swappedData = data.map((item) => {
       return [item[1], item[0], item[2]];
     });
-    console.log('swapped datasource: ', [swappedHeaders, ...swappedData]);
-    // setDataSource([swappedHeaders, ...swappedData]);
+    // console.log('swapped datasource: ', [swappedHeaders, ...swappedData]);
     renderModes.at(renderMode)?.renderer(swappedHeaders, swappedData);
   }
 

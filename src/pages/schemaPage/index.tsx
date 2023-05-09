@@ -45,7 +45,6 @@ function SchemaPage() {
       setColumns(columns);
 
       const colKeys = columns.map((col: any) => col.field);
-      console.log('colKeys: ', colKeys);
 
       const data = results_bindings
         .map((data_binding: any, index: number) => {

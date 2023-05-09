@@ -20,15 +20,15 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import List from '@mui/material/List';
-import { createTheme, styled, ThemeProvider } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
+import SparqlPage from './SparqlPage';
 import GraphsPage from './graphs';
 import SchemaPage from './schemaPage';
 import { getRepoList } from './service';
-import SparqlPage from './SparqlPage';
 
 interface IRepository {
   id: number;
@@ -165,8 +165,6 @@ function DashboardContent() {
             };
           },
         );
-
-        console.log(dataSource);
 
         setColumns(columns);
         setData(dataSource);

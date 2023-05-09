@@ -104,7 +104,6 @@ WHERE {
           ...obj,
         };
       });
-      console.log('datasource: ', data);
       setDataSource(data);
       setShowAlert(false);
     } catch (e: any) {
@@ -122,8 +121,8 @@ WHERE {
     setQuery(value);
   }, []);
 
-  function preprocessVisData(dataSource: any[]): VisDataProps {
-    console.log('original data: ', dataSource);
+  function preprocessDataForGoogleCharts(dataSource: any[]): VisDataProps {
+    console.log('original data of the query: ', dataSource);
 
     const headers: string[] = [];
     if (dataSource.length > 0) {
@@ -158,7 +157,7 @@ WHERE {
       return dataRow;
     });
 
-    console.log('preprocessed data: ', { headers, data });
+    console.log('preprocessed data of the query: ', { headers, data });
 
     return { headers, data };
   }
@@ -238,7 +237,7 @@ WHERE {
             </AppBar>
             <DialogContent>
               <VisOptions
-                data={preprocessVisData(dataSource)}
+                data={preprocessDataForGoogleCharts(dataSource)}
                 originalData={dataSource}
               />
             </DialogContent>
