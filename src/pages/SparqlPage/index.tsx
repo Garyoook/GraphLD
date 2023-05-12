@@ -50,7 +50,7 @@ SELECT ?country ?population
 WHERE {
 	?country rdf:type mon:Country .
 	?country mon:population ?population .
-} ORDER BY DESC(?population) LIMIT 20`,
+} ORDER BY DESC(?population) LIMIT 50`,
   );
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
@@ -62,11 +62,70 @@ WHERE {
 
   const handleVisOpen = () => {
     setOpenVisOption(true);
+
+    // TODO: generate recommendation here
+    generateVisRecommendation(query);
   };
 
   const handleVisClose = () => {
     setOpenVisOption(false);
   };
+
+  async function generateVisRecommendation(user_query: string) {
+    const user_query_normalised = user_query;
+    let user_query_split;
+    if (user_query_normalised.split('where').length === 2) {
+      user_query_split = user_query_normalised.split('where');
+    } else {
+      user_query_split = user_query_normalised.split('WHERE');
+    }
+
+    if (user_query_split.length === 2) {
+      const user_query_head = user_query_split[0];
+      const user_query_body = user_query_split[1];
+
+      const regex = /(?<!rdf)(?:\?|:)[a-zA-Z_][a-zA-Z0-9_]*/gm;
+
+      const matches_head: string[] = [];
+      let m_head;
+      while ((m_head = regex.exec(user_query_head)) !== null) {
+        // This is necessary to avoid infinite loops with zero-width matches
+        if (m_head.index === regex.lastIndex) {
+          regex.lastIndex++;
+        }
+        // The result can be accessed through the `m`-variable.
+        m_head.forEach((match, groupIndex) => {
+          matches_head.push(match);
+        });
+      }
+
+      const matches_body: string[] = [];
+      let m_body;
+      while ((m_body = regex.exec(user_query_body)) !== null) {
+        // This is necessary to avoid infinite loops with zero-width matches
+        if (m_body.index === regex.lastIndex) {
+          regex.lastIndex++;
+        }
+        // The result can be accessed through the `m`-variable.
+        m_body.forEach((match, groupIndex) => {
+          matches_body.push(match);
+        });
+      }
+
+      console.log('matches head', matches_head);
+      console.log('matches body', matches_body);
+
+      // console.log('DP-T Map: ', DP_Range_mapping);
+
+      // console.log('Classes: ', classesList);
+
+      // console.log('Functional Props: ', FunctionalPropsList);
+
+      // console.log('Object Props: ', ObjectPropsList);
+
+      // console.log('DP-Domain Map: ', DP_domain_mapping);
+    }
+  }
 
   const handleQuery = async () => {
     const repositoryID = 'SemanticWebVis';

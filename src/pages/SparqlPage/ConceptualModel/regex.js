@@ -1,4 +1,4 @@
-const regex = /(?<!rdf)(?:\?|:)([a-zA-Z_][a-zA-Z0-9_]*)/gm;
+const regex = /(?<!rdf)(?:\?|:)[a-zA-Z_][a-zA-Z0-9_]*/gm;
 
 // Alternative syntax using RegExp constructor
 // const regex = new RegExp('(?<!rdf)(?:\\?|:)([a-zA-Z_][a-zA-Z0-9_]*)', 'gm')
