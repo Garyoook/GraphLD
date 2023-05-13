@@ -22,6 +22,14 @@ import { TransitionProps } from '@mui/material/transitions';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import CodeMirror from '@uiw/react-codemirror';
 import { forwardRef, useCallback, useState } from 'react';
+import {
+  DPKList,
+  DP_Range_mapping,
+  DP_domain_mapping,
+  FunctionalPropsList,
+  ObjectPropsList,
+  classesList,
+} from '..';
 import { prefix_mapping } from '../../utils';
 import { sendSPARQLquery } from '../services/api';
 import VisOptions from './VisOptions';
@@ -115,15 +123,17 @@ WHERE {
       console.log('matches head', matches_head);
       console.log('matches body', matches_body);
 
-      // console.log('DP-T Map: ', DP_Range_mapping);
+      console.log('DP-T Map: ', DP_Range_mapping);
 
-      // console.log('Classes: ', classesList);
+      console.log('Classes: ', classesList);
 
-      // console.log('Functional Props: ', FunctionalPropsList);
+      console.log('Functional Props: ', FunctionalPropsList);
 
-      // console.log('Object Props: ', ObjectPropsList);
+      console.log('Object Props: ', ObjectPropsList);
 
-      // console.log('DP-Domain Map: ', DP_domain_mapping);
+      console.log('DP-Domain Map: ', DP_domain_mapping);
+
+      console.log('Key DPs: ', DPKList);
     }
   }
 

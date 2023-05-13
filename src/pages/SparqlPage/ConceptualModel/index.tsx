@@ -35,21 +35,6 @@ function ConceptualModelPage(props: any) {
     await findRanges();
 
     await findClasses();
-
-    // const DP_Range_mapping = await getRangeMapping();
-    // console.log('DP-T Map: ', DP_Range_mapping);
-
-    // const classesList = await getClasses();
-    // console.log('Classes: ', classesList);
-
-    // const FunctionalPropsList = await getFunctionalProperties();
-    // console.log('Functional Props: ', FunctionalPropsList);
-
-    // const ObjectPropsList = await getObjectProperties();
-    // console.log('Object Props: ', ObjectPropsList);
-
-    // const DP_domain_mapping = await getDomainMapping();
-    // console.log('DP-Domain Map: ', DP_domain_mapping);
   }
 
   async function findRanges() {
