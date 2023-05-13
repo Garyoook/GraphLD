@@ -26,6 +26,7 @@ import {
   DPKList,
   DP_Range_mapping,
   DP_domain_mapping,
+  DatatypePropsList,
   FunctionalPropsList,
   ObjectPropsList,
   classesList,
@@ -48,9 +49,7 @@ const Transition = forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-function SparqlPage() {
-  const [query, setQuery] = useState<string>(
-    `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+const initialString = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 prefix mon: <http://www.semwebtech.org/mondial/10/meta#>
 		
@@ -58,8 +57,10 @@ SELECT ?country ?population
 WHERE {
 	?country rdf:type mon:Country .
 	?country mon:population ?population .
-} ORDER BY DESC(?population) LIMIT 50`,
-  );
+} ORDER BY DESC(?population) LIMIT 50`;
+
+function SparqlPage() {
+  const [query, setQuery] = useState<string>(initialString);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -67,6 +68,14 @@ WHERE {
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertText, setAlertText] = useState('');
+
+  console.log('Classes: ', classesList);
+  console.log('Functional Props: ', FunctionalPropsList);
+  console.log('Datatype Props', DatatypePropsList);
+  console.log('Key DPs: ', DPKList);
+  console.log('Object Props: ', ObjectPropsList);
+  console.log('DP-Domain Map: ', DP_domain_mapping);
+  console.log('DP-T Map: ', DP_Range_mapping);
 
   const handleVisOpen = () => {
     setOpenVisOption(true);
@@ -123,17 +132,13 @@ WHERE {
       console.log('matches head', matches_head);
       console.log('matches body', matches_body);
 
-      console.log('DP-T Map: ', DP_Range_mapping);
-
-      console.log('Classes: ', classesList);
-
-      console.log('Functional Props: ', FunctionalPropsList);
-
-      console.log('Object Props: ', ObjectPropsList);
-
-      console.log('DP-Domain Map: ', DP_domain_mapping);
-
-      console.log('Key DPs: ', DPKList);
+      // console.log('Classes: ', classesList);
+      // console.log('Functional Props: ', FunctionalPropsList);
+      // console.log('Datatype Props', DatatypePropsList);
+      // console.log('DP-T Map: ', DP_Range_mapping);
+      // console.log('Object Props: ', ObjectPropsList);
+      // console.log('DP-Domain Map: ', DP_domain_mapping);
+      // console.log('Key DPs: ', DPKList);
     }
   }
 

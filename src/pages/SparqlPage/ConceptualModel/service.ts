@@ -45,16 +45,32 @@ export async function getRangeMapping() {
       FILTER(STRSTARTS(STR(?T), STR(xsd:)) || STRSTARTS(STR(?T), STR(:)))
   }`;
 
-  const queryRes = await sendSPARQLquery(repositoryID, query);
-
+  // ! for 1 to many, all domain mapping:
+  const infer = true;
+  const queryRes = await sendSPARQLquery(repositoryID, query, infer);
   const data = queryResultToData(queryRes);
-
   let mapping = Object();
-
+  for (const item of data) {
+    const { DP } = item;
+    mapping[DP] = [];
+  }
   for (const item of data) {
     const { DP, T } = item;
-    mapping[DP] = T;
+    mapping[DP].push(T);
   }
+
+  // ! for 1 to 1, non-infered domain mapping:
+  // const infer = false;
+  // const queryRes = await sendSPARQLquery(repositoryID, query, infer);
+
+  // const data = queryResultToData(queryRes);
+
+  // let mapping = Object();
+
+  // for (const item of data) {
+  //   const { DP, T } = item;
+  //   mapping[DP] = T;
+  // }
 
   return mapping;
 }
@@ -174,28 +190,28 @@ export async function getDomainMapping() {
   }`;
 
   // ! for 1 to many, all domain mapping:
-  // const infer = true;
-  // const queryRes = await sendSPARQLquery(repositoryID, query, infer);
-  // const data = queryResultToData(queryRes);
-  // let mapping = Object();
-  // for (const item of data) {
-  //   const { DP } = item;
-  //   mapping[DP] = [];
-  // }
-  // for (const item of data) {
-  //   const { DP, domain } = item;
-  //   mapping[DP].push(domain);
-  // }
-
-  // ! for 1 to 1, non-infered domain mapping:
-  const infer = false; // to remove infered parent classes.
+  const infer = true;
   const queryRes = await sendSPARQLquery(repositoryID, query, infer);
   const data = queryResultToData(queryRes);
   let mapping = Object();
   for (const item of data) {
-    const { DP, domain } = item;
-    mapping[DP] = domain;
+    const { DP } = item;
+    mapping[DP] = [];
   }
+  for (const item of data) {
+    const { DP, domain } = item;
+    mapping[DP].push(domain);
+  }
+
+  // ! for 1 to 1, non-infered domain mapping:
+  // const infer = false; // to remove infered parent classes.
+  // const queryRes = await sendSPARQLquery(repositoryID, query, infer);
+  // const data = queryResultToData(queryRes);
+  // let mapping = Object();
+  // for (const item of data) {
+  //   const { DP, domain } = item;
+  //   mapping[DP] = domain;
+  // }
 
   return mapping;
 }
