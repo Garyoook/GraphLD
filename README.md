@@ -2,8 +2,19 @@
 
 This project was initialy bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-
 And then migrate to [UmiJs](https://umijs.org/) for better file management & routing experience.
+
+Important enginnering helper of this project:
+
+[MUI](mui.com) (React UI Components)
+
+[AntV G2](https://g2.antv.antgroup.com/manual/introduction)
+
+[Ant Design Charts](https://charts.ant.design/en) (React version of AntV G2 visualisation package)
+
+[Google charts](https://developers.google.com/chart/interactive/docs/gallery/)
+
+[React-Google-Charts](https://www.react-google-charts.com/)
 
 ## Available Scripts
 
