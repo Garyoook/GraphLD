@@ -1,1 +1,1 @@
-export const MAIN_HOST = "http://localhost:7200";
+export const GRAPHDB_HOST = 'http://localhost:7200';

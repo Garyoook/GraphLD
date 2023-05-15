@@ -46,31 +46,31 @@ export async function getRangeMapping() {
   }`;
 
   // ! for 1 to many, all domain mapping:
-  const infer = true;
-  const queryRes = await sendSPARQLquery(repositoryID, query, infer);
-  const data = queryResultToData(queryRes);
-  let mapping = Object();
-  for (const item of data) {
-    const { DP } = item;
-    mapping[DP] = [];
-  }
-  for (const item of data) {
-    const { DP, T } = item;
-    mapping[DP].push(T);
-  }
-
-  // ! for 1 to 1, non-infered domain mapping:
-  // const infer = false;
+  // const infer = true;
   // const queryRes = await sendSPARQLquery(repositoryID, query, infer);
-
   // const data = queryResultToData(queryRes);
-
   // let mapping = Object();
-
+  // for (const item of data) {
+  //   const { DP } = item;
+  //   mapping[DP] = [];
+  // }
   // for (const item of data) {
   //   const { DP, T } = item;
-  //   mapping[DP] = T;
+  //   mapping[DP].push(T);
   // }
+
+  // ! for 1 to 1, non-infered domain mapping:
+  const infer = false;
+  const queryRes = await sendSPARQLquery(repositoryID, query, infer);
+
+  const data = queryResultToData(queryRes);
+
+  let mapping = Object();
+
+  for (const item of data) {
+    const { DP, T } = item;
+    mapping[DP] = T;
+  }
 
   return mapping;
 }
@@ -152,16 +152,19 @@ export async function getObjectProperties() {
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
   PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
-  SELECT ?PAB
+  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+  SELECT ?PAB ?range
   WHERE {
-	  {
-		  ?PAB rdf:type owl:ObjectProperty .
-	  }
-	  FILTER (!isBlank(?PAB))
-	  FILTER(STRSTARTS(STR(?PAB), STR(:)))
+      {
+          ?PAB rdf:type owl:ObjectProperty .
+          ?PAB rdfs:range ?range .
+      }
+      FILTER (!isBlank(?PAB))
+      FILTER(STRSTARTS(STR(?PAB), STR(:)))
   }`;
 
-  const queryRes = await sendSPARQLquery(repositoryID, query);
+  const infer = false;
+  const queryRes = await sendSPARQLquery(repositoryID, query, infer);
 
   const data = queryResultToData(queryRes);
 

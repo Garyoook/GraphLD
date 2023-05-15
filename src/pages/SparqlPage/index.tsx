@@ -22,18 +22,16 @@ import { TransitionProps } from '@mui/material/transitions';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import CodeMirror from '@uiw/react-codemirror';
 import { forwardRef, useCallback, useState } from 'react';
+import { DP_Range_mapping, DatatypePropsList, FunctionalPropsList } from '..';
 import {
-  DPKList,
-  DP_Range_mapping,
-  DP_domain_mapping,
-  DatatypePropsList,
-  FunctionalPropsList,
-  ObjectPropsList,
-  classesList,
-} from '..';
-import { prefix_mapping } from '../../utils';
+  ChartType_mapping,
+  DATA_DIMENTION_TYPE,
+  prefix_mapping,
+  ranges_type_mapping,
+} from '../../utils';
 import { sendSPARQLquery } from '../services/api';
-import VisOptions from './VisOptions';
+import { DataPropertyDomain } from './ConceptualModel/function';
+import VisOptions, { ChartType } from './VisOptions';
 
 export interface VisDataProps {
   headers: string[];
@@ -51,13 +49,69 @@ const Transition = forwardRef(function Transition(
 
 const initialString = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-prefix mon: <http://www.semwebtech.org/mondial/10/meta#>
+prefix : <http://www.semwebtech.org/mondial/10/meta#>
 		
 SELECT ?country ?population
 WHERE {
-	?country rdf:type mon:Country .
-	?country mon:population ?population .
+	?country rdf:type :Country ;
+        :population ?population .
 } ORDER BY DESC(?population) LIMIT 50`;
+
+const f3a = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+SELECT ?inflation ?unemployment WHERE {
+    ?c rdf:type :Country ;
+       :inflation ?inflation ;
+       :unemployment ?unemployment .
+}`;
+
+const f3b = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+SELECT ?continent ?carcode ?population 
+WHERE {
+    ?c rdf:type :Country ;
+       :carCode ?carcode ;
+       :population ?population ;
+       :encompassedByInfo ?en .
+    ?en :encompassedBy ?con ;
+		:percent ?percent .
+    ?con rdf:type :Continent ;
+         :name ?continent .
+    FILTER ( ?percent > 50)
+}`;
+
+const f3c = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+SELECT ?country ?year ?population 
+WHERE {
+    ?c rdf:type :Country ; 
+       :name ?country ;
+       :encompassedByInfo ?en .
+    ?py rdf:type :PopulationCount ;
+        :year ?year;
+        :value ?population .
+    ?c 	:hadPopulation ?py .
+# Filter conditions
+    ?en :encompassedBy ?con .
+    ?con rdf:type :Continent ;
+         :name "Australia/Oceania" .
+}`;
+
+const f3d = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+SELECT ?country1 ?country2 ?length
+WHERE {
+    ?b rdf:type :Border ;
+       :isBorderOf ?c1 ;
+       :isBorderOf ?c2 ;
+       :length ?length .
+  ?c1 rdf:type :Country ;
+      :carCode ?country1 .
+  ?c2 rdf:type :Country ;
+      :carCode ?country2 .
+  # Filter conditions
+  FILTER (?country1<?country2)
+}`;
 
 function SparqlPage() {
   const [query, setQuery] = useState<string>(initialString);
@@ -69,27 +123,43 @@ function SparqlPage() {
   const [showAlert, setShowAlert] = useState(false);
   const [alertText, setAlertText] = useState('');
 
-  console.log('Classes: ', classesList);
-  console.log('Functional Props: ', FunctionalPropsList);
-  console.log('Datatype Props', DatatypePropsList);
-  console.log('Key DPs: ', DPKList);
-  console.log('Object Props: ', ObjectPropsList);
-  console.log('DP-Domain Map: ', DP_domain_mapping);
-  console.log('DP-T Map: ', DP_Range_mapping);
+  const [recommendations, setRecommendations] = useState<ChartType[]>([]);
+
+  // console.log('Classes: ', classesList);
+  // console.log('Functional Props: ', FunctionalPropsList);
+  // console.log('Datatype Props', DatatypePropsList);
+  // console.log('Key DPs: ', DPKList);
+  // console.log('Object Props: ', ObjectPropsList);
+  // console.log('DP-Domain Map: ', DP_domain_mapping);
+  // console.log('DP-T Map: ', DP_Range_mapping);
 
   const handleVisOpen = () => {
     setOpenVisOption(true);
 
     // TODO: generate recommendation here
-    generateVisRecommendation(query);
+    setRecommendations(generateVisRecommendation(query));
   };
 
   const handleVisClose = () => {
     setOpenVisOption(false);
   };
 
-  async function generateVisRecommendation(user_query: string) {
-    const user_query_normalised = user_query;
+  function generateVisRecommendation(user_query: string): ChartType[] {
+    const CLASSES: string[] = [];
+    const CLASS_DP_LOCAL: any = {};
+    const DP_RANGE_LOCAL: any = {};
+    const var_to_class: any = {};
+    const var_to_range_mapping: any = {};
+
+    // ratings for 1 class with DPs:
+    const ratings_1_class = {
+      scatter: 0,
+      bubble: 0,
+      bar: 0,
+      wordClouds: 0,
+    };
+
+    const user_query_normalised = user_query.replace(/[\n\t]/g, '');
     let user_query_split;
     if (user_query_normalised.split('where').length === 2) {
       user_query_split = user_query_normalised.split('where');
@@ -101,45 +171,150 @@ function SparqlPage() {
       const user_query_head = user_query_split[0];
       const user_query_body = user_query_split[1];
 
-      const regex = /(?<!rdf)(?:\?|:)[a-zA-Z_][a-zA-Z0-9_]*/gm;
+      const regex_vars = /(?<!rdf)(?:\?)[a-zA-Z_][a-zA-Z0-9_]*/gm;
 
-      const matches_head: string[] = [];
+      const vars_head: string[] = [];
       let m_head;
-      while ((m_head = regex.exec(user_query_head)) !== null) {
+      while ((m_head = regex_vars.exec(user_query_head)) !== null) {
         // This is necessary to avoid infinite loops with zero-width matches
-        if (m_head.index === regex.lastIndex) {
-          regex.lastIndex++;
+        if (m_head.index === regex_vars.lastIndex) {
+          regex_vars.lastIndex++;
         }
         // The result can be accessed through the `m`-variable.
         m_head.forEach((match, groupIndex) => {
-          matches_head.push(match);
+          vars_head.push(match.split('?')[1]);
         });
       }
+      console.log('matches head', vars_head);
 
-      const matches_body: string[] = [];
-      let m_body;
-      while ((m_body = regex.exec(user_query_body)) !== null) {
-        // This is necessary to avoid infinite loops with zero-width matches
-        if (m_body.index === regex.lastIndex) {
-          regex.lastIndex++;
+      const statements = user_query_body.split('.');
+      for (const stmt of statements) {
+        const stmt_split = stmt.split(';');
+        for (const sub_stmt of stmt_split) {
+          const sub_stmt_trim = sub_stmt.trim();
+          // console.log('statements, ', sub_stmt_trim);
+          if (sub_stmt_trim.includes('rdf:type')) {
+            const type_split = sub_stmt_trim.split('rdf:type');
+            const variable = type_split[0].split('?')[1].trim();
+            if (variable && variable.length > 0) {
+              const class_type = type_split[1].trim();
+              var_to_class[variable] = class_type;
+              CLASSES.push(class_type);
+            }
+          }
         }
-        // The result can be accessed through the `m`-variable.
-        m_body.forEach((match, groupIndex) => {
-          matches_body.push(match);
-        });
+      }
+      console.log('var_to_class: ', var_to_class);
+
+      const var_to_DPA_mapping: any = {};
+      for (const stmt of statements) {
+        const stmt_split = stmt.split(';');
+        for (const sub_stmt of stmt_split) {
+          const sub_stmt_trim = sub_stmt.trim();
+          let DP: string = '';
+          if (
+            DatatypePropsList.some((dp) => {
+              DP = dp;
+              return sub_stmt_trim.includes(dp);
+            }) ||
+            FunctionalPropsList.some((dp) => {
+              DP = dp;
+              return sub_stmt_trim.includes(dp);
+            })
+          ) {
+            const DP_split = sub_stmt_trim.split(DP);
+            const var_in_stmt = DP_split[1].split('?')[1];
+            if (var_in_stmt && var_in_stmt.length > 0) {
+              var_to_DPA_mapping[var_in_stmt] = DP;
+              const range = DP_Range_mapping[DP];
+              var_to_range_mapping[var_in_stmt] = range;
+              DP_RANGE_LOCAL[DP] = range;
+            }
+          }
+        }
+      }
+      // console.log('var_DP mapping: ', var_to_DPA_mapping);
+      // console.log('var_range mapping: ', var_to_range_mapping);
+
+      // console.log(`Classes CA found: `, CLASSES);
+      // console.log(`DP and its Range TA found: `, DP_RANGE_LOCAL);
+
+      for (const dp of Object.keys(DP_RANGE_LOCAL)) {
+        let class_local = '';
+        if (
+          CLASSES.some((c: string) => {
+            class_local = c;
+            return DataPropertyDomain(dp, c);
+          })
+        ) {
+          CLASS_DP_LOCAL[class_local] = dp;
+        }
       }
 
-      console.log('matches head', matches_head);
-      console.log('matches body', matches_body);
+      // !Recommendation rating algorithm here
+      // ratings for 1 class with DPs:
+      let c = 0;
+      let t = 0;
 
-      // console.log('Classes: ', classesList);
-      // console.log('Functional Props: ', FunctionalPropsList);
-      // console.log('Datatype Props', DatatypePropsList);
-      // console.log('DP-T Map: ', DP_Range_mapping);
-      // console.log('Object Props: ', ObjectPropsList);
-      // console.log('DP-Domain Map: ', DP_domain_mapping);
-      // console.log('Key DPs: ', DPKList);
+      for (const v of vars_head) {
+        if (Object.keys(var_to_class).includes(v)) {
+          c++;
+        }
+        if (Object.keys(var_to_range_mapping).includes(v)) {
+          t++;
+        }
+      }
+
+      console.log(`The query contains ${c} Cs, ${t} Ts`);
+
+      if (t == 2) {
+        let allScalar = true;
+        if (
+          Object.values(var_to_range_mapping).some((v: any) => {
+            return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.LEXICAL;
+          })
+        ) {
+          allScalar = false;
+          ratings_1_class.wordClouds += 50;
+        }
+
+        if (
+          Object.values(var_to_range_mapping).some((v: any) => {
+            return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.DISCRETE;
+          })
+        ) {
+          allScalar = false;
+        }
+
+        ratings_1_class.scatter += allScalar ? 50 : 0;
+      }
+      if (c == 1 && t == 1) {
+        ratings_1_class.bar += 50;
+        ratings_1_class.wordClouds += 30;
+      }
+      if (t == 3) {
+        ratings_1_class.bubble += 50;
+      }
+
+      console.log('Final ratings: ', ratings_1_class);
     }
+
+    const recommendations = [];
+
+    for (const r of Object.keys(ratings_1_class)) {
+      const rating = ratings_1_class[r];
+      if (rating > 0) {
+        recommendations.push({ chart: ChartType_mapping[r], rating });
+      }
+    }
+
+    const result = recommendations
+      .sort((a, b) => b.rating - a.rating)
+      .map((r) => r.chart);
+
+    console.log('recommended vis: ', result);
+
+    return result;
   }
 
   const handleQuery = async () => {
@@ -313,6 +488,7 @@ function SparqlPage() {
               <VisOptions
                 data={preprocessDataForGoogleCharts(dataSource)}
                 originalData={dataSource}
+                recommendations={recommendations}
               />
             </DialogContent>
           </Dialog>

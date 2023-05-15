@@ -50,7 +50,7 @@ function draggablePaper(props: PaperProps) {
 }
 
 // TODO: add more charts enums
-enum ChartType {
+export enum ChartType {
   UNSET = 'Visulisation Unset',
   BAR_CHART = 'Bar Chart',
   PIE_CHART = 'Pie Chart',
@@ -59,7 +59,7 @@ enum ChartType {
   TREE_MAP = 'Tree Map',
   LINE_CHART_ANTV = 'line chart ',
   MULTI_LINE_CHART = 'Multiple Line Chart ',
-  BARCHART_ANTV = 'Bar Chart ',
+  BAR_CHART_ANTV = 'Bar Chart ',
   PIE_CHART_ANTV = 'Pie Chart ',
   SCATTER_PLOT_ANTV = 'Scatter Plot ',
   TREE_MAP_ANTV = 'Tree Map ',
@@ -72,9 +72,13 @@ enum ChartType {
   SANKEY_ANTV = 'Sankey Chart',
 }
 
-function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
+function VisOptions(props: {
+  data: VisDataProps;
+  originalData: any[];
+  recommendations: ChartType[];
+}) {
   const { data, headers } = props.data;
-  const { originalData } = props;
+  const { originalData, recommendations } = props;
 
   const [openVis, setOpenVis] = useState(false);
   const [chartType, setChartType] = useState(ChartType.UNSET);
@@ -101,7 +105,7 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
         return <LineChart headers={headers} data={data} />;
       case ChartType.TREE_MAP:
         return <TreeMap headers={headers} data={data} />;
-      case ChartType.BARCHART_ANTV:
+      case ChartType.BAR_CHART_ANTV:
         return <BarChartAntV headers={headers} data={originalData} />;
       case ChartType.LINE_CHART_ANTV:
         return <LineChartAntV headers={headers} data={originalData} />;
@@ -143,7 +147,7 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
   ];
 
   const VisOptions_ANTV = [
-    ChartType.BARCHART_ANTV,
+    ChartType.BAR_CHART_ANTV,
     ChartType.SCATTER_PLOT_ANTV,
     ChartType.BUBBLE_CHART_ANTV,
     ChartType.LINE_CHART_ANTV,
@@ -159,20 +163,29 @@ function VisOptions(props: { data: VisDataProps; originalData: any[] }) {
   ];
 
   function renderVisOptions(options: ChartType[]) {
-    return options.map((chartType) => {
-      return (
-        <>
-          <ListItem button onClick={() => handleVisOpen(chartType)}>
-            <ListItemText primary={chartType} />
-          </ListItem>
-          <Divider />
-        </>
-      );
-    });
+    if (options.length > 0) {
+      return options.map((chartType) => {
+        return (
+          <>
+            <ListItem button onClick={() => handleVisOpen(chartType)}>
+              <ListItemText primary={chartType} />
+            </ListItem>
+            <Divider />
+          </>
+        );
+      });
+    }
   }
 
   return (
     <div>
+      Recommendations
+      <Divider />
+      <List>{renderVisOptions(recommendations)}</List>
+      <br />
+      <br />
+      <br />
+      <br />
       AntV:
       <Divider />
       <List>{renderVisOptions(VisOptions_ANTV)}</List>

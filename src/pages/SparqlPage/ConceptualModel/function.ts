@@ -12,24 +12,24 @@ import {
 // DataProperty(DPAK)
 // FunctionalProperty(DPAK)
 
-function DataPropertyDomain(DPK: string, C: string) {
+export function DataPropertyDomain(DPK: string, C: string) {
   const mappedC = DP_domain_mapping[DPK];
   return mappedC == C;
 }
 
-function HasKey(C: string, DPK: string) {
+export function HasKey(C: string, DPK: string) {
   const domain = DP_domain_mapping[DPK];
   return DPKList.includes(DPK) && domain == C;
 }
 
-function DataPropertyRange(DPK: string, TK: string) {
+export function DataPropertyRange(DPK: string, TK: string) {
   return TK == DP_Range_mapping[DPK];
 }
 
-function DataProperty(DPK: string) {
+export function DataProperty(DPK: string) {
   return FunctionalPropsList.includes(DPK) || DatatypePropsList.includes(DPK);
 }
 
-function FunctionalProperty(DPK: string) {
+export function FunctionalProperty(DPK: string) {
   return FunctionalPropsList.includes(DPK);
 }
