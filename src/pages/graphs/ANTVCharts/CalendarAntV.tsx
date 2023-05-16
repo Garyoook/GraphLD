@@ -171,11 +171,18 @@ const CalendarChart = (props: VisDataProps) => {
       },
     },
     yAxis: {
+      text: 'day',
       grid: null,
     },
     tooltip: {
-      title: dateField,
+      title: 'date',
       showMarkers: false,
+
+      fields: ['date', 'month', 'week'],
+      formatter: (datum) => {
+        const date = datum.date;
+        return { name: 'month', value: date.split('-')[1] };
+      },
     },
     interactions: [
       {
@@ -183,6 +190,7 @@ const CalendarChart = (props: VisDataProps) => {
       },
     ],
     xAxis: {
+      text: 'week',
       position: 'top',
       tickLine: null,
       line: null,
