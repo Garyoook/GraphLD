@@ -305,6 +305,19 @@ function SparqlPage() {
         ratings_1_class.wordClouds += 70;
       }
       if (
+        c == 1 &&
+        t == 1 &&
+        Object.values(var_to_range_mapping).some((v: any) => {
+          return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
+        }) &&
+        Object.values(var_to_range_mapping).some((v: any) => {
+          return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.LEXICAL;
+        })
+      ) {
+        ratings_1_class.bar += 100;
+        ratings_1_class.wordClouds += 100;
+      }
+      if (
         (c == 1 && t == 2) ||
         (t == 3 &&
           Object.values(var_to_range_mapping).some((v: any) => {
