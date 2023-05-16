@@ -1,5 +1,6 @@
 import BarChartAntV from '@/pages/graphs/ANTVCharts/BarChartAntV';
 import BubbleChartAntV from '@/pages/graphs/ANTVCharts/BubbleChartAntV';
+import CalendarChart from '@/pages/graphs/ANTVCharts/CalendarAntV';
 import ChordAntV from '@/pages/graphs/ANTVCharts/ChordAntV';
 import CirclePackingAntV from '@/pages/graphs/ANTVCharts/CirclePackingAntV';
 import LineChartAntV from '@/pages/graphs/ANTVCharts/LineChartAntV';
@@ -68,8 +69,9 @@ export enum ChartType {
   WORD_CLOUD_ANTV = 'Word Cloud ',
   TREE_ANTV = 'Hierarchy Tree ',
   CIRCLE_PACKING_ANTV = 'Circle Packing ',
-  SUNBURST_ANTV = 'Sunburst Chart',
-  SANKEY_ANTV = 'Sankey Chart',
+  SUNBURST_ANTV = 'Sunburst Chart ',
+  SANKEY_ANTV = 'Sankey Chart ',
+  CALENDAR_ANTV = 'Calendar Chart ',
 }
 
 function VisOptions(props: {
@@ -131,6 +133,8 @@ function VisOptions(props: {
         return <SunBurst headers={headers} data={originalData} />;
       case ChartType.SANKEY_ANTV:
         return <SankeyAntV headers={headers} data={originalData} />;
+      case ChartType.CALENDAR_ANTV:
+        return <CalendarChart headers={headers} data={originalData} />;
 
       default:
         return 'You specified an invalid chart type, please check the code';
@@ -160,6 +164,7 @@ function VisOptions(props: {
     ChartType.TREE_MAP_ANTV,
     ChartType.CIRCLE_PACKING_ANTV,
     ChartType.SUNBURST_ANTV,
+    ChartType.CALENDAR_ANTV,
   ];
 
   function renderVisOptions(options: RecommendationProps[]) {

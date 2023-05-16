@@ -334,6 +334,7 @@ function SparqlPage() {
     for (const r of Object.keys(ratings_1_class)) {
       const rating = ratings_1_class[r];
       if (rating > 0) {
+        // @ts-ignore
         recommendations.push({ chart: ChartType_mapping[r], rating });
       }
     }
