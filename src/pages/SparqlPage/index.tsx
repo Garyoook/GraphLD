@@ -6,9 +6,7 @@ import SendIcon from '@mui/icons-material/Send';
 import {
   Alert,
   AppBar,
-  Backdrop,
   Button,
-  CircularProgress,
   Dialog,
   DialogContent,
   Grid,
@@ -32,6 +30,8 @@ import {
 import { sendSPARQLquery } from '../services/api';
 import { DataPropertyDomain } from './ConceptualModel/function';
 import VisOptions, { ChartType } from './VisOptions';
+
+import LoadingButton from '@mui/lab/LoadingButton';
 
 export interface VisDataProps {
   headers: string[];
@@ -142,9 +142,6 @@ function SparqlPage() {
 
   const handleVisOpen = () => {
     setOpenVisOption(true);
-
-    // TODO: generate recommendation here
-    setRecommendations(generateVisRecommendation(query));
   };
 
   const handleVisClose = () => {
@@ -404,6 +401,8 @@ function SparqlPage() {
         e.response.data || 'Error: please check your query and try again.',
       );
     } finally {
+      // TODO: generate recommendation here
+      setRecommendations(generateVisRecommendation(query));
       setLoading(false);
     }
   };
@@ -460,15 +459,18 @@ function SparqlPage() {
       <Grid container spacing={2}>
         <Grid item xs={12}></Grid>
         <Grid item xs={4}>
-          <Button
+          <LoadingButton
             variant="contained"
-            disabled={loading}
             onClick={handleQuery}
+            loading={loading}
+            loadingPosition="end"
+            // disabled={loading}
             endIcon={<SendIcon />}
+            style={{ textTransform: 'none' }}
           >
-            Execute query
-          </Button>
-          {loading && (
+            Execute Query
+          </LoadingButton>
+          {/* {loading && (
             <Backdrop
               sx={{
                 color: '#fff',
@@ -480,20 +482,28 @@ function SparqlPage() {
 
               <div style={{ marginLeft: 20 }}> Processing query ... </div>
             </Backdrop>
-          )}
+          )} */}
         </Grid>
 
         <Grid item xs={12}></Grid>
 
         <Grid item xs>
-          <Button
-            variant="outlined"
-            disabled={loading || dataSource.length == 0}
+          <LoadingButton
+            variant="contained"
+            color={recommendations.length > 0 ? 'success' : 'primary'}
+            disabled={dataSource.length == 0}
+            loading={loading}
+            loadingPosition="end"
             onClick={handleVisOpen}
             endIcon={<AutoGraphIcon />}
+            style={{
+              textTransform: 'none',
+            }}
           >
-            Visualisation Options
-          </Button>
+            {recommendations.length > 0
+              ? `Visualisation Options (${recommendations.length} Recommendations)`
+              : `Visualisation Options`}
+          </LoadingButton>
           <Dialog
             open={openVis}
             onClose={handleVisClose}
