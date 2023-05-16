@@ -33,7 +33,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import Draggable from 'react-draggable';
-import { VisDataProps } from '..';
+import { RecommendationProps, VisDataProps } from '..';
 import BarChart from '../../graphs/GoogleCharts/BarChart';
 import PieChart from '../../graphs/GoogleCharts/PieChart';
 
@@ -75,7 +75,7 @@ export enum ChartType {
 function VisOptions(props: {
   data: VisDataProps;
   originalData: any[];
-  recommendations: ChartType[];
+  recommendations: RecommendationProps[];
 }) {
   const { data, headers } = props.data;
   const { originalData, recommendations } = props;
@@ -162,13 +162,18 @@ function VisOptions(props: {
     ChartType.SUNBURST_ANTV,
   ];
 
-  function renderVisOptions(options: ChartType[]) {
+  function renderVisOptions(options: RecommendationProps[]) {
     if (options.length > 0) {
-      return options.map((chartType) => {
+      return options.map((option) => {
         return (
           <>
-            <ListItem button onClick={() => handleVisOpen(chartType)}>
-              <ListItemText primary={chartType} />
+            <ListItem button onClick={() => handleVisOpen(option.chart)}>
+              <ListItemText
+                primary={option.chart}
+                secondary={
+                  isNaN(option.rating) ? undefined : `rating: ${option.rating}`
+                }
+              />
             </ListItem>
             <Divider />
           </>
@@ -179,18 +184,31 @@ function VisOptions(props: {
 
   return (
     <div>
-      Recommendations
+      Recommended Visulisations:
       <Divider />
       <List>{renderVisOptions(recommendations)}</List>
       <br />
       <br />
       <br />
+      All Visualisations:
       <br />
-      AntV:
+      AntV
       <Divider />
-      <List>{renderVisOptions(VisOptions_ANTV)}</List>
-      Google Charts:
-      <List>{renderVisOptions(VisOptions_GoogleCharts)}</List>
+      <List>
+        {renderVisOptions(
+          VisOptions_ANTV.map((o) => {
+            return { chart: o, rating: NaN };
+          }),
+        )}
+      </List>
+      Google Charts
+      <List>
+        {renderVisOptions(
+          VisOptions_GoogleCharts.map((o) => {
+            return { chart: o, rating: NaN };
+          }),
+        )}
+      </List>
       <Dialog
         open={openVis}
         onClose={handleVisClose}

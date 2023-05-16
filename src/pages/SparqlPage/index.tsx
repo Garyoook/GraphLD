@@ -113,6 +113,11 @@ WHERE {
   FILTER (?country1<?country2)
 }`;
 
+export interface RecommendationProps {
+  chart: ChartType;
+  rating: number;
+}
+
 function SparqlPage() {
   const [query, setQuery] = useState<string>(initialString);
   const [columns, setColumns] = useState([]);
@@ -123,7 +128,9 @@ function SparqlPage() {
   const [showAlert, setShowAlert] = useState(false);
   const [alertText, setAlertText] = useState('');
 
-  const [recommendations, setRecommendations] = useState<ChartType[]>([]);
+  const [recommendations, setRecommendations] = useState<RecommendationProps[]>(
+    [],
+  );
 
   // console.log('Classes: ', classesList);
   // console.log('Functional Props: ', FunctionalPropsList);
@@ -144,7 +151,9 @@ function SparqlPage() {
     setOpenVisOption(false);
   };
 
-  function generateVisRecommendation(user_query: string): ChartType[] {
+  function generateVisRecommendation(
+    user_query: string,
+  ): RecommendationProps[] {
     const CLASSES: string[] = [];
     const CLASS_DP_LOCAL: any = {};
     const DP_RANGE_LOCAL: any = {};
@@ -152,7 +161,7 @@ function SparqlPage() {
     const var_to_range_mapping: any = {};
 
     // ratings for 1 class with DPs:
-    const ratings_1_class = {
+    const ratings_1_class: any = {
       scatter: 0,
       bubble: 0,
       bar: 0,
@@ -264,7 +273,6 @@ function SparqlPage() {
           t++;
         }
       }
-
       console.log(`The query contains ${c} Cs, ${t} Ts`);
 
       if (t == 2) {
@@ -275,9 +283,8 @@ function SparqlPage() {
           })
         ) {
           allScalar = false;
-          ratings_1_class.wordClouds += 50;
+          ratings_1_class.wordClouds += 100;
         }
-
         if (
           Object.values(var_to_range_mapping).some((v: any) => {
             return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.DISCRETE;
@@ -285,22 +292,32 @@ function SparqlPage() {
         ) {
           allScalar = false;
         }
-
-        ratings_1_class.scatter += allScalar ? 50 : 0;
+        ratings_1_class.scatter += allScalar ? 100 : 20;
       }
-      if (c == 1 && t == 1) {
-        ratings_1_class.bar += 50;
-        ratings_1_class.wordClouds += 30;
+      if (
+        c == 1 &&
+        t == 1 &&
+        Object.values(var_to_range_mapping).some((v: any) => {
+          return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
+        })
+      ) {
+        ratings_1_class.bar += 100;
+        ratings_1_class.wordClouds += 70;
       }
-      if (t == 3) {
-        ratings_1_class.bubble += 50;
+      if (
+        (c == 1 && t == 2) ||
+        (t == 3 &&
+          Object.values(var_to_range_mapping).some((v: any) => {
+            return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
+          }))
+      ) {
+        ratings_1_class.bubble += 100;
       }
-
       console.log('Final ratings: ', ratings_1_class);
     }
 
-    const recommendations = [];
-
+    const recommendations: RecommendationProps[] = [];
+    // TODO: complete recommendations to all catogories
     for (const r of Object.keys(ratings_1_class)) {
       const rating = ratings_1_class[r];
       if (rating > 0) {
@@ -308,12 +325,10 @@ function SparqlPage() {
       }
     }
 
-    const result = recommendations
-      .sort((a, b) => b.rating - a.rating)
-      .map((r) => r.chart);
+    // Final recommendation results:
+    const result = recommendations.sort((a, b) => b.rating - a.rating);
 
     console.log('recommended vis: ', result);
-
     return result;
   }
 
