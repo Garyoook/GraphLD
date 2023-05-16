@@ -166,6 +166,7 @@ function SparqlPage() {
       bubble: 0,
       bar: 0,
       wordClouds: 0,
+      calendar: 0,
     };
 
     const user_query_normalised = user_query.replace(/[\n\t]/g, '');
@@ -325,6 +326,14 @@ function SparqlPage() {
           }))
       ) {
         ratings_1_class.bubble += 100;
+      }
+      if (
+        t == 1 &&
+        Object.values(var_to_range_mapping).some((v: any) => {
+          return v == 'xsd:date';
+        })
+      ) {
+        ratings_1_class.calendar += 80;
       }
       console.log('Final ratings: ', ratings_1_class);
     }

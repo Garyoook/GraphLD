@@ -28,6 +28,7 @@ export const ChartType_mapping = {
   bar: ChartType.BAR_CHART_ANTV,
   bubble: ChartType.BUBBLE_CHART_ANTV,
   wordClouds: ChartType.WORD_CLOUD_ANTV,
+  calendar: ChartType.CALENDAR_ANTV,
 };
 
 export function convertPrefixToNamespace(jsonldItem: any) {
