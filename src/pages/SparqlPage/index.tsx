@@ -148,6 +148,85 @@ function SparqlPage() {
     setOpenVisOption(false);
   };
 
+  function generateRecommendationFor1Class(
+    c: number,
+    t: number,
+    var_to_range_mapping: any,
+  ) {
+    // ratings for 1 class with DPs:
+    const ratings_1_class: any = {
+      scatter: 0,
+      bubble: 0,
+      bar: 0,
+      wordClouds: 0,
+      calendar: 0,
+    };
+
+    if (t == 2) {
+      let allScalar = true;
+      if (
+        Object.values(var_to_range_mapping).some((v: any) => {
+          return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.LEXICAL;
+        })
+      ) {
+        allScalar = false;
+        ratings_1_class.wordClouds += 100;
+      }
+      if (
+        Object.values(var_to_range_mapping).some((v: any) => {
+          return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.DISCRETE;
+        })
+      ) {
+        allScalar = false;
+      }
+      ratings_1_class.scatter += allScalar ? 100 : 30;
+      ratings_1_class.bubble += allScalar ? 70 : 20;
+    }
+    if (
+      c == 1 &&
+      t == 1 &&
+      Object.values(var_to_range_mapping).some((v: any) => {
+        return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
+      })
+    ) {
+      ratings_1_class.bar += 100;
+      ratings_1_class.wordClouds += 70;
+    }
+    if (
+      c == 1 &&
+      t == 1 &&
+      Object.values(var_to_range_mapping).some((v: any) => {
+        return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
+      }) &&
+      Object.values(var_to_range_mapping).some((v: any) => {
+        return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.LEXICAL;
+      })
+    ) {
+      ratings_1_class.bar += 100;
+      ratings_1_class.wordClouds += 100;
+    }
+    if (
+      (c == 1 && t == 2) ||
+      (t == 3 &&
+        Object.values(var_to_range_mapping).some((v: any) => {
+          return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
+        }))
+    ) {
+      ratings_1_class.bubble += 100;
+    }
+    if (
+      t == 1 &&
+      Object.values(var_to_range_mapping).some((v: any) => {
+        return v == 'xsd:date';
+      })
+    ) {
+      ratings_1_class.calendar += 80;
+    }
+    console.log('Final 1 class vis ratings: ', ratings_1_class);
+
+    return ratings_1_class;
+  }
+
   function generateVisRecommendation(
     user_query: string,
   ): RecommendationProps[] {
@@ -158,13 +237,7 @@ function SparqlPage() {
     const var_to_range_mapping: any = {};
 
     // ratings for 1 class with DPs:
-    const ratings_1_class: any = {
-      scatter: 0,
-      bubble: 0,
-      bar: 0,
-      wordClouds: 0,
-      calendar: 0,
-    };
+    let ratings_recommendation: any = {};
 
     const user_query_normalised = user_query.replace(/[\n\t]/g, '');
     let user_query_split;
@@ -178,8 +251,10 @@ function SparqlPage() {
       const user_query_head = user_query_split[0];
       const user_query_body = user_query_split[1];
 
+      // regex to match variables in the query.
       const regex_vars = /(?<!rdf)(?:\?)[a-zA-Z_][a-zA-Z0-9_]*/gm;
 
+      // regex to match variables in the query head (text before 'WHERE').
       const vars_head: string[] = [];
       let m_head;
       while ((m_head = regex_vars.exec(user_query_head)) !== null) {
@@ -194,6 +269,8 @@ function SparqlPage() {
       }
       console.log('matches head', vars_head);
 
+      // analysis to the query body, to find the classes, data/object properties
+      // and ranges, and map them to the variables.
       const statements = user_query_body.split('.');
       for (const stmt of statements) {
         const stmt_split = stmt.split(';');
@@ -213,7 +290,7 @@ function SparqlPage() {
       }
       console.log('var_to_class: ', var_to_class);
 
-      const var_to_DPA_mapping: any = {};
+      // const var_to_DPA_mapping: any = {};
       for (const stmt of statements) {
         const stmt_split = stmt.split(';');
         for (const sub_stmt of stmt_split) {
@@ -232,7 +309,7 @@ function SparqlPage() {
             const DP_split = sub_stmt_trim.split(DP);
             const var_in_stmt = DP_split[1].split('?')[1];
             if (var_in_stmt && var_in_stmt.length > 0) {
-              var_to_DPA_mapping[var_in_stmt] = DP;
+              // var_to_DPA_mapping[var_in_stmt] = DP;
               const range = DP_Range_mapping[DP];
               var_to_range_mapping[var_in_stmt] = range;
               DP_RANGE_LOCAL[DP] = range;
@@ -259,10 +336,9 @@ function SparqlPage() {
       }
 
       // !Recommendation rating algorithm here
-      // ratings for 1 class with DPs:
+      // first check number of Classes(C) and Ranges(T)
       let c = 0;
       let t = 0;
-
       for (const v of vars_head) {
         if (Object.keys(var_to_class).includes(v)) {
           c++;
@@ -272,73 +348,23 @@ function SparqlPage() {
         }
       }
       console.log(`The query contains ${c} Cs, ${t} Ts`);
+      // ratings for 1 class with DPs:
+      const ratings_1_class = generateRecommendationFor1Class(
+        c,
+        t,
+        var_to_range_mapping,
+      );
 
-      if (t == 2) {
-        let allScalar = true;
-        if (
-          Object.values(var_to_range_mapping).some((v: any) => {
-            return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.LEXICAL;
-          })
-        ) {
-          allScalar = false;
-          ratings_1_class.wordClouds += 100;
-        }
-        if (
-          Object.values(var_to_range_mapping).some((v: any) => {
-            return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.DISCRETE;
-          })
-        ) {
-          allScalar = false;
-        }
-        ratings_1_class.scatter += allScalar ? 100 : 20;
-      }
-      if (
-        c == 1 &&
-        t == 1 &&
-        Object.values(var_to_range_mapping).some((v: any) => {
-          return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
-        })
-      ) {
-        ratings_1_class.bar += 100;
-        ratings_1_class.wordClouds += 70;
-      }
-      if (
-        c == 1 &&
-        t == 1 &&
-        Object.values(var_to_range_mapping).some((v: any) => {
-          return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
-        }) &&
-        Object.values(var_to_range_mapping).some((v: any) => {
-          return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.LEXICAL;
-        })
-      ) {
-        ratings_1_class.bar += 100;
-        ratings_1_class.wordClouds += 100;
-      }
-      if (
-        (c == 1 && t == 2) ||
-        (t == 3 &&
-          Object.values(var_to_range_mapping).some((v: any) => {
-            return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
-          }))
-      ) {
-        ratings_1_class.bubble += 100;
-      }
-      if (
-        t == 1 &&
-        Object.values(var_to_range_mapping).some((v: any) => {
-          return v == 'xsd:date';
-        })
-      ) {
-        ratings_1_class.calendar += 80;
-      }
-      console.log('Final ratings: ', ratings_1_class);
+      ratings_recommendation = {
+        ...ratings_recommendation,
+        ...ratings_1_class,
+      };
     }
 
     const recommendations: RecommendationProps[] = [];
     // TODO: complete recommendations to all catogories
-    for (const r of Object.keys(ratings_1_class)) {
-      const rating = ratings_1_class[r];
+    for (const r of Object.keys(ratings_recommendation)) {
+      const rating = ratings_recommendation[r];
       if (rating > 0) {
         // @ts-ignore
         recommendations.push({ chart: ChartType_mapping[r], rating });
@@ -558,6 +584,7 @@ function SparqlPage() {
                 </Alert>
               ) : (
                 <DataGridPro
+                  key={Date.now()}
                   rows={dataSource}
                   columns={columns}
                   pagination
