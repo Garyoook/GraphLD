@@ -22,9 +22,7 @@ const LineChartAntV = (props: VisDataProps) => {
     setXField(headers[0]);
     setYField(headers[1]);
 
-    const typedData = preprocessData(data).sort(
-      (a: any, b: any) => a[headers[1]] - b[headers[1]],
-    );
+    const typedData = preprocessData(data);
 
     setDataSource(typedData);
   }, [headers, data]);
@@ -34,7 +32,6 @@ const LineChartAntV = (props: VisDataProps) => {
       const orderedData = dataSource.sort(
         (a: any, b: any) => a[yField] - b[yField],
       );
-
       setDataSource(orderedData);
     }
   }, [xField, yField]);
