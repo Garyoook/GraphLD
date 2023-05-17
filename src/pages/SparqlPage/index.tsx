@@ -20,7 +20,7 @@ import { TransitionProps } from '@mui/material/transitions';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import CodeMirror from '@uiw/react-codemirror';
 import { forwardRef, useCallback, useState } from 'react';
-import { DP_Range_mapping, DatatypePropsList, FunctionalPropsList } from '..';
+import { ConceptualModelInfo } from '..';
 import {
   ChartType_mapping,
   DATA_DIMENTION_TYPE,
@@ -148,21 +148,22 @@ function SparqlPage() {
     setOpenVisOption(false);
   };
 
-  function generateRecommendationFor1Class(
-    c: number,
-    t: number,
+  function generateRatingsFor1C(
+    c_num: number,
+    t_num: number,
     var_to_range_mapping: any,
   ) {
     // ratings for 1 class with DPs:
-    const ratings_1_class: any = {
+    const ratings: any = {
       scatter: 0,
       bubble: 0,
       bar: 0,
       wordClouds: 0,
       calendar: 0,
+      pie: 0,
     };
 
-    if (t == 2) {
+    if (t_num == 2) {
       let allScalar = true;
       if (
         Object.values(var_to_range_mapping).some((v: any) => {
@@ -170,7 +171,7 @@ function SparqlPage() {
         })
       ) {
         allScalar = false;
-        ratings_1_class.wordClouds += 100;
+        ratings.wordClouds += 100;
       }
       if (
         Object.values(var_to_range_mapping).some((v: any) => {
@@ -179,22 +180,23 @@ function SparqlPage() {
       ) {
         allScalar = false;
       }
-      ratings_1_class.scatter += allScalar ? 100 : 30;
-      ratings_1_class.bubble += allScalar ? 70 : 20;
+      ratings.scatter += allScalar ? 100 : 30;
+      ratings.bubble += allScalar ? 70 : 20;
     }
     if (
-      c == 1 &&
-      t == 1 &&
+      c_num == 1 &&
+      t_num == 1 &&
       Object.values(var_to_range_mapping).some((v: any) => {
         return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
       })
     ) {
-      ratings_1_class.bar += 100;
-      ratings_1_class.wordClouds += 70;
+      ratings.bar += 100;
+      ratings.wordClouds += 70;
+      ratings.pie += 100;
     }
     if (
-      c == 1 &&
-      t == 1 &&
+      c_num == 1 &&
+      t_num == 1 &&
       Object.values(var_to_range_mapping).some((v: any) => {
         return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
       }) &&
@@ -202,29 +204,49 @@ function SparqlPage() {
         return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.LEXICAL;
       })
     ) {
-      ratings_1_class.bar += 100;
-      ratings_1_class.wordClouds += 100;
+      ratings.bar += 100;
+      ratings.wordClouds += 100;
     }
     if (
-      (c == 1 && t == 2) ||
-      (t == 3 &&
+      (c_num == 1 && t_num == 2) ||
+      (t_num == 3 &&
         Object.values(var_to_range_mapping).some((v: any) => {
           return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
         }))
     ) {
-      ratings_1_class.bubble += 100;
+      ratings.bubble += 100;
     }
     if (
-      t == 1 &&
+      t_num == 1 &&
       Object.values(var_to_range_mapping).some((v: any) => {
         return v == 'xsd:date';
       })
     ) {
-      ratings_1_class.calendar += 80;
+      ratings.calendar += 80;
     }
-    console.log('Final 1 class vis ratings: ', ratings_1_class);
+    console.log('Final 1 class vis ratings: ', ratings);
 
-    return ratings_1_class;
+    return ratings;
+  }
+
+  function generateratingsFor2C1PAB(
+    c_num: number,
+    t_num: number,
+    var_to_class: any,
+    var_to_range_mapping: any,
+  ) {
+    // ratings for 1 class with DPs:
+    const ratings: any = {
+      scatter: 0,
+      bubble: 0,
+      bar: 0,
+      wordClouds: 0,
+      calendar: 0,
+    };
+
+    console.log('Final 2 class vis ratings: ', ratings);
+
+    return ratings;
   }
 
   function generateVisRecommendation(
@@ -297,11 +319,11 @@ function SparqlPage() {
           const sub_stmt_trim = sub_stmt.trim();
           let DP: string = '';
           if (
-            DatatypePropsList.some((dp) => {
+            ConceptualModelInfo.DatatypePropsList.some((dp) => {
               DP = dp;
               return sub_stmt_trim.includes(dp);
             }) ||
-            FunctionalPropsList.some((dp) => {
+            ConceptualModelInfo.FunctionalPropsList.some((dp) => {
               DP = dp;
               return sub_stmt_trim.includes(dp);
             })
@@ -310,7 +332,7 @@ function SparqlPage() {
             const var_in_stmt = DP_split[1].split('?')[1];
             if (var_in_stmt && var_in_stmt.length > 0) {
               // var_to_DPA_mapping[var_in_stmt] = DP;
-              const range = DP_Range_mapping[DP];
+              const range = ConceptualModelInfo.DP_Range_mapping[DP];
               var_to_range_mapping[var_in_stmt] = range;
               DP_RANGE_LOCAL[DP] = range;
             }
@@ -349,11 +371,7 @@ function SparqlPage() {
       }
       console.log(`The query contains ${c} Cs, ${t} Ts`);
       // ratings for 1 class with DPs:
-      const ratings_1_class = generateRecommendationFor1Class(
-        c,
-        t,
-        var_to_range_mapping,
-      );
+      const ratings_1_class = generateRatingsFor1C(c, t, var_to_range_mapping);
 
       ratings_recommendation = {
         ...ratings_recommendation,

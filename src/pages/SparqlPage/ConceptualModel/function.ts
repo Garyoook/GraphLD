@@ -1,10 +1,4 @@
-import {
-  DPKList,
-  DP_Range_mapping,
-  DP_domain_mapping,
-  DatatypePropsList,
-  FunctionalPropsList,
-} from '@/pages';
+import { ConceptualModelInfo } from '@/pages';
 
 // DataPropertyDomain(DPAK CA)
 // HasKey(CA () (DPAK))
@@ -13,23 +7,26 @@ import {
 // FunctionalProperty(DPAK)
 
 export function DataPropertyDomain(DPK: string, C: string) {
-  const mappedC = DP_domain_mapping[DPK];
+  const mappedC = ConceptualModelInfo.DP_domain_mapping[DPK];
   return mappedC == C;
 }
 
 export function HasKey(C: string, DPK: string) {
-  const domain = DP_domain_mapping[DPK];
-  return DPKList.includes(DPK) && domain == C;
+  const domain = ConceptualModelInfo.DP_domain_mapping[DPK];
+  return ConceptualModelInfo.DPKList.includes(DPK) && domain == C;
 }
 
 export function DataPropertyRange(DPK: string, TK: string) {
-  return TK == DP_Range_mapping[DPK];
+  return TK == ConceptualModelInfo.DP_Range_mapping[DPK];
 }
 
 export function DataProperty(DPK: string) {
-  return FunctionalPropsList.includes(DPK) || DatatypePropsList.includes(DPK);
+  return (
+    ConceptualModelInfo.FunctionalPropsList.includes(DPK) ||
+    ConceptualModelInfo.DatatypePropsList.includes(DPK)
+  );
 }
 
 export function FunctionalProperty(DPK: string) {
-  return FunctionalPropsList.includes(DPK);
+  return ConceptualModelInfo.FunctionalPropsList.includes(DPK);
 }
