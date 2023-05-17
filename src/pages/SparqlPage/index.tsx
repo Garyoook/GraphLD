@@ -319,11 +319,11 @@ function SparqlPage() {
           const sub_stmt_trim = sub_stmt.trim();
           let DP: string = '';
           if (
-            ConceptualModelInfo.DatatypePropsList.some((dp) => {
+            ConceptualModelInfo.DatatypePropsList.some((dp: string) => {
               DP = dp;
               return sub_stmt_trim.includes(dp);
             }) ||
-            ConceptualModelInfo.FunctionalPropsList.some((dp) => {
+            ConceptualModelInfo.FunctionalPropsList.some((dp: string) => {
               DP = dp;
               return sub_stmt_trim.includes(dp);
             })
