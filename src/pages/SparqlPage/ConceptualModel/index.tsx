@@ -91,7 +91,6 @@ WHERE {
         };
       });
 
-      // TODO: add list to store all the ranges
       console.log('Ranges datasource: ', data);
       setRangePropsDataSource(data);
       //   setShowAlert(false);
@@ -151,7 +150,6 @@ WHERE {
         };
       });
 
-      // TODO: add list to store all the classes
       console.log('Classes datasource: ', data);
 
       setClassesDataSource(data);
@@ -213,7 +211,6 @@ WHERE {
         };
       });
 
-      // TODO: add list to store all the functional properties
       console.log('FPs: ', data);
       setFunctionalPropsDataSource(data);
       //   setShowAlert(false);
@@ -273,7 +270,6 @@ WHERE {
         };
       });
 
-      // TODO: add list to store all the object properties
       console.log('OPs: ', data);
 
       setObjectPropsDataSource(data);

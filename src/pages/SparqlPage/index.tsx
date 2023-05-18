@@ -120,7 +120,7 @@ export interface RecommendationProps {
 }
 
 function SparqlPage() {
-  const [query, setQuery] = useState<string>(initialString);
+  const [query, setQuery] = useState<string>(f3c);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -164,7 +164,7 @@ function SparqlPage() {
       pie: 0,
     };
 
-    if (t_num == 2) {
+    if (c_num == 1 && t_num == 2) {
       let allScalar = true;
       if (
         Object.values(var_to_range_mapping).some((v: any) => {
@@ -205,6 +205,7 @@ function SparqlPage() {
       ratings.scatter += 100;
     }
 
+    // TODO: here will be a checker & new branch for the key(a must) to apply bar/wordClouds/pie chart.
     if (
       c_num == 1 &&
       t_num == 1 &&
@@ -230,6 +231,7 @@ function SparqlPage() {
       ratings.wordClouds += 100;
     }
     if (
+      c_num == 1 &&
       t_num == 1 &&
       Object.values(var_to_range_mapping).some((v: any) => {
         return v == 'xsd:date';
@@ -245,17 +247,34 @@ function SparqlPage() {
   function generateratingsFor2C1PAB(
     c_num: number,
     t_num: number,
+    pab_num: number,
     var_to_class: any,
     var_to_range_mapping: any,
   ) {
     // ratings for 1 class with DPs:
     const ratings: any = {
-      scatter: 0,
-      bubble: 0,
-      bar: 0,
-      wordClouds: 0,
-      calendar: 0,
+      treeMap: 0,
+      hierarchyTree: 0,
+      sunburst: 0,
+      circlePacking: 0,
     };
+
+    if (c_num == 2 && t_num == 2) {
+      ratings.hierarchyTree += 100;
+    }
+
+    if (
+      c_num == 2 &&
+      t_num == 3 &&
+      Object.values(var_to_range_mapping).some((v: any) => {
+        return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
+      })
+    ) {
+      ratings.treeMap += 100;
+      ratings.hierarchyTree += 20;
+      ratings.sunburst += 70;
+      ratings.circlePacking += 70;
+    }
 
     console.log('Final 2 class vis ratings: ', ratings);
 
@@ -325,11 +344,14 @@ function SparqlPage() {
       }
       console.log('var_to_class: ', var_to_class);
 
+      const PAB_LIST: any = [];
       // const var_to_DPA_mapping: any = {};
       for (const stmt of statements) {
         const stmt_split = stmt.split(';');
         for (const sub_stmt of stmt_split) {
           const sub_stmt_trim = sub_stmt.trim();
+
+          // get DP and range
           let DP: string = '';
           if (
             ConceptualModelInfo.DatatypePropsList.some((dp: string) => {
@@ -349,6 +371,26 @@ function SparqlPage() {
               var_to_range_mapping[var_in_stmt] = range;
               DP_RANGE_LOCAL[DP] = range;
             }
+          }
+
+          // get PAB and its domain&range (2 linked classes)
+          let PAB: string = '';
+          if (
+            ConceptualModelInfo.ObjectPropsList.some((pab: string) => {
+              PAB = pab;
+              // ! the space after the PAB is important to avoid matching PABs that are substrings of other PABs
+              return sub_stmt_trim.includes(`${pab} `);
+            })
+          ) {
+            // const PAB_split = sub_stmt_trim.split(PAB);
+            const PAB_obj = ConceptualModelInfo.ObjectPropsMapping[PAB];
+            // implicitly verifies PAB and its related classes are in the query
+            const c1 = PAB_obj?.domain;
+            const c2 = PAB_obj?.range;
+            // TODO: this relationship bt PAB and classes should be checked, but currently no effective way, leave it for future work
+            // if (CLASSES.includes(c1) && CLASSES.includes(c2)) {
+            PAB_LIST.push(PAB);
+            // }
           }
         }
       }
@@ -372,23 +414,41 @@ function SparqlPage() {
 
       // !Recommendation rating algorithm here
       // first check number of Classes(C) and Ranges(T)
-      let c = 0;
-      let t = 0;
+      // let c_num = 0;
+      let t_num = 0;
       for (const v of vars_head) {
-        if (Object.keys(var_to_class).includes(v)) {
-          c++;
-        }
+        // if (Object.keys(var_to_class).includes(v)) {
+        //   c_num++;
+        // }
         if (Object.keys(var_to_range_mapping).includes(v)) {
-          t++;
+          t_num++;
         }
       }
-      console.log(`The query contains ${c} Cs, ${t} Ts`);
+
+      let c_num = CLASSES.length;
+
+      let pab_num = PAB_LIST.length;
+      console.log(
+        `The query contains ${c_num} Cs, ${t_num} Ts, and ${pab_num} PABs`,
+      );
       // ratings for 1 class with DPs:
-      const ratings_1_class = generateRatingsFor1C(c, t, var_to_range_mapping);
+      const ratings_1_class = generateRatingsFor1C(
+        c_num,
+        t_num,
+        var_to_range_mapping,
+      );
+      const ratings_2_classes = generateratingsFor2C1PAB(
+        c_num,
+        t_num,
+        pab_num,
+        var_to_class,
+        var_to_range_mapping,
+      );
 
       ratings_recommendation = {
         ...ratings_recommendation,
         ...ratings_1_class,
+        ...ratings_2_classes,
       };
     }
 
@@ -459,7 +519,6 @@ function SparqlPage() {
           'Error: either missing content in the query or unknown syntax error, please check your query and try again.',
       );
     } finally {
-      // TODO: generate recommendation here
       setRecommendations(generateVisRecommendation(query));
       setLoading(false);
     }

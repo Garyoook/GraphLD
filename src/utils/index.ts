@@ -24,12 +24,18 @@ export const ranges_type_mapping: any = {
 };
 
 export const ChartType_mapping = {
+  // 1-class vis:
   scatter: ChartType.SCATTER_PLOT_ANTV,
   bar: ChartType.BAR_CHART_ANTV,
   bubble: ChartType.BUBBLE_CHART_ANTV,
   wordClouds: ChartType.WORD_CLOUD_ANTV,
   calendar: ChartType.CALENDAR_ANTV,
   pie: ChartType.PIE_CHART_ANTV,
+  // 2-class vis:
+  treeMap: ChartType.TREE_MAP_ANTV,
+  hierarchyTree: ChartType.TREE_ANTV,
+  sunburst: ChartType.SUNBURST_ANTV,
+  circlePacking: ChartType.CIRCLE_PACKING_ANTV,
 };
 
 export function convertPrefixToNamespace(jsonldItem: any) {

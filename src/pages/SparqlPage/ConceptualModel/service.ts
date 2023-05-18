@@ -198,12 +198,15 @@ export async function getObjectPropertyMapping() {
 
   const data = queryResultToData(queryRes);
 
-  const objectPropsList = [];
+  const objectPropsMapping: any = {};
   for (const item of data) {
     const { PAB, domain, range } = item;
-    objectPropsList.push({ PAB, domain, range });
+    objectPropsMapping[PAB] = {
+      domain,
+      range,
+    };
   }
-  return objectPropsList;
+  return objectPropsMapping;
 }
 
 export async function getDomainMapping() {
