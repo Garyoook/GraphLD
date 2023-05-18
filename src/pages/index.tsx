@@ -6,7 +6,7 @@ import {
   getDomainMapping,
   getFunctionalProperties,
   getKeyDataProperties,
-  getObjectProperties,
+  getObjectPropertiesList,
   getRangeMapping,
 } from './SparqlPage/ConceptualModel/service';
 import Dashboard from './dashBoard';
@@ -57,7 +57,7 @@ function HomePage() {
       // console.log('Functional Props: ', FunctionalPropsList);
       console.log('Datatype Props list ready');
 
-      const ObjectPropsList = await getObjectProperties();
+      const ObjectPropsList = await getObjectPropertiesList();
       // console.log('Object Props: ', ObjectPropsList);
       console.log('Object DP list ready');
 

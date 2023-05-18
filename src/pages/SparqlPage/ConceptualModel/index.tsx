@@ -1,3 +1,4 @@
+import { repo_graphDB } from '@/consts';
 import { sendSPARQLquery } from '@/pages/services/api';
 import { prefix_mapping } from '@/utils';
 import { Alert, Backdrop, CircularProgress, Grid, Paper } from '@mui/material';
@@ -39,7 +40,7 @@ function ConceptualModelPage(props: any) {
 
   async function findRanges() {
     try {
-      const repositoryID = 'SemanticWebVis';
+      const repositoryID = repo_graphDB;
       const query = `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX mons: <http://www.semwebtech.org/mondial/10/meta#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -103,7 +104,7 @@ WHERE {
 
   async function findClasses() {
     try {
-      const repositoryID = 'SemanticWebVis';
+      const repositoryID = repo_graphDB;
       const query = `
       PREFIX mons: <http://www.semwebtech.org/mondial/10/meta#>
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -164,7 +165,7 @@ WHERE {
 
   async function findFunctionalProperties() {
     try {
-      const repositoryID = 'SemanticWebVis';
+      const repositoryID = repo_graphDB;
       const query = `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 	  PREFIX mons: <http://www.semwebtech.org/mondial/10/meta#>
 	  PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -225,7 +226,7 @@ WHERE {
 
   async function findObjectProperties() {
     try {
-      const repositoryID = 'SemanticWebVis';
+      const repositoryID = repo_graphDB;
       const query = `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 	  PREFIX mons: <http://www.semwebtech.org/mondial/10/meta#>
 	  PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>

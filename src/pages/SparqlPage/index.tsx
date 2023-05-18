@@ -31,6 +31,7 @@ import { sendSPARQLquery } from '../services/api';
 import { DataPropertyDomain } from './ConceptualModel/function';
 import VisOptions, { ChartType } from './VisOptions';
 
+import { repo_graphDB } from '@/consts';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 export interface VisDataProps {
@@ -397,7 +398,7 @@ function SparqlPage() {
   }
 
   const handleQuery = async () => {
-    const repositoryID = 'SemanticWebVis';
+    const repositoryID = repo_graphDB;
 
     try {
       setLoading(true);

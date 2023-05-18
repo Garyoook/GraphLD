@@ -1,3 +1,4 @@
+import { repo_graphDB } from '@/consts';
 import { sendSPARQLquery } from '@/pages/services/api';
 import { prefix_mapping } from '@/utils';
 
@@ -32,7 +33,7 @@ function queryResultToData(queryRes: any) {
 }
 
 export async function getRangeMapping() {
-  const repositoryID = 'SemanticWebVis';
+  const repositoryID = repo_graphDB;
   const query = `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
   PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
   PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -76,7 +77,7 @@ export async function getRangeMapping() {
 }
 
 export async function getClasses() {
-  const repositoryID = 'SemanticWebVis';
+  const repositoryID = repo_graphDB;
   const query = `PREFIX mons: <http://www.semwebtech.org/mondial/10/meta#>
   PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -100,7 +101,7 @@ export async function getClasses() {
 }
 
 export async function getFunctionalProperties() {
-  const repositoryID = 'SemanticWebVis';
+  const repositoryID = repo_graphDB;
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 	PREFIX owl: <http://www.w3.org/2002/07/owl#>
 	SELECT ?DP
@@ -123,7 +124,7 @@ export async function getFunctionalProperties() {
 }
 
 export async function getDatatypeProperties() {
-  const repositoryID = 'SemanticWebVis';
+  const repositoryID = repo_graphDB;
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
   PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
@@ -147,8 +148,8 @@ export async function getDatatypeProperties() {
   return DPs;
 }
 
-export async function getObjectProperties() {
-  const repositoryID = 'SemanticWebVis';
+export async function getObjectPropertiesList() {
+  const repositoryID = repo_graphDB;
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
   PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
@@ -175,8 +176,38 @@ export async function getObjectProperties() {
   return objectPropsList;
 }
 
+export async function getObjectPropertyMapping() {
+  const repositoryID = repo_graphDB;
+  const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  PREFIX owl: <http://www.w3.org/2002/07/owl#>
+  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+  SELECT ?PAB ?domain ?range
+  WHERE {
+      {
+          ?PAB rdf:type owl:ObjectProperty ;
+              rdfs:range ?range ;
+            rdfs:domain ?domain .
+      }
+      FILTER (!isBlank(?PAB) && !isBlank(?domain))
+      FILTER(STRSTARTS(STR(?PAB), STR(:)))
+  }`;
+
+  const infer = false;
+  const queryRes = await sendSPARQLquery(repositoryID, query, infer);
+
+  const data = queryResultToData(queryRes);
+
+  const objectPropsList = [];
+  for (const item of data) {
+    const { PAB, domain, range } = item;
+    objectPropsList.push({ PAB, domain, range });
+  }
+  return objectPropsList;
+}
+
 export async function getDomainMapping() {
-  const repositoryID = 'SemanticWebVis';
+  const repositoryID = repo_graphDB;
   const query = `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
   PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
   SELECT ?DP ?domain
@@ -220,7 +251,7 @@ export async function getDomainMapping() {
 }
 
 export async function getKeyDataProperties() {
-  const repositoryID = 'SemanticWebVis';
+  const repositoryID = repo_graphDB;
   const query = `PREFIX owl: <http://www.w3.org/2002/07/owl#>
   PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>

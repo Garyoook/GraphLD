@@ -1,3 +1,4 @@
+import { repo_graphDB } from '@/consts';
 import { Backdrop, CircularProgress, Grid, Paper } from '@mui/material';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import { useEffect, useState } from 'react';
@@ -27,7 +28,7 @@ function SchemaPage() {
   const [loading, setLoading] = useState(false);
 
   const handleQuery = async () => {
-    const repositoryID = 'SemanticWebVis';
+    const repositoryID = repo_graphDB;
 
     try {
       setLoading(true);
