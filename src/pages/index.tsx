@@ -102,7 +102,7 @@ function HomePage() {
           >
             <CircularProgress color="inherit" />
 
-            <div style={{ marginLeft: 20 }}> Loading LD visualiser </div>
+            <div style={{ marginLeft: 20 }}> Graph LD </div>
           </Backdrop>
         ) : (
           Dashboard()
