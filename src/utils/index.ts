@@ -28,7 +28,7 @@ export const ChartType_mapping = {
   scatter: ChartType.SCATTER_PLOT_ANTV,
   bar: ChartType.BAR_CHART_ANTV,
   bubble: ChartType.BUBBLE_CHART_ANTV,
-  wordClouds: ChartType.WORD_CLOUD_ANTV,
+  wordClouds: ChartType.WORD_CLOUDS_ANTV,
   calendar: ChartType.CALENDAR_ANTV,
   pie: ChartType.PIE_CHART_ANTV,
   // 2-class vis:
@@ -36,6 +36,9 @@ export const ChartType_mapping = {
   hierarchyTree: ChartType.TREE_ANTV,
   sunburst: ChartType.SUNBURST_ANTV,
   circlePacking: ChartType.CIRCLE_PACKING_ANTV,
+  // 3-class vis:
+  sankey: ChartType.SANKEY_ANTV,
+  chord: ChartType.CHORD_DIAGRAM_ANTV,
 };
 
 export function convertPrefixToNamespace(jsonldItem: any) {

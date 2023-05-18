@@ -120,7 +120,7 @@ export interface RecommendationProps {
 }
 
 function SparqlPage() {
-  const [query, setQuery] = useState<string>(f3c);
+  const [query, setQuery] = useState<string>(f3d);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -274,6 +274,28 @@ function SparqlPage() {
       ratings.hierarchyTree += 20;
       ratings.sunburst += 70;
       ratings.circlePacking += 70;
+    }
+
+    console.log('Final 2 class vis ratings: ', ratings);
+
+    return ratings;
+  }
+
+  function generateRatingsFor3C(
+    c_num: number,
+    t_num: number,
+    var_to_range_mapping: any,
+  ) {
+    // ratings for 1 class with DPs:
+    const ratings: any = {
+      sankey: 0,
+      chord: 0,
+    };
+
+    if (c_num == 3) {
+      // TODO: separate sankey and chord ratings by checking the reflexivity.
+      ratings.sankey += 100;
+      ratings.chord += 100;
     }
 
     console.log('Final 2 class vis ratings: ', ratings);
@@ -445,10 +467,17 @@ function SparqlPage() {
         var_to_range_mapping,
       );
 
+      const ratings_3_classes = generateRatingsFor3C(
+        c_num,
+        t_num,
+        var_to_range_mapping,
+      );
+
       ratings_recommendation = {
         ...ratings_recommendation,
         ...ratings_1_class,
         ...ratings_2_classes,
+        ...ratings_3_classes,
       };
     }
 

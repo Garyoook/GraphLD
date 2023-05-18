@@ -66,7 +66,7 @@ export enum ChartType {
   TREE_MAP_ANTV = 'Tree Map ',
   CHORD_DIAGRAM_ANTV = 'Chord Diagram ',
   BUBBLE_CHART_ANTV = 'Bubble Chart ',
-  WORD_CLOUD_ANTV = 'Word Cloud ',
+  WORD_CLOUDS_ANTV = 'Word Clouds ',
   TREE_ANTV = 'Hierarchy Tree ',
   CIRCLE_PACKING_ANTV = 'Circle Packing ',
   SUNBURST_ANTV = 'Sunburst Chart ',
@@ -123,7 +123,7 @@ function VisOptions(props: {
         return <ChordAntV headers={headers} data={originalData} />;
       case ChartType.BUBBLE_CHART_ANTV:
         return <BubbleChartAntV headers={headers} data={originalData} />;
-      case ChartType.WORD_CLOUD_ANTV:
+      case ChartType.WORD_CLOUDS_ANTV:
         return <WordCloudAntV headers={headers} data={originalData} />;
       case ChartType.TREE_ANTV:
         return <TreeAntV headers={headers} data={originalData} />;
@@ -159,7 +159,7 @@ function VisOptions(props: {
     ChartType.PIE_CHART_ANTV,
     ChartType.CHORD_DIAGRAM_ANTV,
     ChartType.SANKEY_ANTV,
-    ChartType.WORD_CLOUD_ANTV,
+    ChartType.WORD_CLOUDS_ANTV,
     ChartType.TREE_ANTV,
     ChartType.TREE_MAP_ANTV,
     ChartType.CIRCLE_PACKING_ANTV,
