@@ -138,6 +138,9 @@ function SchemaPage() {
         <Backdrop
           sx={{
             color: '#fff',
+            fontSize: 20,
+            fontWeight: 'bold',
+            backgroundColor: '#1976d277',
             zIndex: (theme) => theme.zIndex.drawer + 1,
           }}
           open={loading}

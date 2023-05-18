@@ -277,6 +277,7 @@ function DashboardContent() {
           <List component="nav">
             <React.Fragment>
               <ListItemButton
+                selected={tab === TABS_DASHBOARD.REPOSITORY}
                 onClick={() => {
                   setTab(TABS_DASHBOARD.REPOSITORY);
                 }}
@@ -288,6 +289,7 @@ function DashboardContent() {
               </ListItemButton>
 
               <ListItemButton
+                selected={tab === TABS_DASHBOARD.SPARQL_QUERY}
                 onClick={() => {
                   setTab(TABS_DASHBOARD.SPARQL_QUERY);
                 }}
@@ -299,6 +301,7 @@ function DashboardContent() {
               </ListItemButton>
 
               <ListItemButton
+                selected={tab === TABS_DASHBOARD.SCHEMA}
                 onClick={() => {
                   setTab(TABS_DASHBOARD.SCHEMA);
                 }}
@@ -310,6 +313,7 @@ function DashboardContent() {
               </ListItemButton>
 
               <ListItemButton
+                selected={tab === TABS_DASHBOARD.GRAPHS}
                 onClick={() => {
                   setTab(TABS_DASHBOARD.GRAPHS);
                 }}
