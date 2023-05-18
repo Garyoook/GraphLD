@@ -39,6 +39,7 @@ const ScatterPlotAntV = (props: VisDataProps) => {
   // axis, set to states for future column switching requirements
   const [xField, setXField] = useState<string>('');
   const [yField, setYField] = useState<string>('');
+  const [keyField, setKeyField] = useState<string>('');
   const [regressionType, setRegressionType] = useState(Regression_Type.NONE);
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
@@ -51,6 +52,7 @@ const ScatterPlotAntV = (props: VisDataProps) => {
   useEffect(() => {
     setXField(headers[0]);
     setYField(headers[1]);
+    setKeyField(headers[2]);
 
     const typedData = preprocessDataForVisualisation(data);
 
@@ -62,6 +64,7 @@ const ScatterPlotAntV = (props: VisDataProps) => {
     data: dataSource,
     xField,
     yField,
+    colorField: keyField,
     shape: 'circle',
     // colorField: '',
     size: 4,
@@ -138,6 +141,30 @@ const ScatterPlotAntV = (props: VisDataProps) => {
                 value={safeGetFieldIndex(fieldsAll, yField)}
                 onChange={(e) => {
                   setYField(
+                    safeGetField(
+                      fieldsAll,
+                      Number(e.target.value),
+                      emptyHeader,
+                    ),
+                  );
+                }}
+              >
+                {fieldsAll.map((item, index) => {
+                  return <MenuItem value={index}>{item}</MenuItem>;
+                })}
+              </Select>
+            </FormControl>
+          </Tooltip>
+        </Grid>
+
+        <Grid item>
+          <Tooltip title="Select input source for keys" arrow placement="top">
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              source for key field
+              <Select
+                value={safeGetFieldIndex(fieldsAll, keyField)}
+                onChange={(e) => {
+                  setKeyField(
                     safeGetField(
                       fieldsAll,
                       Number(e.target.value),

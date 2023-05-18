@@ -182,8 +182,29 @@ function SparqlPage() {
         allScalar = false;
       }
       ratings.scatter += allScalar ? 100 : 30;
-      ratings.bubble += allScalar ? 70 : 20;
     }
+
+    if (
+      c_num == 1 &&
+      t_num >= 2 &&
+      t_num <= 4 &&
+      Object.values(var_to_range_mapping).some((v: any) => {
+        return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
+      })
+    ) {
+      ratings.bubble += 100;
+    }
+
+    if (
+      c_num == 1 &&
+      t_num == 2 &&
+      Object.values(var_to_range_mapping).some((v: any) => {
+        return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
+      })
+    ) {
+      ratings.scatter += 100;
+    }
+
     if (
       c_num == 1 &&
       t_num == 1 &&
@@ -207,15 +228,6 @@ function SparqlPage() {
     ) {
       ratings.bar += 100;
       ratings.wordClouds += 100;
-    }
-    if (
-      (c_num == 1 && t_num == 2) ||
-      (t_num == 3 &&
-        Object.values(var_to_range_mapping).some((v: any) => {
-          return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
-        }))
-    ) {
-      ratings.bubble += 100;
     }
     if (
       t_num == 1 &&
@@ -440,10 +452,11 @@ function SparqlPage() {
       setDataSource(data);
       setShowAlert(false);
     } catch (e: any) {
-      console.error('Error', e.response.data);
+      console.error('Error', e.response?.data);
       setShowAlert(true);
       setAlertText(
-        e.response.data || 'Error: please check your query and try again.',
+        e.response?.data ||
+          'Error: either missing content in the query or unknown syntax error, please check your query and try again.',
       );
     } finally {
       // TODO: generate recommendation here

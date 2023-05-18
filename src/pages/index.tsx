@@ -7,6 +7,7 @@ import {
   getFunctionalProperties,
   getKeyDataProperties,
   getObjectPropertiesList,
+  getObjectPropertyMapping,
   getRangeMapping,
 } from './SparqlPage/ConceptualModel/service';
 import Dashboard from './dashBoard';
@@ -61,6 +62,10 @@ function HomePage() {
       // console.log('Object Props: ', ObjectPropsList);
       console.log('Object DP list ready');
 
+      const ObjectPropsMapping = await getObjectPropertyMapping();
+      // console.log('Object Props Mapping: ', ObjectPropsMapping);
+      console.log('Object DP mapping ready');
+
       const DP_domain_mapping = await getDomainMapping();
       // console.log('DP-Domain Map: ', DP_domain_mapping);
       console.log('DP - domain mapping ready');
@@ -74,6 +79,7 @@ function HomePage() {
       ConceptualModelInfo['FunctionalPropsList'] = FunctionalPropsList;
       ConceptualModelInfo['DatatypePropsList'] = DatatypePropsList;
       ConceptualModelInfo['ObjectPropsList'] = ObjectPropsList;
+      ConceptualModelInfo['ObjectPropsMapping'] = ObjectPropsMapping;
       ConceptualModelInfo['DP_domain_mapping'] = DP_domain_mapping;
       ConceptualModelInfo['DPKList'] = DPKList;
     } catch (error) {
