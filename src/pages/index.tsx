@@ -1,4 +1,4 @@
-import { Backdrop, CircularProgress } from '@mui/material';
+import { Backdrop, CircularProgress, Grow } from '@mui/material';
 import { useEffect, useState } from 'react';
 import {
   getClasses,
@@ -99,6 +99,7 @@ function HomePage() {
               zIndex: (theme) => theme.zIndex.drawer + 1,
             }}
             open={loading}
+            TransitionComponent={Grow}
           >
             <CircularProgress color="inherit" />
 
