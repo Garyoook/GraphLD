@@ -2,7 +2,11 @@ import { VisDataProps } from '@/pages/SparqlPage';
 import { Line } from '@ant-design/plots';
 import { FormControl, Grid, MenuItem, Select } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { preprocessData } from './utils';
+import {
+  preprocessDataForVisualisation,
+  safeGetField,
+  safeGetFieldIndex,
+} from './utils';
 
 function MultipleLineChart(props: VisDataProps) {
   const { headers, data } = props;
@@ -15,8 +19,10 @@ function MultipleLineChart(props: VisDataProps) {
   const [seriesField, setSeriesField] = useState<string>('');
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
+
+  const emptyHeader = '-';
   useEffect(() => {
-    setFieldsAll(headers);
+    setFieldsAll([emptyHeader, ...headers]);
   }, [headers]);
 
   useEffect(() => {
@@ -24,7 +30,7 @@ function MultipleLineChart(props: VisDataProps) {
     setXField(headers[1]);
     setYField(headers[2]);
 
-    const typedData = preprocessData(data).sort(
+    const typedData = preprocessDataForVisualisation(data).sort(
       (a: any, b: any) => a[headers[1]] - b[headers[1]],
     );
 
@@ -68,9 +74,11 @@ function MultipleLineChart(props: VisDataProps) {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for series
             <Select
-              value={fieldsAll.indexOf(seriesField)}
+              value={safeGetFieldIndex(fieldsAll, seriesField)}
               onChange={(e) => {
-                setSeriesField(fieldsAll[Number(e.target.value)]);
+                setSeriesField(
+                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
+                );
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -84,9 +92,11 @@ function MultipleLineChart(props: VisDataProps) {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for x axis
             <Select
-              value={fieldsAll.indexOf(xField)}
+              value={safeGetFieldIndex(fieldsAll, xField)}
               onChange={(e) => {
-                setXField(fieldsAll[Number(e.target.value)]);
+                setXField(
+                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
+                );
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -100,9 +110,11 @@ function MultipleLineChart(props: VisDataProps) {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for y axis
             <Select
-              value={fieldsAll.indexOf(yField)}
+              value={safeGetFieldIndex(fieldsAll, yField)}
               onChange={(e) => {
-                setYField(fieldsAll[Number(e.target.value)]);
+                setYField(
+                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
+                );
               }}
             >
               {fieldsAll.map((item, index) => {

@@ -3,7 +3,11 @@ import { Treemap } from '@ant-design/plots';
 import { FormControl, Grid, MenuItem, Select, Tooltip } from '@mui/material';
 import { useEffect, useState } from 'react';
 import './TreeMapAntV.scss';
-import { preprocessData } from './utils';
+import {
+  preprocessDataForVisualisation,
+  safeGetField,
+  safeGetFieldIndex,
+} from './utils';
 
 const TreeMapAntV = (props: VisDataProps) => {
   const { headers, data } = props;
@@ -18,8 +22,10 @@ const TreeMapAntV = (props: VisDataProps) => {
   const [drillDownOpen, setDrillDownOpen] = useState(false);
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
+
+  const emptyHeader = '-';
   useEffect(() => {
-    setFieldsAll(headers);
+    setFieldsAll([emptyHeader, ...headers]);
   }, [headers]);
 
   const renderModes = [
@@ -40,7 +46,7 @@ const TreeMapAntV = (props: VisDataProps) => {
   };
 
   useEffect(() => {
-    const typedData = preprocessData(data);
+    const typedData = preprocessDataForVisualisation(data);
 
     const catogories = Array.from(
       new Set(typedData.map((item: any) => item[categoryCol])),
@@ -126,9 +132,15 @@ const TreeMapAntV = (props: VisDataProps) => {
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               source for catogories field
               <Select
-                value={fieldsAll.indexOf(categoryCol)}
+                value={safeGetFieldIndex(fieldsAll, categoryCol)}
                 onChange={(e) => {
-                  setCatogoryCol(fieldsAll[Number(e.target.value)]);
+                  setCatogoryCol(
+                    safeGetField(
+                      fieldsAll,
+                      Number(e.target.value),
+                      emptyHeader,
+                    ),
+                  );
                 }}
               >
                 {fieldsAll.map((item, index) => {
@@ -148,9 +160,15 @@ const TreeMapAntV = (props: VisDataProps) => {
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               source for identification field
               <Select
-                value={fieldsAll.indexOf(idCol)}
+                value={safeGetFieldIndex(fieldsAll, idCol)}
                 onChange={(e) => {
-                  setIdCol(fieldsAll[Number(e.target.value)]);
+                  setIdCol(
+                    safeGetField(
+                      fieldsAll,
+                      Number(e.target.value),
+                      emptyHeader,
+                    ),
+                  );
                 }}
               >
                 {fieldsAll.map((item, index) => {
@@ -178,7 +196,7 @@ const TreeMapAntV = (props: VisDataProps) => {
           </Tooltip>
         </Grid> */}
 
-        <Grid item xs={12}>
+        <Grid item>
           <Tooltip
             title="Change render mode: Overview or Layers"
             arrow

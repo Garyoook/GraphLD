@@ -1,6 +1,6 @@
 import { VisDataProps } from '@/pages/SparqlPage';
 
-export function preprocessData(
+export function preprocessDataForVisualisation(
   data: VisDataProps['data'],
 ): VisDataProps['data'] {
   return data.map((item) => {
@@ -27,4 +27,20 @@ export function preprocessData(
     }
     return item;
   });
+}
+
+export function safeGetFieldIndex(fieldsAll: string[], field: string): number {
+  return fieldsAll.indexOf(field) == -1 ? 0 : fieldsAll.indexOf(field);
+}
+
+// safely get field from fieldsAll if not valid,
+// return empty string for vis to render normally.
+export function safeGetField(
+  fieldsAll: string[],
+  value: number,
+  emptyHeader: string = '-',
+): string {
+  return fieldsAll[Number(value)] == emptyHeader
+    ? ''
+    : fieldsAll[Number(value)];
 }

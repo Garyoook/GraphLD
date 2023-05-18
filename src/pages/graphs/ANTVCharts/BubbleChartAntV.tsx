@@ -2,7 +2,11 @@ import { VisDataProps } from '@/pages/SparqlPage';
 import { Scatter } from '@ant-design/plots';
 import { FormControl, Grid, MenuItem, Select, Tooltip } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { preprocessData } from './utils';
+import {
+  preprocessDataForVisualisation,
+  safeGetField,
+  safeGetFieldIndex,
+} from './utils';
 
 const BubbleChartAntV = (props: VisDataProps) => {
   const { headers, data } = props;
@@ -16,8 +20,10 @@ const BubbleChartAntV = (props: VisDataProps) => {
   const [colorField, setColorField] = useState('');
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
+
+  const emptyHeader = '-';
   useEffect(() => {
-    setFieldsAll(headers);
+    setFieldsAll([emptyHeader, ...headers]);
   }, [headers]);
 
   useEffect(() => {
@@ -26,7 +32,7 @@ const BubbleChartAntV = (props: VisDataProps) => {
     setSizeField(headers[2]);
     setColorField(headers[3]);
 
-    const typedData = preprocessData(data);
+    const typedData = preprocessDataForVisualisation(data);
 
     setDataSource(typedData);
   }, [headers, data]);
@@ -76,24 +82,6 @@ const BubbleChartAntV = (props: VisDataProps) => {
         },
       },
     },
-    // quadrant: {
-    //   xBaseline: 0,
-    //   yBaseline: 0,
-    //   labels: [
-    //     {
-    //       content: 'Male decrease,\nfemale increase',
-    //     },
-    //     {
-    //       content: 'Female decrease,\nmale increase',
-    //     },
-    //     {
-    //       content: 'Female & male decrease',
-    //     },
-    //     {
-    //       content: 'Female &\n male increase',
-    //     },
-    //   ],
-    // },
   };
 
   return dataSource.length > 0 ? (
@@ -105,9 +93,14 @@ const BubbleChartAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for x axis
             <Select
-              value={fieldsAll.indexOf(xField)}
+              value={safeGetFieldIndex(fieldsAll, xField)}
               onChange={(e) => {
-                setXField(fieldsAll[Number(e.target.value)]);
+                const field = safeGetField(
+                  fieldsAll,
+                  Number(e.target.value),
+                  emptyHeader,
+                );
+                setXField(field);
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -121,9 +114,14 @@ const BubbleChartAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for y axis
             <Select
-              value={fieldsAll.indexOf(yField)}
+              value={safeGetFieldIndex(fieldsAll, yField)}
               onChange={(e) => {
-                setYField(fieldsAll[Number(e.target.value)]);
+                const field = safeGetField(
+                  fieldsAll,
+                  Number(e.target.value),
+                  emptyHeader,
+                );
+                setYField(field);
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -137,9 +135,14 @@ const BubbleChartAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for size field
             <Select
-              value={fieldsAll.indexOf(sizeField)}
+              value={safeGetFieldIndex(fieldsAll, sizeField)}
               onChange={(e) => {
-                setSizeField(fieldsAll[Number(e.target.value)]);
+                const field = safeGetField(
+                  fieldsAll,
+                  Number(e.target.value),
+                  emptyHeader,
+                );
+                setSizeField(field);
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -158,9 +161,14 @@ const BubbleChartAntV = (props: VisDataProps) => {
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               source for color field
               <Select
-                value={fieldsAll.indexOf(colorField)}
+                value={safeGetFieldIndex(fieldsAll, colorField)}
                 onChange={(e) => {
-                  setColorField(fieldsAll[Number(e.target.value)]);
+                  const field = safeGetField(
+                    fieldsAll,
+                    Number(e.target.value),
+                    emptyHeader,
+                  );
+                  setColorField(field);
                 }}
               >
                 {fieldsAll.map((item, index) => {

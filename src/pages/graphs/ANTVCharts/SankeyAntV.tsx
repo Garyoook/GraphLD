@@ -2,7 +2,11 @@ import { VisDataProps } from '@/pages/SparqlPage';
 import { Sankey } from '@ant-design/plots';
 import { FormControl, Grid, MenuItem, Select } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { preprocessData } from './utils';
+import {
+  preprocessDataForVisualisation,
+  safeGetField,
+  safeGetFieldIndex,
+} from './utils';
 
 const SankeyAntV = (props: VisDataProps) => {
   const { headers, data } = props;
@@ -15,8 +19,10 @@ const SankeyAntV = (props: VisDataProps) => {
   const [weightField, setWeightField] = useState<string>('');
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
+
+  const emptyHeader = '-';
   useEffect(() => {
-    setFieldsAll(headers);
+    setFieldsAll([emptyHeader, ...headers]);
   }, [headers]);
 
   useEffect(() => {
@@ -24,7 +30,7 @@ const SankeyAntV = (props: VisDataProps) => {
     setTargetField(headers[1]);
     setWeightField(headers[2]);
 
-    const typedData = preprocessData(data);
+    const typedData = preprocessDataForVisualisation(data);
 
     setDataSource(typedData);
   }, [data, headers]);
@@ -51,7 +57,7 @@ const SankeyAntV = (props: VisDataProps) => {
 
         return {
           name: `${source} -> ${target}`,
-          value,
+          value: `${weightField}: ${value}`,
         };
       },
     },
@@ -66,9 +72,11 @@ const SankeyAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source field
             <Select
-              value={fieldsAll.indexOf(sourceField)}
+              value={safeGetFieldIndex(fieldsAll, sourceField)}
               onChange={(e) => {
-                setSourceField(fieldsAll[Number(e.target.value)]);
+                setSourceField(
+                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
+                );
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -82,9 +90,11 @@ const SankeyAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             target field
             <Select
-              value={fieldsAll.indexOf(targetField)}
+              value={safeGetFieldIndex(fieldsAll, targetField)}
               onChange={(e) => {
-                setTargetField(fieldsAll[Number(e.target.value)]);
+                setTargetField(
+                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
+                );
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -98,9 +108,11 @@ const SankeyAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             weight field
             <Select
-              value={fieldsAll.indexOf(weightField)}
+              value={safeGetFieldIndex(fieldsAll, weightField)}
               onChange={(e) => {
-                setWeightField(fieldsAll[Number(e.target.value)]);
+                setWeightField(
+                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
+                );
               }}
             >
               {fieldsAll.map((item, index) => {

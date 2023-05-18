@@ -2,7 +2,11 @@ import { VisDataProps } from '@/pages/SparqlPage';
 import { Chord } from '@ant-design/plots';
 import { FormControl, Grid, MenuItem, Select } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { preprocessData } from './utils';
+import {
+  preprocessDataForVisualisation,
+  safeGetField,
+  safeGetFieldIndex,
+} from './utils';
 
 const ChordAntV = (props: VisDataProps) => {
   const { headers, data } = props;
@@ -15,8 +19,10 @@ const ChordAntV = (props: VisDataProps) => {
   const [weightField, setWeightField] = useState<string>('');
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
+
+  const emptyHeader = '-';
   useEffect(() => {
-    setFieldsAll(headers);
+    setFieldsAll([emptyHeader, ...headers]);
   }, [headers]);
 
   useEffect(() => {
@@ -24,7 +30,7 @@ const ChordAntV = (props: VisDataProps) => {
     setTargetField(headers[1]);
     setWeightField(headers[2]);
 
-    const typedData = preprocessData(data);
+    const typedData = preprocessDataForVisualisation(data);
 
     setDataSource(typedData);
   }, [data, headers]);
@@ -51,7 +57,7 @@ const ChordAntV = (props: VisDataProps) => {
 
         return {
           name: `${source} -> ${target}`,
-          value,
+          value: `${weightField}: ${value}`,
         };
       },
     },
@@ -65,9 +71,14 @@ const ChordAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source field
             <Select
-              value={fieldsAll.indexOf(sourceField)}
+              value={safeGetFieldIndex(fieldsAll, sourceField)}
               onChange={(e) => {
-                setSourceField(fieldsAll[Number(e.target.value)]);
+                const field = safeGetField(
+                  fieldsAll,
+                  Number(e.target.value),
+                  emptyHeader,
+                );
+                setSourceField(field);
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -81,9 +92,14 @@ const ChordAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             target field
             <Select
-              value={fieldsAll.indexOf(targetField)}
+              value={safeGetFieldIndex(fieldsAll, targetField)}
               onChange={(e) => {
-                setTargetField(fieldsAll[Number(e.target.value)]);
+                const field = safeGetField(
+                  fieldsAll,
+                  Number(e.target.value),
+                  emptyHeader,
+                );
+                setTargetField(field);
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -97,9 +113,11 @@ const ChordAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             weight field
             <Select
-              value={fieldsAll.indexOf(weightField)}
+              value={safeGetFieldIndex(fieldsAll, weightField)}
               onChange={(e) => {
-                setWeightField(fieldsAll[Number(e.target.value)]);
+                setWeightField(
+                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
+                );
               }}
             >
               {fieldsAll.map((item, index) => {

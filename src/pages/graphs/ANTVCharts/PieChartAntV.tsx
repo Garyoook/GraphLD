@@ -2,7 +2,11 @@ import { VisDataProps } from '@/pages/SparqlPage';
 import { Pie } from '@ant-design/plots';
 import { FormControl, Grid, MenuItem, Select } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { preprocessData } from './utils';
+import {
+  preprocessDataForVisualisation,
+  safeGetField,
+  safeGetFieldIndex,
+} from './utils';
 
 const PieChartAntV = (props: VisDataProps) => {
   const { headers, data } = props;
@@ -14,15 +18,17 @@ const PieChartAntV = (props: VisDataProps) => {
   const [colorField, setColorField] = useState<string>('');
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
+
+  const emptyHeader = '-';
   useEffect(() => {
-    setFieldsAll(headers);
+    setFieldsAll([emptyHeader, ...headers]);
   }, [headers]);
 
   useEffect(() => {
     setColorField(headers[0]);
     setAngleField(headers[1]);
 
-    const typedData = preprocessData(data).sort(
+    const typedData = preprocessDataForVisualisation(data).sort(
       (a: any, b: any) => a[headers[1]] - b[headers[1]],
     );
 
@@ -69,9 +75,11 @@ const PieChartAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for catorization field
             <Select
-              value={fieldsAll.indexOf(colorField)}
+              value={safeGetFieldIndex(fieldsAll, colorField)}
               onChange={(e) => {
-                setColorField(fieldsAll[Number(e.target.value)]);
+                setColorField(
+                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
+                );
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -85,9 +93,11 @@ const PieChartAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for quantity field
             <Select
-              value={fieldsAll.indexOf(angleField)}
+              value={safeGetFieldIndex(fieldsAll, angleField)}
               onChange={(e) => {
-                setAngleField(fieldsAll[Number(e.target.value)]);
+                setAngleField(
+                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
+                );
               }}
             >
               {fieldsAll.map((item, index) => {

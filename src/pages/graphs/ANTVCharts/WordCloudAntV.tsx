@@ -2,7 +2,11 @@ import { VisDataProps } from '@/pages/SparqlPage';
 import { WordCloud } from '@ant-design/plots';
 import { FormControl, Grid, MenuItem, Select } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { preprocessData } from './utils';
+import {
+  preprocessDataForVisualisation,
+  safeGetField,
+  safeGetFieldIndex,
+} from './utils';
 
 const BarChartAntV = (props: VisDataProps) => {
   const { headers, data } = props;
@@ -14,15 +18,17 @@ const BarChartAntV = (props: VisDataProps) => {
   const [weightField, setWeightField] = useState<string>('');
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
+
+  const emptyHeader = '-';
   useEffect(() => {
-    setFieldsAll(headers);
+    setFieldsAll([emptyHeader, ...headers]);
   }, [headers]);
 
   useEffect(() => {
     setWordField(headers[0]);
     setWeightField(headers[1]);
 
-    const typedData = preprocessData(data);
+    const typedData = preprocessDataForVisualisation(data);
 
     setDataSource(typedData);
   }, [headers, data]);
@@ -51,6 +57,18 @@ const BarChartAntV = (props: VisDataProps) => {
         },
       },
     },
+    tooltip: {
+      // fields: ['value'],
+      showContent: true,
+      formatter: (datum: any) => {
+        const { text, value } = datum;
+
+        return {
+          name: text,
+          value: `(${weightField}) ${value}`,
+        };
+      },
+    },
   };
 
   return dataSource.length > 0 ? (
@@ -62,9 +80,11 @@ const BarChartAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for words
             <Select
-              value={fieldsAll.indexOf(wordField)}
+              value={safeGetFieldIndex(fieldsAll, wordField)}
               onChange={(e) => {
-                setWordField(fieldsAll[Number(e.target.value)]);
+                setWordField(
+                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
+                );
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -78,9 +98,11 @@ const BarChartAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for weight
             <Select
-              value={fieldsAll.indexOf(weightField)}
+              value={safeGetFieldIndex(fieldsAll, weightField)}
               onChange={(e) => {
-                setWeightField(fieldsAll[Number(e.target.value)]);
+                setWeightField(
+                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
+                );
               }}
             >
               {fieldsAll.map((item, index) => {

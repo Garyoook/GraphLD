@@ -2,7 +2,11 @@ import { VisDataProps } from '@/pages/SparqlPage';
 import { Column } from '@ant-design/plots';
 import { FormControl, Grid, MenuItem, Select } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { preprocessData } from './utils';
+import {
+  preprocessDataForVisualisation,
+  safeGetField,
+  safeGetFieldIndex,
+} from './utils';
 
 const BarChartAntV = (props: VisDataProps) => {
   const { headers, data } = props;
@@ -14,15 +18,17 @@ const BarChartAntV = (props: VisDataProps) => {
   const [yField, setYField] = useState<string>('');
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
+
+  const emptyHeader = '-';
   useEffect(() => {
-    setFieldsAll(headers);
+    setFieldsAll([emptyHeader, ...headers]);
   }, [headers]);
 
   useEffect(() => {
     setXField(headers[0]);
     setYField(headers[1]);
 
-    const typedData = preprocessData(data);
+    const typedData = preprocessDataForVisualisation(data);
     // sort is not necessary
     // .sort((a: any, b: any) => a[headers[1]] - b[headers[1]],);
 
@@ -50,9 +56,14 @@ const BarChartAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for x axis
             <Select
-              value={fieldsAll.indexOf(xField)}
+              value={safeGetFieldIndex(fieldsAll, xField)}
               onChange={(e) => {
-                setXField(fieldsAll[Number(e.target.value)]);
+                const field = safeGetField(
+                  fieldsAll,
+                  Number(e.target.value),
+                  emptyHeader,
+                );
+                setXField(field);
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -66,9 +77,14 @@ const BarChartAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for y axis
             <Select
-              value={fieldsAll.indexOf(yField)}
+              value={safeGetFieldIndex(fieldsAll, yField)}
               onChange={(e) => {
-                setYField(fieldsAll[Number(e.target.value)]);
+                const field = safeGetField(
+                  fieldsAll,
+                  Number(e.target.value),
+                  emptyHeader,
+                );
+                setYField(field);
               }}
             >
               {fieldsAll.map((item, index) => {

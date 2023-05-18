@@ -3,7 +3,11 @@ import { VisDataProps } from '@/pages/SparqlPage';
 import { G2, Heatmap } from '@ant-design/plots';
 import { FormControl, Grid, MenuItem, Select } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { preprocessData } from './utils';
+import {
+  preprocessDataForVisualisation,
+  safeGetField,
+  safeGetFieldIndex,
+} from './utils';
 
 const CalendarChart = (props: VisDataProps) => {
   const { headers, data } = props;
@@ -16,8 +20,10 @@ const CalendarChart = (props: VisDataProps) => {
   const [colorField, setColorField] = useState<string>('');
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
+
+  const emptyHeader = '-';
   useEffect(() => {
-    setFieldsAll(headers);
+    setFieldsAll([emptyHeader, ...headers]);
   }, [headers]);
 
   useEffect(() => {
@@ -26,8 +32,12 @@ const CalendarChart = (props: VisDataProps) => {
     headers[1] && setColorField(headers[1]);
   }, [headers, data]);
 
+  function isValidDate(date) {
+    return !Number.isNaN(new Date(date).getTime());
+  }
+
   useEffect(() => {
-    let dateData = preprocessData(data);
+    let dateData = preprocessDataForVisualisation(data);
     if (dateData.length > 0 && dateData[0][dateField]) {
       dateData = dateData
         .map((item: any) => {
@@ -78,7 +88,9 @@ const CalendarChart = (props: VisDataProps) => {
             const d2 = new Date(d.date);
             d1.setHours(0);
             d2.setHours(0);
-            return d1.toISOString() == d2.toISOString();
+            return isValidDate(d1) && isValidDate(d2)
+              ? d1.toISOString() == d2.toISOString()
+              : false;
           })
         ) {
           d.week = week;
@@ -231,9 +243,14 @@ const CalendarChart = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for date field
             <Select
-              value={fieldsAll.indexOf(dateField)}
+              value={safeGetFieldIndex(fieldsAll, dateField)}
               onChange={(e) => {
-                setDateField(fieldsAll[Number(e.target.value)]);
+                const field = safeGetField(
+                  fieldsAll,
+                  Number(e.target.value),
+                  emptyHeader,
+                );
+                setDateField(field);
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -246,9 +263,14 @@ const CalendarChart = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for color field
             <Select
-              value={fieldsAll.indexOf(colorField)}
+              value={safeGetFieldIndex(fieldsAll, colorField)}
               onChange={(e) => {
-                setColorField(fieldsAll[Number(e.target.value)]);
+                const field = safeGetField(
+                  fieldsAll,
+                  Number(e.target.value),
+                  emptyHeader,
+                );
+                setColorField(field);
               }}
             >
               {fieldsAll.map((item, index) => {

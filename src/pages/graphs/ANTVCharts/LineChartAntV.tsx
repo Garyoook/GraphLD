@@ -2,7 +2,11 @@ import { VisDataProps } from '@/pages/SparqlPage';
 import { Line } from '@ant-design/plots';
 import { FormControl, Grid, MenuItem, Select } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { preprocessData } from './utils';
+import {
+  preprocessDataForVisualisation,
+  safeGetField,
+  safeGetFieldIndex,
+} from './utils';
 
 const LineChartAntV = (props: VisDataProps) => {
   const { headers, data } = props;
@@ -14,15 +18,17 @@ const LineChartAntV = (props: VisDataProps) => {
   const [yField, setYField] = useState<string>('');
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
+
+  const emptyHeader = '-';
   useEffect(() => {
-    setFieldsAll(headers);
+    setFieldsAll([emptyHeader, ...headers]);
   }, [headers]);
 
   useEffect(() => {
     setXField(headers[0]);
     setYField(headers[1]);
 
-    const typedData = preprocessData(data);
+    const typedData = preprocessDataForVisualisation(data);
 
     setDataSource(typedData);
   }, [headers, data]);
@@ -56,9 +62,11 @@ const LineChartAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for x axis
             <Select
-              value={fieldsAll.indexOf(xField)}
+              value={safeGetFieldIndex(fieldsAll, xField)}
               onChange={(e) => {
-                setXField(fieldsAll[Number(e.target.value)]);
+                setXField(
+                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
+                );
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -72,9 +80,11 @@ const LineChartAntV = (props: VisDataProps) => {
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for y axis
             <Select
-              value={fieldsAll.indexOf(yField)}
+              value={safeGetFieldIndex(fieldsAll, yField)}
               onChange={(e) => {
-                setYField(fieldsAll[Number(e.target.value)]);
+                setYField(
+                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
+                );
               }}
             >
               {fieldsAll.map((item, index) => {

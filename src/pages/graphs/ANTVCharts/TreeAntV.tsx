@@ -2,7 +2,11 @@ import { VisDataProps } from '@/pages/SparqlPage';
 import { RadialTreeGraph } from '@ant-design/graphs';
 import { FormControl, Grid, MenuItem, Select, Tooltip } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { preprocessData } from './utils';
+import {
+  preprocessDataForVisualisation,
+  safeGetField,
+  safeGetFieldIndex,
+} from './utils';
 
 const TreeAntV = (props: VisDataProps) => {
   const { headers, data } = props;
@@ -14,8 +18,10 @@ const TreeAntV = (props: VisDataProps) => {
   const [valueCol, setValueCol] = useState<string>('');
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
+
+  const emptyHeader = '-';
   useEffect(() => {
-    setFieldsAll(headers);
+    setFieldsAll([emptyHeader, ...headers]);
   }, [headers]);
 
   useEffect(() => {
@@ -25,7 +31,7 @@ const TreeAntV = (props: VisDataProps) => {
   }, [headers]);
 
   useEffect(() => {
-    const typedData = preprocessData(data);
+    const typedData = preprocessDataForVisualisation(data);
 
     const catogories = Array.from(
       new Set(typedData.map((item: any) => item[categoryCol])),
@@ -105,9 +111,15 @@ const TreeAntV = (props: VisDataProps) => {
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               source for catogories field
               <Select
-                value={fieldsAll.indexOf(categoryCol)}
+                value={safeGetFieldIndex(fieldsAll, categoryCol)}
                 onChange={(e) => {
-                  setCatogoryCol(fieldsAll[Number(e.target.value)]);
+                  setCatogoryCol(
+                    safeGetField(
+                      fieldsAll,
+                      Number(e.target.value),
+                      emptyHeader,
+                    ),
+                  );
                 }}
               >
                 {fieldsAll.map((item, index) => {
@@ -127,9 +139,15 @@ const TreeAntV = (props: VisDataProps) => {
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               source for identification field
               <Select
-                value={fieldsAll.indexOf(idCol)}
+                value={safeGetFieldIndex(fieldsAll, idCol)}
                 onChange={(e) => {
-                  setIdCol(fieldsAll[Number(e.target.value)]);
+                  setIdCol(
+                    safeGetField(
+                      fieldsAll,
+                      Number(e.target.value),
+                      emptyHeader,
+                    ),
+                  );
                 }}
               >
                 {fieldsAll.map((item, index) => {
