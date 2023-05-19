@@ -31,7 +31,7 @@ function HomePage() {
   //   console.log('modified', mondial_metadata_clone);
   // }, []);
   // ! END experimental code
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     initConceptualModelInfo().then(() => {
@@ -87,7 +87,7 @@ function HomePage() {
     } finally {
       setTimeout(() => {
         setLoading(false);
-      }, 1000);
+      }, 500);
     }
   }
 
