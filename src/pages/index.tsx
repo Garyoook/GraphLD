@@ -1,4 +1,4 @@
-import { Backdrop, CircularProgress, Grow } from '@mui/material';
+import { Backdrop, Box, Grow, LinearProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
 import {
   getClasses,
@@ -85,9 +85,9 @@ function HomePage() {
     } catch (error) {
       console.log(error);
     } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 500);
+      // setTimeout(() => {
+      //   setLoading(false);
+      // }, 1000);
     }
   }
 
@@ -103,13 +103,48 @@ function HomePage() {
               fontWeight: 'bold',
               backgroundColor: '#1976d2',
               zIndex: (theme) => theme.zIndex.drawer + 1,
+              fontFamily: '"Gill Sans", sans-serif',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
             }}
             open={loading}
             TransitionComponent={Grow}
           >
-            <CircularProgress color="inherit" />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                margin: 30,
+              }}
+            >
+              <div
+                style={{
+                  marginRight: 20,
+                  alignSelf: 'flex-end',
+                }}
+              >
+                Graph LD
+              </div>
 
-            <div style={{ marginLeft: 20 }}> Graph LD </div>
+              <div
+                style={{
+                  color: '#fff',
+                  fontSize: 30,
+                  alignSelf: 'flex-end',
+                }}
+              >
+                - better way to know your Linked Data
+              </div>
+            </div>
+
+            <Box
+              sx={{
+                width: '60%',
+              }}
+            >
+              <LinearProgress color="inherit" />
+            </Box>
           </Backdrop>
         ) : (
           Dashboard()
