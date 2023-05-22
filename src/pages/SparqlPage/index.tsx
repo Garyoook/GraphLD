@@ -6,13 +6,17 @@ import SendIcon from '@mui/icons-material/Send';
 import {
   Alert,
   AppBar,
+  Backdrop,
+  Box,
   Button,
   Dialog,
   DialogContent,
   FormControlLabel,
   FormGroup,
   Grid,
+  Grow,
   IconButton,
+  LinearProgress,
   Paper,
   Switch,
   Toolbar,
@@ -22,7 +26,7 @@ import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import CodeMirror from '@uiw/react-codemirror';
-import { forwardRef, useCallback, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useState } from 'react';
 import { ConceptualModelInfo } from '..';
 import {
   ChartType_mapping,
@@ -36,6 +40,17 @@ import VisOptions, { ChartType } from './VisOptions';
 
 import { repo_graphDB } from '@/consts';
 import LoadingButton from '@mui/lab/LoadingButton';
+import { useSearchParams } from 'umi';
+import {
+  getClasses,
+  getDatatypeProperties,
+  getDomainMapping,
+  getFunctionalProperties,
+  getKeyDataProperties,
+  getObjectPropertiesList,
+  getObjectPropertyMapping,
+  getRangeMapping,
+} from './ConceptualModel/service';
 
 export interface VisDataProps {
   headers: string[];
@@ -123,6 +138,16 @@ export interface RecommendationProps {
 }
 
 function SparqlPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  let ConceptualModel = ConceptualModelInfo;
+  const [fullLoading, setFullLoading] = useState(true);
+  useEffect(() => {
+    if (searchParams.get('query')) {
+      initConceptualModelInfo();
+      setQuery(searchParams.get('query') || initialString);
+    }
+  }, [searchParams]);
+
   const [query, setQuery] = useState<string>(initialString);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
@@ -145,6 +170,33 @@ function SparqlPage() {
   // console.log('Object Props: ', ObjectPropsList);
   // console.log('DP-Domain Map: ', DP_domain_mapping);
   // console.log('DP-T Map: ', DP_Range_mapping);
+
+  async function initConceptualModelInfo() {
+    try {
+      setFullLoading(true);
+      const DP_Range_mapping = await getRangeMapping();
+      const classesList = await getClasses();
+      const FunctionalPropsList = await getFunctionalProperties();
+      const DatatypePropsList = await getDatatypeProperties();
+      const ObjectPropsList = await getObjectPropertiesList();
+      const ObjectPropsMapping = await getObjectPropertyMapping();
+      const DP_domain_mapping = await getDomainMapping();
+      const DPKList = await getKeyDataProperties();
+
+      ConceptualModel['DP_Range_mapping'] = DP_Range_mapping;
+      ConceptualModel['classesList'] = classesList;
+      ConceptualModel['FunctionalPropsList'] = FunctionalPropsList;
+      ConceptualModel['DatatypePropsList'] = DatatypePropsList;
+      ConceptualModel['ObjectPropsList'] = ObjectPropsList;
+      ConceptualModel['ObjectPropsMapping'] = ObjectPropsMapping;
+      ConceptualModel['DP_domain_mapping'] = DP_domain_mapping;
+      ConceptualModel['DPKList'] = DPKList;
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setFullLoading(false);
+    }
+  }
 
   const handleVisOpen = () => {
     setOpenVisOption(true);
@@ -608,7 +660,7 @@ function SparqlPage() {
   }
 
   return (
-    <Grid>
+    <Grid style={{ margin: 10 }}>
       <CodeMirror
         value={query}
         height="300px"
@@ -755,6 +807,48 @@ function SparqlPage() {
             </Paper>
           </Grid>
         </Grid>
+      )}
+
+      {fullLoading && (
+        <Backdrop
+          sx={{
+            color: '#fff',
+            fontSize: 30,
+            fontWeight: 'bold',
+            backgroundColor: '#1976d2',
+            zIndex: (theme) => theme.zIndex.drawer + 1,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}
+          open={fullLoading}
+          TransitionComponent={Grow}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              margin: 30,
+            }}
+          >
+            <div
+              style={{
+                marginRight: 20,
+                alignSelf: 'flex-end',
+              }}
+            >
+              Loading your query ...
+            </div>
+          </div>
+
+          <Box
+            sx={{
+              width: '60%',
+            }}
+          >
+            <LinearProgress color="inherit" />
+          </Box>
+        </Backdrop>
       )}
     </Grid>
   );

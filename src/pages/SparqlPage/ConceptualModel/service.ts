@@ -280,3 +280,28 @@ export async function getKeyDataProperties() {
   }
   return DPs;
 }
+
+export async function getDPByClass(c: string) {
+  const repositoryID = repo_graphDB;
+  const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  PREFIX owl: <http://www.w3.org/2002/07/owl#>
+  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+  SELECT ?DP
+  WHERE {
+          ?DP rdfs:domain ${c} .
+        ?DP rdf:type owl:FunctionalProperty .
+      FILTER (!isBlank(?DP))
+      FILTER(STRSTARTS(STR(?DP), STR(:)))
+  } ORDER BY ?DP
+  `;
+  const queryRes = await sendSPARQLquery(repositoryID, query, false);
+
+  const data = queryResultToData(queryRes);
+
+  const DPs = [];
+  for (const item of data) {
+    DPs.push(item.DP);
+  }
+  return DPs;
+}

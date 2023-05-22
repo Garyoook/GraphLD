@@ -1,9 +1,7 @@
 import { VisDataProps } from '@/pages/SparqlPage';
-import {
-  preprocessDataForVisualisation,
-  safeGetField,
-  safeGetFieldIndex,
-} from '@/pages/graphs/ANTVCharts/utils';
+import { getDPByClass } from '@/pages/SparqlPage/ConceptualModel/service';
+import { preprocessDataForVisualisation } from '@/pages/graphs/ANTVCharts/utils';
+import { PlotEvent } from '@ant-design/charts';
 import { Chord } from '@ant-design/plots';
 import { StreamLanguage } from '@codemirror/language';
 import { sparql } from '@codemirror/legacy-modes/mode/sparql';
@@ -14,11 +12,11 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  FormControl,
+  Divider,
   Grid,
-  MenuItem,
+  ListItem,
+  ListItemText,
   Popover,
-  Select,
   Typography,
 } from '@mui/material';
 import CodeMirror from '@uiw/react-codemirror';
@@ -42,11 +40,19 @@ const ChordSchema = (props: VisDataProps) => {
 
   // for generated query
   const [generatedQuery, setGeneratedQuery] = useState<string>('');
-  const [showQueryGen, setShowQueryGen] = useState<boolean>(false);
+
+  // for ODP query generation
+  const [showODPQueryGen, setShowQueryGen] = useState<boolean>(false);
   const [source, setSource] = useState('');
   const [target, setTarget] = useState('');
   const [objectProp, setObjectProp] = useState('');
-  const [showCopySuccess, setShowCopySuccess] = useState(false);
+  const [showCopySuccess, setShowCopySuccess] = useState<boolean>(false);
+
+  // for FDP list
+  const [showFDPList, setShowFDPList] = useState<boolean>(false);
+  const [FDPList, setFDPList] = useState<string[]>([]);
+  // for FDP query generation
+  const [showFDPQueryGen, setShowFDPQueryGen] = useState<boolean>(false);
 
   useEffect(() => {
     setSourceField(headers[0]);
@@ -72,9 +78,9 @@ const ChordSchema = (props: VisDataProps) => {
         if (isNode) {
           return {
             name: `${name}(Source)`,
-            value: dataSource
+            value: `${dataSource
               .filter((d) => d[sourceField] === name)
-              .reduce((a, b) => a + b[weightField], 0),
+              .reduce((a, b) => a + b[weightField], 0)} instances`,
           };
         }
 
@@ -92,109 +98,25 @@ const ChordSchema = (props: VisDataProps) => {
     },
   };
 
-  return dataSource.length > 0 ? (
-    <Grid>
-      <Chord
-        {...config}
-        onEvent={(_, event) => {
-          if (event.type === 'click') {
-            const data = event.data?.data || [];
-            const { source, target } = data;
+  const handleCopyToClipboard = () => {
+    navigator.clipboard
+      .writeText(generatedQuery)
+      .then(() => {
+        setShowCopySuccess(true);
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setShowCopySuccess(false);
+        }, 2000);
+      });
+  };
 
-            if (data.source && data.target) {
-              const filteredData = dataSource.filter(
-                (d) => d[sourceField] === source && d[targetField] === target,
-              );
-              const ObjectProp =
-                filteredData.length === 1 ? filteredData[0]['PAB'] : 'unknown';
-
-              const generatedQuery = `PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX owl: <http://www.w3.org/2002/07/owl#>
-SELECT  ?s ?t
-WHERE{
-	?s ${ObjectProp} ?t .
-	?s rdf:type ${source} .
-	?t rdf:type ${target} .
-}`;
-
-              setSource(source);
-              setTarget(target);
-              setObjectProp(ObjectProp);
-              setGeneratedQuery(generatedQuery);
-              setShowQueryGen(ObjectProp !== 'unknown');
-            }
-          }
-        }}
-      />
-
-      {/* Field controllers, now hiden because no changing requirement */}
-      <Grid container spacing={2} style={{ display: 'none' }}>
-        <Grid item>
-          <FormControl sx={{ m: 1, minWidth: 120 }}>
-            source field
-            <Select
-              value={safeGetFieldIndex(fieldsAll, sourceField)}
-              onChange={(e) => {
-                const field = safeGetField(
-                  fieldsAll,
-                  Number(e.target.value),
-                  emptyHeader,
-                );
-                setSourceField(field);
-              }}
-            >
-              {fieldsAll.map((item, index) => {
-                return <MenuItem value={index}>{item}</MenuItem>;
-              })}
-            </Select>
-          </FormControl>
-        </Grid>
-
-        <Grid item>
-          <FormControl sx={{ m: 1, minWidth: 120 }}>
-            target field
-            <Select
-              value={safeGetFieldIndex(fieldsAll, targetField)}
-              onChange={(e) => {
-                const field = safeGetField(
-                  fieldsAll,
-                  Number(e.target.value),
-                  emptyHeader,
-                );
-                setTargetField(field);
-              }}
-            >
-              {fieldsAll.map((item, index) => {
-                return <MenuItem value={index}>{item}</MenuItem>;
-              })}
-            </Select>
-          </FormControl>
-        </Grid>
-
-        <Grid item>
-          <FormControl sx={{ m: 1, minWidth: 120 }}>
-            weight field
-            <Select
-              value={safeGetFieldIndex(fieldsAll, weightField)}
-              onChange={(e) => {
-                setWeightField(
-                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
-                );
-              }}
-            >
-              {fieldsAll.map((item, index) => {
-                return <MenuItem value={index}>{item}</MenuItem>;
-              })}
-            </Select>
-          </FormControl>
-        </Grid>
-      </Grid>
-
+  function showGeneratedODPQuery() {
+    return (
       <Dialog
         fullWidth
         maxWidth="md"
-        open={showQueryGen}
+        open={showODPQueryGen}
         onClose={() => setShowQueryGen(false)}
       >
         <DialogTitle>{`Generated query from ${source} to ${target}`}</DialogTitle>
@@ -203,45 +125,34 @@ WHERE{
             value={generatedQuery}
             height="300px"
             extensions={[StreamLanguage.define(sparql)]}
-            // onChange={onChange}
           />
           <DialogContentText>
             <Button
               variant="text"
               size="small"
-              onClick={() => {
-                navigator.clipboard
-                  .writeText(generatedQuery)
-                  .then(() => {
-                    setShowCopySuccess(true);
-                  })
-                  .finally(() => {
-                    setTimeout(() => {
-                      setShowCopySuccess(false);
-                    }, 2000);
-                  });
-              }}
+              onClick={handleCopyToClipboard}
               aria-describedby={'copySuccess'}
               style={{
                 textTransform: 'none',
               }}
             >
-              Click here to copy the query to clipboard
+              Copy to clipboard
+            </Button>
+            <br />
+            Or
+            <Button
+              variant="text"
+              size="large"
+              style={{
+                textTransform: 'none',
+              }}
+              href={`/SparqlPage/?query=${encodeURIComponent(generatedQuery)}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Try this query in SPARQL page!
             </Button>
           </DialogContentText>
-          <Popover
-            id={'copySuccess'}
-            open={showCopySuccess}
-            onClose={() => setShowCopySuccess(false)}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-          >
-            <Typography sx={{ p: 2 }}>
-              The SPARQL query has been copied to clipboard!
-            </Typography>
-          </Popover>
         </DialogContent>
         <DialogActions>
           <Button
@@ -253,6 +164,186 @@ WHERE{
           </Button>
         </DialogActions>
       </Dialog>
+    );
+  }
+
+  function showGeneratedFDPList() {
+    return (
+      <Dialog
+        fullWidth
+        maxWidth="sm"
+        open={showFDPList}
+        onClose={() => setShowFDPList(false)}
+      >
+        <DialogTitle>{`Related data properties of ${source}`}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Click one of the properties to get related SPARQL query
+          </DialogContentText>
+          {FDPList.map((dp) => {
+            return (
+              <>
+                <ListItem
+                  button
+                  onClick={(e) => {
+                    const DP = e.currentTarget.textContent;
+                    const var_DP = DP?.split(':')[1];
+                    const class_URI = source;
+                    const var_class = class_URI?.split(':')[1];
+
+                    const generatedQuery = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+SELECT ?${var_class} ?${var_DP}
+WHERE {
+    ?${var_class} rdf:type ${class_URI} ;
+		${DP} ?${var_DP} .
+}`;
+                    setGeneratedQuery(generatedQuery);
+                    setShowFDPQueryGen(true);
+                  }}
+                >
+                  <ListItemText primary={dp} />
+                </ListItem>
+                <Divider />
+              </>
+            );
+          })}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setShowFDPList(false);
+            }}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
+
+  function showGeneratedFDPQuery() {
+    return (
+      <Dialog
+        fullWidth
+        maxWidth="md"
+        open={showFDPQueryGen}
+        onClose={() => setShowFDPQueryGen(false)}
+      >
+        <DialogTitle>{`Generated query of class ${source} on property ${target}`}</DialogTitle>
+        <DialogContent>
+          <CodeMirror
+            value={generatedQuery}
+            height="300px"
+            extensions={[StreamLanguage.define(sparql)]}
+          />
+          <DialogContentText>
+            <Button
+              variant="text"
+              size="small"
+              onClick={handleCopyToClipboard}
+              aria-describedby={'copySuccess'}
+              style={{
+                textTransform: 'none',
+              }}
+            >
+              Copy to clipboard
+            </Button>
+            <br />
+            Or
+            <Button
+              variant="text"
+              size="large"
+              style={{
+                textTransform: 'none',
+              }}
+              href={`/SparqlPage/?query=${encodeURIComponent(generatedQuery)}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Try this query in SPARQL page!
+            </Button>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setShowFDPQueryGen(false);
+            }}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
+
+  const handleClickChord = async (_: any, event: PlotEvent) => {
+    if (event.type === 'click') {
+      const data = event.data?.data || [];
+      const { isNode } = data;
+      if (isNode) {
+        const source = data.name;
+        try {
+          const FDP_list = await getDPByClass(source);
+
+          setFDPList(FDP_list);
+          setSource(source);
+          setShowFDPList(true);
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        if (data.source && data.target) {
+          const { source, target, isNode } = data;
+          const filteredData = dataSource.filter(
+            (d) => d[sourceField] === source && d[targetField] === target,
+          );
+          const ObjectProp =
+            filteredData.length === 1 ? filteredData[0]['PAB'] : 'unknown';
+
+          const generatedQuery = `PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+SELECT  ?s ?t
+WHERE{
+?s ${ObjectProp} ?t .
+?s rdf:type ${source} .
+?t rdf:type ${target} .
+}`;
+
+          setSource(source);
+          setTarget(target);
+          setObjectProp(ObjectProp);
+          setGeneratedQuery(generatedQuery);
+          setShowQueryGen(ObjectProp !== 'unknown');
+        }
+      }
+    }
+  };
+
+  return dataSource.length > 0 ? (
+    <Grid>
+      <Chord {...config} onEvent={handleClickChord} />
+
+      {showGeneratedODPQuery()}
+      {showGeneratedFDPList()}
+      {showGeneratedFDPQuery()}
+
+      {/* Copied successful notification */}
+      <Popover
+        id={'copySuccess'}
+        open={showCopySuccess}
+        onClose={() => setShowCopySuccess(false)}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+        <Typography sx={{ p: 2 }}>
+          The SPARQL query has been copied to clipboard!
+        </Typography>
+      </Popover>
     </Grid>
   ) : (
     <div>Loading ... </div>
