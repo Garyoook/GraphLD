@@ -9,9 +9,12 @@ import {
   Button,
   Dialog,
   DialogContent,
+  FormControlLabel,
+  FormGroup,
   Grid,
   IconButton,
   Paper,
+  Switch,
   Toolbar,
   Typography,
 } from '@mui/material';
@@ -120,7 +123,7 @@ export interface RecommendationProps {
 }
 
 function SparqlPage() {
-  const [query, setQuery] = useState<string>(f3d);
+  const [query, setQuery] = useState<string>(initialString);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -128,6 +131,8 @@ function SparqlPage() {
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertText, setAlertText] = useState('');
+
+  const [inferredDataQuery, setInferredDataQuery] = useState<boolean>(true);
 
   const [recommendations, setRecommendations] = useState<RecommendationProps[]>(
     [],
@@ -498,12 +503,20 @@ function SparqlPage() {
     return result;
   }
 
+  function toggleInferredDataQuery() {
+    setInferredDataQuery(!inferredDataQuery);
+  }
+
   const handleQuery = async () => {
     const repositoryID = repo_graphDB;
 
     try {
       setLoading(true);
-      const queryRes = await sendSPARQLquery(repositoryID, query);
+      const queryRes = await sendSPARQLquery(
+        repositoryID,
+        query,
+        inferredDataQuery,
+      );
 
       console.log('original queryRes', queryRes);
 
@@ -630,6 +643,26 @@ function SparqlPage() {
             </Backdrop>
           )} */}
         </Grid>
+
+        <Grid item xs={12}></Grid>
+
+        {/* <Grid item xs> */}
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Switch
+                defaultChecked
+                value={inferredDataQuery}
+                onClick={() => {
+                  toggleInferredDataQuery();
+                  handleQuery();
+                }}
+              />
+            }
+            label="Use inferred data?"
+            labelPlacement="start"
+          />
+        </FormGroup>
 
         <Grid item xs={12}></Grid>
 
