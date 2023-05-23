@@ -1,4 +1,4 @@
-import { GRAPHDB_HOST } from '../consts';
+import { GRAPHDB_HOST } from '../config';
 import { sendGet } from './services/api';
 
 export async function getRepoList() {

@@ -1,4 +1,4 @@
-import { db_prefix_URL } from '@/consts';
+import { db_prefix_URL } from '@/config';
 var stringSimilarity = require('string-similarity');
 
 const testcases = [

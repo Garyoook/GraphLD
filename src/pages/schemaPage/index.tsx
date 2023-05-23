@@ -1,4 +1,4 @@
-import { db_prefix_URL, repo_graphDB } from '@/consts';
+import { db_prefix_URL, repo_graphDB } from '@/config';
 import {
   Backdrop,
   CircularProgress,

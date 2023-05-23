@@ -1,4 +1,4 @@
-import { db_prefix_URL } from '@/consts';
+import { db_prefix_URL } from '@/config';
 import { VisDataProps } from '@/pages/SparqlPage';
 import { getDPByClass } from '@/pages/SparqlPage/ConceptualModel/service';
 import { preprocessDataForVisualisation } from '@/pages/graphs/ANTVCharts/utils';

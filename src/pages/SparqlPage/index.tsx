@@ -38,7 +38,7 @@ import { sendSPARQLquery } from '../services/api';
 import { DataPropertyDomain } from './ConceptualModel/function';
 import VisOptions, { ChartType } from './VisOptions';
 
-import { db_prefix_URL, repo_graphDB } from '@/consts';
+import { db_prefix_URL, repo_graphDB } from '@/config';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useSearchParams } from 'umi';
 import {

@@ -1,4 +1,4 @@
-import { db_prefix_URL, repo_graphDB } from '@/consts';
+import { db_prefix_URL, repo_graphDB } from '@/config';
 import { sendSPARQLquery } from '@/pages/services/api';
 import { prefix_mapping } from '@/utils';
 
