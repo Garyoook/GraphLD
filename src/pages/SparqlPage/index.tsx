@@ -140,9 +140,10 @@ export interface RecommendationProps {
 function SparqlPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   let ConceptualModel = ConceptualModelInfo;
-  const [fullLoading, setFullLoading] = useState(true);
+  const [fullLoading, setFullLoading] = useState(false);
   useEffect(() => {
     if (searchParams.get('query')) {
+      setFullLoading(true);
       initConceptualModelInfo();
       setQuery(searchParams.get('query') || initialString);
     }
