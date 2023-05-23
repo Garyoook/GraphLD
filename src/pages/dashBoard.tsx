@@ -228,6 +228,7 @@ function DashboardContent() {
         <CssBaseline />
         <AppBar position="absolute" open={open}>
           <Toolbar
+            id="DashBoardToolbar"
             sx={{
               pr: '24px', // keep right padding when drawer closed
             }}
@@ -260,7 +261,7 @@ function DashboardContent() {
                         </IconButton> */}
           </Toolbar>
         </AppBar>
-        <Drawer variant="permanent" open={open}>
+        <Drawer id={'DashBoardDrawer'} variant="permanent" open={open}>
           <Toolbar
             sx={{
               display: 'flex',

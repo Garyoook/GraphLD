@@ -164,10 +164,16 @@ function SchemaPage() {
       {loading && (
         <Backdrop
           sx={{
+            marginLeft: `${
+              document.getElementById('DashBoardDrawer')?.offsetWidth
+            }px`,
+            marginTop: `${
+              document.getElementById('DashBoardToolbar')?.offsetHeight
+            }px`,
             color: '#fff',
             fontSize: 20,
             fontWeight: 'bold',
-            backgroundColor: '#1976d255',
+            backgroundColor: '#1976d2dd',
             zIndex: (theme) => theme.zIndex.drawer + 1,
           }}
           open={loading}
