@@ -9,6 +9,7 @@ import { sparql } from '@codemirror/legacy-modes/mode/sparql';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import {
+  Alert,
   Button,
   Dialog,
   DialogActions,
@@ -19,8 +20,7 @@ import {
   Grid,
   ListItem,
   ListItemText,
-  Popover,
-  Typography,
+  Snackbar,
 } from '@mui/material';
 import CodeMirror from '@uiw/react-codemirror';
 import { useEffect, useState } from 'react';
@@ -43,6 +43,7 @@ const ChordSchema = (props: VisDataProps) => {
 
   // for generated query
   const [generatedQuery, setGeneratedQuery] = useState<string>('');
+  const [showEditWarning, setShowEditWarning] = useState<boolean>(false);
 
   // for ODP query generation
   const [showODPQueryGen, setShowQueryGen] = useState<boolean>(false);
@@ -269,6 +270,7 @@ WHERE{
           height="300px"
           extensions={[StreamLanguage.define(sparql)]}
           readOnly
+          onKeyDown={() => setShowEditWarning(true)}
         />
         <DialogContentText>
           <Button
@@ -314,19 +316,34 @@ WHERE{
       {showGeneratedFDPQuery()}
 
       {/* Copied successful notification */}
-      <Popover
-        id={'copySuccess'}
+      <Snackbar
         open={showCopySuccess}
+        autoHideDuration={2000}
         onClose={() => setShowCopySuccess(false)}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
       >
-        <Typography sx={{ p: 2 }}>
+        <Alert
+          severity="success"
+          sx={{ width: '100%' }}
+          onClose={() => setShowCopySuccess(false)}
+        >
           The SPARQL query has been copied to clipboard!
-        </Typography>
-      </Popover>
+        </Alert>
+      </Snackbar>
+
+      {/* readonly warning */}
+      <Snackbar
+        open={showEditWarning}
+        autoHideDuration={2000}
+        onClose={() => setShowEditWarning(false)}
+      >
+        <Alert
+          severity="error"
+          sx={{ width: '100%' }}
+          onClose={() => setShowEditWarning(false)}
+        >
+          This query is readonly.
+        </Alert>
+      </Snackbar>
     </Grid>
   ) : (
     <div>Loading ... </div>
