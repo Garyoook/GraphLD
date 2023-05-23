@@ -38,7 +38,7 @@ import { sendSPARQLquery } from '../services/api';
 import { DataPropertyDomain } from './ConceptualModel/function';
 import VisOptions, { ChartType } from './VisOptions';
 
-import { repo_graphDB } from '@/consts';
+import { db_prefix_URL, repo_graphDB } from '@/consts';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useSearchParams } from 'umi';
 import {
@@ -68,7 +68,7 @@ const Transition = forwardRef(function Transition(
 
 const initialString = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-prefix : <http://www.semwebtech.org/mondial/10/meta#>
+prefix : <${db_prefix_URL}>
 		
 SELECT ?country ?population
 WHERE {
@@ -77,7 +77,7 @@ WHERE {
 } ORDER BY DESC(?population) LIMIT 50`;
 
 const f3a = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+PREFIX : <${db_prefix_URL}>
 SELECT ?inflation ?unemployment WHERE {
     ?c rdf:type :Country ;
        :inflation ?inflation ;
@@ -85,7 +85,7 @@ SELECT ?inflation ?unemployment WHERE {
 }`;
 
 const f3b = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+PREFIX : <${db_prefix_URL}>
 SELECT ?continent ?carcode ?population 
 WHERE {
     ?c rdf:type :Country ;
@@ -100,7 +100,7 @@ WHERE {
 }`;
 
 const f3c = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+PREFIX : <${db_prefix_URL}>
 SELECT ?country ?year ?population 
 WHERE {
     ?c rdf:type :Country ; 
@@ -117,7 +117,7 @@ WHERE {
 }`;
 
 const f3d = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+PREFIX : <${db_prefix_URL}>
 SELECT ?country1 ?country2 ?length
 WHERE {
     ?b rdf:type :Border ;

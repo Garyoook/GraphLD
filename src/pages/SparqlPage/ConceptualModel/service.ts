@@ -1,4 +1,4 @@
-import { repo_graphDB } from '@/consts';
+import { db_prefix_URL, repo_graphDB } from '@/consts';
 import { sendSPARQLquery } from '@/pages/services/api';
 import { prefix_mapping } from '@/utils';
 
@@ -35,7 +35,7 @@ function queryResultToData(queryRes: any) {
 export async function getRangeMapping() {
   const repositoryID = repo_graphDB;
   const query = `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  PREFIX : <${db_prefix_URL}>
   PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
   SELECT ?DP ?T
   WHERE {
@@ -78,15 +78,15 @@ export async function getRangeMapping() {
 
 export async function getClasses() {
   const repositoryID = repo_graphDB;
-  const query = `PREFIX mons: <http://www.semwebtech.org/mondial/10/meta#>
-  PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
-  SELECT DISTINCT ?class
+  PREFIX : <${db_prefix_URL}>
+  SELECT DISTINCT ?class 
   WHERE {
-	  {
-		  ?class rdf:type owl:Class . 
-	  }
-	  FILTER(STRSTARTS(STR(?class), STR(mons:)))
+      {
+          ?class rdf:type owl:Class . 
+      }
+      FILTER(STRSTARTS(STR(?class), STR(:)))
   }`;
 
   const queryRes = await sendSPARQLquery(repositoryID, query);
@@ -127,7 +127,7 @@ export async function getDatatypeProperties() {
   const repositoryID = repo_graphDB;
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
-  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  PREFIX : <${db_prefix_URL}>
   SELECT ?DP
   WHERE {
       {
@@ -152,7 +152,7 @@ export async function getObjectPropertiesList() {
   const repositoryID = repo_graphDB;
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
-  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  PREFIX : <${db_prefix_URL}>
   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
   SELECT ?PAB ?range
   WHERE {
@@ -180,7 +180,7 @@ export async function getObjectPropertyMapping() {
   const repositoryID = repo_graphDB;
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
-  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  PREFIX : <${db_prefix_URL}>
   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
   SELECT ?PAB ?domain ?range
   WHERE {
@@ -212,7 +212,7 @@ export async function getObjectPropertyMapping() {
 export async function getDomainMapping() {
   const repositoryID = repo_graphDB;
   const query = `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  PREFIX : <${db_prefix_URL}>
   SELECT ?DP ?domain
   WHERE {
 	  {
@@ -258,7 +258,7 @@ export async function getKeyDataProperties() {
   const query = `PREFIX owl: <http://www.w3.org/2002/07/owl#>
   PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  PREFIX : <${db_prefix_URL}>
       
   SELECT ?DP
   WHERE {
@@ -285,7 +285,7 @@ export async function getDPByClass(c: string) {
   const repositoryID = repo_graphDB;
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
-  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  PREFIX : <${db_prefix_URL}>
   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
   SELECT ?DP
   WHERE {

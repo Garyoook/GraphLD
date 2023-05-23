@@ -1,4 +1,4 @@
-import { repo_graphDB } from '@/consts';
+import { db_prefix_URL, repo_graphDB } from '@/consts';
 import {
   Backdrop,
   CircularProgress,
@@ -16,7 +16,7 @@ import ChordSchema from './schemaGraph/Chord';
 function SchemaPage() {
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
-  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  PREFIX : <${db_prefix_URL}>
   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
   SELECT ?domain ?range
   (count(?d) AS ?count) ?PAB

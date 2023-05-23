@@ -1,3 +1,4 @@
+import { db_prefix_URL } from '@/consts';
 var stringSimilarity = require('string-similarity');
 
 const testcases = [
@@ -107,7 +108,7 @@ const sim = stringSimilarity.findBestMatch(
 			 :name "Australia/Oceania" .
 	}`,
     `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-	PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+	PREFIX : <${db_prefix_URL}>
 	SELECT ?country1 ?country2 ?length
 	WHERE {
 		?b rdf:type :Border ;

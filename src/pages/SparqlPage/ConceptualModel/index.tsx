@@ -1,4 +1,4 @@
-import { repo_graphDB } from '@/consts';
+import { db_prefix_URL, repo_graphDB } from '@/consts';
 import { sendSPARQLquery } from '@/pages/services/api';
 import { prefix_mapping } from '@/utils';
 import { Alert, Backdrop, CircularProgress, Grid, Paper } from '@mui/material';
@@ -42,10 +42,10 @@ function ConceptualModelPage(props: any) {
     try {
       const repositoryID = repo_graphDB;
       const query = `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX mons: <http://www.semwebtech.org/mondial/10/meta#>
+PREFIX mons: <${db_prefix_URL}>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
-PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+PREFIX : <${db_prefix_URL}>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 SELECT ?DP ?T
 WHERE {
@@ -105,7 +105,7 @@ WHERE {
     try {
       const repositoryID = repo_graphDB;
       const query = `
-      PREFIX mons: <http://www.semwebtech.org/mondial/10/meta#>
+      PREFIX mons: <${db_prefix_URL}>
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX owl: <http://www.w3.org/2002/07/owl#>
       SELECT DISTINCT ?class
@@ -165,10 +165,10 @@ WHERE {
     try {
       const repositoryID = repo_graphDB;
       const query = `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-	  PREFIX mons: <http://www.semwebtech.org/mondial/10/meta#>
+	  PREFIX mons: <${db_prefix_URL}>
 	  PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 	  PREFIX owl: <http://www.w3.org/2002/07/owl#>
-	  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+	  PREFIX : <${db_prefix_URL}>
 	  SELECT ?DP
 	  WHERE {
 		  {
@@ -225,10 +225,10 @@ WHERE {
     try {
       const repositoryID = repo_graphDB;
       const query = `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-	  PREFIX mons: <http://www.semwebtech.org/mondial/10/meta#>
+	  PREFIX mons: <${db_prefix_URL}>
 	  PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 	  PREFIX owl: <http://www.w3.org/2002/07/owl#>
-	  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+	  PREFIX : <${db_prefix_URL}>
 	  SELECT ?PAB
 	  WHERE {
 		  {

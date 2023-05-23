@@ -1,3 +1,4 @@
+import { db_prefix_URL } from '@/consts';
 import { VisDataProps } from '@/pages/SparqlPage';
 import { getDPByClass } from '@/pages/SparqlPage/ConceptualModel/service';
 import { preprocessDataForVisualisation } from '@/pages/graphs/ANTVCharts/utils';
@@ -161,7 +162,7 @@ const ChordSchema = (props: VisDataProps) => {
                     const var_class = class_URI?.split(':')[1].toLowerCase();
 
                     const generatedQuery = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+PREFIX : <${db_prefix_URL}>
 SELECT ?${var_class} ?${var_DP}
 WHERE {
     ?${var_class} rdf:type ${class_URI} ;
@@ -240,7 +241,7 @@ WHERE {
           const var_source = source?.split(':')[1].toLowerCase();
           const var_target = target?.split(':')[1].toLowerCase();
 
-          const generatedQuery = `PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+          const generatedQuery = `PREFIX : <${db_prefix_URL}>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 SELECT  ?${var_source} ?${var_target}
