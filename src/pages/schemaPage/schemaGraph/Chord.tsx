@@ -5,6 +5,8 @@ import { PlotEvent } from '@ant-design/charts';
 import { Chord } from '@ant-design/plots';
 import { StreamLanguage } from '@codemirror/language';
 import { sparql } from '@codemirror/legacy-modes/mode/sparql';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import {
   Button,
   Dialog,
@@ -120,40 +122,7 @@ const ChordSchema = (props: VisDataProps) => {
         onClose={() => setShowQueryGen(false)}
       >
         <DialogTitle>{`Generated query from ${source} to ${target}`}</DialogTitle>
-        <DialogContent>
-          <CodeMirror
-            value={generatedQuery}
-            height="300px"
-            extensions={[StreamLanguage.define(sparql)]}
-          />
-          <DialogContentText>
-            <Button
-              variant="text"
-              size="small"
-              onClick={handleCopyToClipboard}
-              aria-describedby={'copySuccess'}
-              style={{
-                textTransform: 'none',
-              }}
-            >
-              Copy to clipboard
-            </Button>
-            <br />
-            Or
-            <Button
-              variant="text"
-              size="large"
-              style={{
-                textTransform: 'none',
-              }}
-              href={`/SparqlPage/?query=${encodeURIComponent(generatedQuery)}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Try this query in SPARQL page!
-            </Button>
-          </DialogContentText>
-        </DialogContent>
+        {generatedContent()}
         <DialogActions>
           <Button
             onClick={() => {
@@ -187,9 +156,9 @@ const ChordSchema = (props: VisDataProps) => {
                   button
                   onClick={(e) => {
                     const DP = e.currentTarget.textContent;
-                    const var_DP = DP?.split(':')[1];
+                    const var_DP = DP?.split(':')[1].toLowerCase();
                     const class_URI = source;
-                    const var_class = class_URI?.split(':')[1];
+                    const var_class = class_URI?.split(':')[1].toLowerCase();
 
                     const generatedQuery = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
@@ -231,40 +200,7 @@ WHERE {
         onClose={() => setShowFDPQueryGen(false)}
       >
         <DialogTitle>{`Generated query of class ${source} on property ${target}`}</DialogTitle>
-        <DialogContent>
-          <CodeMirror
-            value={generatedQuery}
-            height="300px"
-            extensions={[StreamLanguage.define(sparql)]}
-          />
-          <DialogContentText>
-            <Button
-              variant="text"
-              size="small"
-              onClick={handleCopyToClipboard}
-              aria-describedby={'copySuccess'}
-              style={{
-                textTransform: 'none',
-              }}
-            >
-              Copy to clipboard
-            </Button>
-            <br />
-            Or
-            <Button
-              variant="text"
-              size="large"
-              style={{
-                textTransform: 'none',
-              }}
-              href={`/SparqlPage/?query=${encodeURIComponent(generatedQuery)}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Try this query in SPARQL page!
-            </Button>
-          </DialogContentText>
-        </DialogContent>
+        {generatedContent()}
         <DialogActions>
           <Button
             onClick={() => {
@@ -301,15 +237,17 @@ WHERE {
           );
           const ObjectProp =
             filteredData.length === 1 ? filteredData[0]['PAB'] : 'unknown';
+          const var_source = source?.split(':')[1].toLowerCase();
+          const var_target = target?.split(':')[1].toLowerCase();
 
           const generatedQuery = `PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
-SELECT  ?s ?t
+SELECT  ?${var_source} ?${var_target}
 WHERE{
-?s ${ObjectProp} ?t .
-?s rdf:type ${source} .
-?t rdf:type ${target} .
+?${var_source} ${ObjectProp} ?${var_target} .
+?${var_source} rdf:type ${source} .
+?${var_target} rdf:type ${target} .
 }`;
 
           setSource(source);
@@ -321,6 +259,50 @@ WHERE{
       }
     }
   };
+
+  function generatedContent() {
+    return (
+      <DialogContent>
+        <CodeMirror
+          value={generatedQuery}
+          height="300px"
+          extensions={[StreamLanguage.define(sparql)]}
+          readOnly
+        />
+        <DialogContentText>
+          <Button
+            variant="text"
+            size="small"
+            endIcon={<ContentCopyIcon />}
+            onClick={handleCopyToClipboard}
+            aria-describedby={'copySuccess'}
+            style={{
+              textTransform: 'none',
+            }}
+          >
+            Copy to clipboard
+          </Button>
+          <br />
+
+          <Button
+            variant="text"
+            color="success"
+            size="medium"
+            endIcon={<OpenInNewIcon />}
+            style={{
+              fontWeight: 'bold',
+              textTransform: 'none',
+            }}
+            href={`/SparqlPage/?query=${encodeURIComponent(generatedQuery)}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Try this query in SPARQL page!
+          </Button>
+        </DialogContentText>
+      </DialogContent>
+    );
+  }
 
   return dataSource.length > 0 ? (
     <Grid>
