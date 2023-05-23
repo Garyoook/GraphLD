@@ -46,6 +46,10 @@ const BarChartAntV = (props: VisDataProps) => {
         autoRotate: false,
       },
     },
+    // scrollbar: {
+    //   type: 'horizontal' as 'horizontal',
+    //   categorySize: 12.5,
+    // },
   };
   return dataSource.length > 0 ? (
     <Grid>
