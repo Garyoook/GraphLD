@@ -1,7 +1,7 @@
-import { db_prefix_URL } from '@/config';
 import { VisDataProps } from '@/pages/SparqlPage';
 import { getDPByClass } from '@/pages/SparqlPage/ConceptualModel/service';
 import { preprocessDataForVisualisation } from '@/pages/graphs/ANTVCharts/utils';
+import { DatabaseState } from '@/pages/reducer/databaseReducer';
 import { PlotEvent } from '@ant-design/charts';
 import { Chord } from '@ant-design/plots';
 import { StreamLanguage } from '@codemirror/language';
@@ -24,9 +24,17 @@ import {
 } from '@mui/material';
 import CodeMirror from '@uiw/react-codemirror';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const ChordSchema = (props: VisDataProps) => {
   const { headers, data } = props;
+
+  const repo_graphDB = useSelector(
+    (state: DatabaseState) => state.database.repo,
+  );
+  const db_prefix_URL = useSelector(
+    (state: DatabaseState) => state.database.db_prefix_URL,
+  );
 
   const [dataSource, setDataSource] = useState<any[]>([]);
 
@@ -223,7 +231,11 @@ WHERE {
       if (isNode) {
         const source = data.name;
         try {
-          const FDP_list = await getDPByClass(source);
+          const FDP_list = await getDPByClass(
+            source,
+            repo_graphDB,
+            db_prefix_URL,
+          );
 
           setFDPList(FDP_list);
           setSource(source);
@@ -296,7 +308,11 @@ WHERE{
               fontWeight: 'bold',
               textTransform: 'none',
             }}
-            href={`/SparqlPage/?query=${encodeURIComponent(generatedQuery)}`}
+            href={`/SparqlPage/?query=${encodeURIComponent(
+              generatedQuery,
+            )}&repo_graphDB=${encodeURIComponent(
+              repo_graphDB,
+            )}&db_prefix_URL=${encodeURIComponent(db_prefix_URL)}`}
             target="_blank"
             rel="noreferrer"
           >

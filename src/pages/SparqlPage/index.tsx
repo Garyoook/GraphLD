@@ -27,7 +27,6 @@ import { TransitionProps } from '@mui/material/transitions';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import CodeMirror from '@uiw/react-codemirror';
 import { forwardRef, useCallback, useEffect, useState } from 'react';
-import { ConceptualModelInfo } from '..';
 import {
   ChartType_mapping,
   DATA_DIMENTION_TYPE,
@@ -35,12 +34,11 @@ import {
   ranges_type_mapping,
 } from '../../utils';
 import { sendSPARQLquery } from '../services/api';
-import { DataPropertyDomain } from './ConceptualModel/function';
 import VisOptions, { ChartType } from './VisOptions';
 
-import { db_prefix_URL, repo_graphDB } from '@/config';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useSearchParams } from 'umi';
+import { conceptualModelFunctions } from './ConceptualModel/function';
 import {
   getClasses,
   getDatatypeProperties,
@@ -68,7 +66,7 @@ const Transition = forwardRef(function Transition(
 
 const initialString = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-prefix : <${db_prefix_URL}>
+prefix : <http://www.semwebtech.org/mondial/10/meta#>
 		
 SELECT ?country ?population
 WHERE {
@@ -77,7 +75,7 @@ WHERE {
 } ORDER BY DESC(?population) LIMIT 50`;
 
 const f3a = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <${db_prefix_URL}>
+PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
 SELECT ?inflation ?unemployment WHERE {
     ?c rdf:type :Country ;
        :inflation ?inflation ;
@@ -85,7 +83,7 @@ SELECT ?inflation ?unemployment WHERE {
 }`;
 
 const f3b = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <${db_prefix_URL}>
+PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
 SELECT ?continent ?carcode ?population 
 WHERE {
     ?c rdf:type :Country ;
@@ -100,7 +98,7 @@ WHERE {
 }`;
 
 const f3c = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <${db_prefix_URL}>
+PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
 SELECT ?country ?year ?population 
 WHERE {
     ?c rdf:type :Country ; 
@@ -117,7 +115,7 @@ WHERE {
 }`;
 
 const f3d = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <${db_prefix_URL}>
+PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
 SELECT ?country1 ?country2 ?length
 WHERE {
     ?b rdf:type :Border ;
@@ -137,17 +135,12 @@ export interface RecommendationProps {
   rating: number;
 }
 
-function SparqlPage() {
+function SparqlPage(props: any) {
+  const { repo_graphDB, db_prefix_URL } = props;
+
   const [searchParams, setSearchParams] = useSearchParams();
-  let ConceptualModel = ConceptualModelInfo;
+  const [ConceptualModelInfo, setConceptualModelInfo] = useState<any>({});
   const [fullLoading, setFullLoading] = useState(false);
-  useEffect(() => {
-    if (searchParams.get('query')) {
-      setFullLoading(true);
-      initConceptualModelInfo();
-      setQuery(searchParams.get('query') || initialString);
-    }
-  }, [searchParams]);
 
   const [query, setQuery] = useState<string>(initialString);
   const [columns, setColumns] = useState([]);
@@ -164,40 +157,80 @@ function SparqlPage() {
     [],
   );
 
-  // console.log('Classes: ', classesList);
-  // console.log('Functional Props: ', FunctionalPropsList);
-  // console.log('Datatype Props', DatatypePropsList);
-  // console.log('Key DPs: ', DPKList);
-  // console.log('Object Props: ', ObjectPropsList);
-  // console.log('DP-Domain Map: ', DP_domain_mapping);
-  // console.log('DP-T Map: ', DP_Range_mapping);
-
-  async function initConceptualModelInfo() {
-    try {
+  useEffect(() => {
+    if (repo_graphDB && db_prefix_URL) {
       setFullLoading(true);
-      const DP_Range_mapping = await getRangeMapping();
-      const classesList = await getClasses();
-      const FunctionalPropsList = await getFunctionalProperties();
-      const DatatypePropsList = await getDatatypeProperties();
-      const ObjectPropsList = await getObjectPropertiesList();
-      const ObjectPropsMapping = await getObjectPropertyMapping();
-      const DP_domain_mapping = await getDomainMapping();
-      const DPKList = await getKeyDataProperties();
+      initConceptualModelInfo(repo_graphDB, db_prefix_URL);
+    }
+  }, []);
 
-      ConceptualModel['DP_Range_mapping'] = DP_Range_mapping;
-      ConceptualModel['classesList'] = classesList;
-      ConceptualModel['FunctionalPropsList'] = FunctionalPropsList;
-      ConceptualModel['DatatypePropsList'] = DatatypePropsList;
-      ConceptualModel['ObjectPropsList'] = ObjectPropsList;
-      ConceptualModel['ObjectPropsMapping'] = ObjectPropsMapping;
-      ConceptualModel['DP_domain_mapping'] = DP_domain_mapping;
-      ConceptualModel['DPKList'] = DPKList;
+  useEffect(() => {
+    if (searchParams.get('query')) {
+      setQuery(searchParams.get('query') || initialString);
+
+      const repo = searchParams.get('repo_graphDB') || '';
+      const prefix = searchParams.get('db_prefix_URL') || '';
+
+      console.log('repo: ', repo);
+      console.log('prefix: ', prefix);
+
+      setFullLoading(true);
+      initConceptualModelInfo(repo, prefix);
+    }
+  }, [searchParams]);
+
+  async function initConceptualModelInfo(
+    repo_graphDB: string,
+    db_prefix_URL: string,
+  ) {
+    try {
+      const conceptualModelInfo: any = {};
+      setFullLoading(true);
+      const DP_Range_mapping = await getRangeMapping(
+        repo_graphDB,
+        db_prefix_URL,
+      );
+      const classesList = await getClasses(repo_graphDB, db_prefix_URL);
+      const FunctionalPropsList = await getFunctionalProperties(
+        repo_graphDB,
+        db_prefix_URL,
+      );
+      const DatatypePropsList = await getDatatypeProperties(
+        repo_graphDB,
+        db_prefix_URL,
+      );
+      const ObjectPropsList = await getObjectPropertiesList(
+        repo_graphDB,
+        db_prefix_URL,
+      );
+      const ObjectPropsMapping = await getObjectPropertyMapping(
+        repo_graphDB,
+        db_prefix_URL,
+      );
+      const DP_domain_mapping = await getDomainMapping(
+        repo_graphDB,
+        db_prefix_URL,
+      );
+      const DPKList = await getKeyDataProperties(repo_graphDB, db_prefix_URL);
+
+      conceptualModelInfo['DP_Range_mapping'] = DP_Range_mapping;
+      conceptualModelInfo['classesList'] = classesList;
+      conceptualModelInfo['FunctionalPropsList'] = FunctionalPropsList;
+      conceptualModelInfo['DatatypePropsList'] = DatatypePropsList;
+      conceptualModelInfo['ObjectPropsList'] = ObjectPropsList;
+      conceptualModelInfo['ObjectPropsMapping'] = ObjectPropsMapping;
+      conceptualModelInfo['DP_domain_mapping'] = DP_domain_mapping;
+      conceptualModelInfo['DPKList'] = DPKList;
+      setConceptualModelInfo(conceptualModelInfo);
     } catch (error) {
       console.log(error);
     } finally {
       setFullLoading(false);
     }
   }
+
+  const functions_conceptualModel =
+    conceptualModelFunctions(ConceptualModelInfo);
 
   const handleVisOpen = () => {
     setOpenVisOption(true);
@@ -485,7 +518,7 @@ function SparqlPage() {
         if (
           CLASSES.some((c: string) => {
             class_local = c;
-            return DataPropertyDomain(dp, c);
+            return functions_conceptualModel.DataPropertyDomain(dp, c);
           })
         ) {
           CLASS_DP_LOCAL[class_local] = dp;
@@ -561,7 +594,7 @@ function SparqlPage() {
   }
 
   const handleQuery = async () => {
-    const repositoryID = repo_graphDB;
+    const repositoryID = repo_graphDB || searchParams.get('repo_graphDB');
 
     try {
       setLoading(true);
@@ -838,7 +871,7 @@ function SparqlPage() {
                 alignSelf: 'flex-end',
               }}
             >
-              Loading your query ...
+              Collecting info for the conceptual model...
             </div>
           </div>
 

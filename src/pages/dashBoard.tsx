@@ -5,10 +5,16 @@ import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import MenuIcon from '@mui/icons-material/Menu';
 import SchemaIcon from '@mui/icons-material/Schema';
 import {
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  MenuItem,
   Paper,
+  Select,
 } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -25,8 +31,10 @@ import Typography from '@mui/material/Typography';
 import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import SparqlPage from './SparqlPage';
 import GraphsPage from './graphs';
+import { DatabaseState } from './reducer/databaseReducer';
 import SchemaPage from './schemaPage';
 import { getRepoList } from './service';
 
@@ -116,10 +124,22 @@ enum TABS_DASHBOARD {
 }
 
 function DashboardContent() {
-  const [open, setOpen] = useState(true);
-  const [columns, setColumns] = useState<any>([]);
-  const [data, setData] = useState<any>([]);
+  const repo_graphDB = useSelector(
+    (state: DatabaseState) => state.database.repo,
+  );
+  const db_prefix_URL = useSelector(
+    (state: DatabaseState) => state.database.db_prefix_URL,
+  );
+
+  const dispatch = useDispatch();
+
+  const [selectRepoReminder, setSelectRepoReminder] = useState<boolean>(false);
+  const [siderOpen, setSiderOpen] = useState(true);
+  const [columnsRepoTable, setColumnsRepoTable] = useState<any>([]);
+  const [dataRepoTable, setDataRepoTable] = useState<any>([]);
   const [tab, setTab] = useState(TABS_DASHBOARD.REPOSITORY);
+
+  const [repoList, setRepoList] = useState<string[]>([]);
 
   const data_keys = ['id', 'title', 'uri', 'writable', 'readable'];
 
@@ -166,8 +186,15 @@ function DashboardContent() {
           },
         );
 
-        setColumns(columns);
-        setData(dataSource);
+        const repoList = data_bindings.map(
+          (data_binding: any, index: number) => {
+            return data_binding.id.value;
+          },
+        );
+
+        setRepoList(['None', ...repoList]);
+        setColumnsRepoTable(columns);
+        setDataRepoTable(dataSource);
       }
     } catch (error) {
       console.log(error);
@@ -178,14 +205,80 @@ function DashboardContent() {
     fetchRepos();
   }, []);
 
+  useEffect(() => {
+    setSelectRepoReminder(
+      repo_graphDB === undefined || repo_graphDB === 'None',
+    );
+  }, [repo_graphDB]);
+
   const toggleDrawer = () => {
-    setOpen(!open);
+    setSiderOpen(!siderOpen);
+  };
+
+  const selectRepo = () => {
+    return (
+      <Grid>
+        Select a data repository:
+        <Select
+          size="small"
+          value={repo_graphDB ? repoList.indexOf(repo_graphDB) : 0}
+          displayEmpty
+          inputProps={{ 'aria-label': 'Without label' }}
+          style={{
+            margin: 5,
+            backgroundColor:
+              repo_graphDB && repo_graphDB !== 'None' ? '#ccffcc' : '#ffcccc',
+          }}
+        >
+          {repoList.map((repo: any) => {
+            return (
+              <MenuItem
+                key={repoList.indexOf(repo)}
+                value={repoList.indexOf(repo)}
+                onClick={() => {
+                  dispatch({ type: 'database/setRepo', payload: repo });
+                }}
+                style={{
+                  backgroundColor: repo !== 'None' ? '#ccffcc' : '#ffcccc',
+                  borderRadius: 5,
+                  border: '1px solid #aaa',
+                  margin: 3,
+                }}
+              >
+                {repo}
+              </MenuItem>
+            );
+          })}
+        </Select>
+      </Grid>
+    );
   };
 
   function tabContents(tab_current: TABS_DASHBOARD) {
     if (tab_current === TABS_DASHBOARD.REPOSITORY) {
       return (
         <Grid container spacing={3}>
+          <Grid item xs={12}>
+            {selectRepo()}
+            <Dialog
+              open={selectRepoReminder}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+              fullWidth
+              maxWidth="sm"
+              style={{ padding: 30 }}
+            >
+              <DialogTitle id="alert-dialog-title">
+                {'Data Repository not specified'}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  You have not selected a data repository!
+                </DialogContentText>
+                {selectRepo()}
+              </DialogContent>
+            </Dialog>
+          </Grid>
           {/* Chart */}
           <Grid item xs={12}>
             <Paper
@@ -194,14 +287,13 @@ function DashboardContent() {
               }}
             >
               <DataGrid
-                rows={data}
-                columns={columns}
-                // onRowClick={(params) => {
-                //     fetchStatementsFromRepo(
-                //         (params.row as IRepository)
-                //             .title
-                //     );
-                // }}
+                rows={dataRepoTable}
+                columns={columnsRepoTable}
+                onRowClick={(params) => {
+                  const title = params.row.title;
+                  title &&
+                    dispatch({ type: 'database/setRepo', payload: title });
+                }}
               />
             </Paper>
           </Grid>
@@ -209,7 +301,9 @@ function DashboardContent() {
       );
     }
     if (tab_current === TABS_DASHBOARD.SPARQL_QUERY) {
-      return <SparqlPage />;
+      return (
+        <SparqlPage repo_graphDB={repo_graphDB} db_prefix_URL={db_prefix_URL} />
+      );
     }
 
     if (tab_current === TABS_DASHBOARD.SCHEMA) {
@@ -226,7 +320,7 @@ function DashboardContent() {
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <AppBar position="absolute" open={open}>
+        <AppBar position="absolute" open={siderOpen}>
           <Toolbar
             id="DashBoardToolbar"
             sx={{
@@ -240,7 +334,7 @@ function DashboardContent() {
               onClick={toggleDrawer}
               sx={{
                 marginRight: '36px',
-                ...(open && { display: 'none' }),
+                ...(siderOpen && { display: 'none' }),
               }}
             >
               <MenuIcon />
@@ -261,7 +355,7 @@ function DashboardContent() {
                         </IconButton> */}
           </Toolbar>
         </AppBar>
-        <Drawer id={'DashBoardDrawer'} variant="permanent" open={open}>
+        <Drawer id={'DashBoardDrawer'} variant="permanent" open={siderOpen}>
           <Toolbar
             sx={{
               display: 'flex',

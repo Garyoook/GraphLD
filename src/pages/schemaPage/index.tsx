@@ -1,4 +1,3 @@
-import { db_prefix_URL, repo_graphDB } from '@/config';
 import {
   Backdrop,
   CircularProgress,
@@ -9,11 +8,20 @@ import {
 } from '@mui/material';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { prefix_mapping } from '../../utils';
+import { DatabaseState } from '../reducer/databaseReducer';
 import { sendSPARQLquery } from '../services/api';
 import ChordSchema from './schemaGraph/Chord';
 
 function SchemaPage() {
+  const repo_graphDB = useSelector(
+    (state: DatabaseState) => state.database.repo,
+  );
+  const db_prefix_URL = useSelector(
+    (state: DatabaseState) => state.database.db_prefix_URL,
+  );
+
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
   PREFIX : <${db_prefix_URL}>

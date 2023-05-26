@@ -1,4 +1,3 @@
-import { db_prefix_URL, repo_graphDB } from '@/config';
 import { sendSPARQLquery } from '@/pages/services/api';
 import { prefix_mapping } from '@/utils';
 
@@ -32,7 +31,10 @@ function queryResultToData(queryRes: any) {
   return data;
 }
 
-export async function getRangeMapping() {
+export async function getRangeMapping(
+  repo_graphDB: string,
+  db_prefix_URL: string,
+) {
   const repositoryID = repo_graphDB;
   const query = `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
   PREFIX : <${db_prefix_URL}>
@@ -76,7 +78,7 @@ export async function getRangeMapping() {
   return mapping;
 }
 
-export async function getClasses() {
+export async function getClasses(repo_graphDB: string, db_prefix_URL: string) {
   const repositoryID = repo_graphDB;
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -100,7 +102,10 @@ export async function getClasses() {
   return classes;
 }
 
-export async function getFunctionalProperties() {
+export async function getFunctionalProperties(
+  repo_graphDB: string,
+  db_prefix_URL: string,
+) {
   const repositoryID = repo_graphDB;
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 	PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -123,7 +128,10 @@ export async function getFunctionalProperties() {
   return DPs;
 }
 
-export async function getDatatypeProperties() {
+export async function getDatatypeProperties(
+  repo_graphDB: string,
+  db_prefix_URL: string,
+) {
   const repositoryID = repo_graphDB;
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -148,7 +156,10 @@ export async function getDatatypeProperties() {
   return DPs;
 }
 
-export async function getObjectPropertiesList() {
+export async function getObjectPropertiesList(
+  repo_graphDB: string,
+  db_prefix_URL: string,
+) {
   const repositoryID = repo_graphDB;
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -176,7 +187,10 @@ export async function getObjectPropertiesList() {
   return objectPropsList;
 }
 
-export async function getObjectPropertyMapping() {
+export async function getObjectPropertyMapping(
+  repo_graphDB: string,
+  db_prefix_URL: string,
+) {
   const repositoryID = repo_graphDB;
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -209,7 +223,10 @@ export async function getObjectPropertyMapping() {
   return objectPropsMapping;
 }
 
-export async function getDomainMapping() {
+export async function getDomainMapping(
+  repo_graphDB: string,
+  db_prefix_URL: string,
+) {
   const repositoryID = repo_graphDB;
   const query = `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
   PREFIX : <${db_prefix_URL}>
@@ -253,7 +270,10 @@ export async function getDomainMapping() {
   return mapping;
 }
 
-export async function getKeyDataProperties() {
+export async function getKeyDataProperties(
+  repo_graphDB: string,
+  db_prefix_URL: string,
+) {
   const repositoryID = repo_graphDB;
   const query = `PREFIX owl: <http://www.w3.org/2002/07/owl#>
   PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -281,7 +301,11 @@ export async function getKeyDataProperties() {
   return DPs;
 }
 
-export async function getDPByClass(c: string) {
+export async function getDPByClass(
+  c: string,
+  repo_graphDB: string,
+  db_prefix_URL: string,
+) {
   const repositoryID = repo_graphDB;
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
