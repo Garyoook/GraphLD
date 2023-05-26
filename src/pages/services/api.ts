@@ -1,3 +1,4 @@
+import { GRAPHDB_HOST } from '@/config';
 import axios from 'axios';
 
 const config = {
@@ -20,7 +21,7 @@ export async function sendSPARQLquery(
   query: string,
   infer: boolean = true,
 ) {
-  const url = `http://localhost:7200/repositories/${repositoryID}`;
+  const url = `${GRAPHDB_HOST}/repositories/${repositoryID}`;
   const header_sqparql = { Accept: 'application/sparql-results+json' };
   const resp = await sendGet(url, header_sqparql, {
     repositoryID: repositoryID,
