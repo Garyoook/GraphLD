@@ -15,6 +15,7 @@ import {
   MenuItem,
   Paper,
   Select,
+  TextField,
 } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -259,26 +260,54 @@ function DashboardContent() {
       return (
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            {selectRepo()}
-            <Dialog
-              open={selectRepoReminder}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-              fullWidth
-              maxWidth="sm"
-              style={{ padding: 30 }}
-            >
-              <DialogTitle id="alert-dialog-title">
-                {'Data Repository not specified'}
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  You have not selected a data repository!
-                </DialogContentText>
-                {selectRepo()}
-              </DialogContent>
-            </Dialog>
+            <Paper sx={{ padding: 3 }}>
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  {selectRepo()}
+                  <Dialog
+                    open={selectRepoReminder}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                    fullWidth
+                    maxWidth="sm"
+                    style={{ padding: 30 }}
+                  >
+                    <DialogTitle id="alert-dialog-title">
+                      {'Data Repository not specified'}
+                    </DialogTitle>
+                    <DialogContent>
+                      <DialogContentText id="alert-dialog-description">
+                        You have not selected a data repository!
+                      </DialogContentText>
+                      {selectRepo()}
+                    </DialogContent>
+                  </Dialog>
+                </Grid>
+
+                <Grid item xs={12}>
+                  Edit the prefix of featured database:{' '}
+                  <TextField
+                    id="outlined-basic"
+                    value={db_prefix_URL}
+                    size="small"
+                    variant="outlined"
+                    onChange={(event) => {
+                      dispatch({
+                        type: 'database/setPrefixURL',
+                        payload: event.target.value,
+                      });
+                    }}
+                    style={{
+                      margin: 3,
+                      backgroundColor: 'white',
+                      width: '100%',
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            </Paper>
           </Grid>
+
           {/* Chart */}
           <Grid item xs={12}>
             <Paper

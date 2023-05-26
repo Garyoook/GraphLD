@@ -64,9 +64,17 @@ const Transition = forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const initialString = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+export interface RecommendationProps {
+  chart: ChartType;
+  rating: number;
+}
+
+function SparqlPage(props: any) {
+  const { repo_graphDB, db_prefix_URL } = props;
+
+  const initialString = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-prefix : <http://www.semwebtech.org/mondial/10/meta#>
+prefix : <${db_prefix_URL}>
 		
 SELECT ?country ?population
 WHERE {
@@ -74,16 +82,16 @@ WHERE {
         :population ?population .
 } ORDER BY DESC(?population) LIMIT 50`;
 
-const f3a = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  const f3a = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <${db_prefix_URL}>
 SELECT ?inflation ?unemployment WHERE {
     ?c rdf:type :Country ;
        :inflation ?inflation ;
        :unemployment ?unemployment .
 }`;
 
-const f3b = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  const f3b = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <${db_prefix_URL}>
 SELECT ?continent ?carcode ?population 
 WHERE {
     ?c rdf:type :Country ;
@@ -97,8 +105,8 @@ WHERE {
     FILTER ( ?percent > 50)
 }`;
 
-const f3c = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  const f3c = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <${db_prefix_URL}>
 SELECT ?country ?year ?population 
 WHERE {
     ?c rdf:type :Country ; 
@@ -114,8 +122,8 @@ WHERE {
          :name "Australia/Oceania" .
 }`;
 
-const f3d = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  const f3d = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <${db_prefix_URL}>
 SELECT ?country1 ?country2 ?length
 WHERE {
     ?b rdf:type :Border ;
@@ -129,14 +137,6 @@ WHERE {
   # Filter conditions
   FILTER (?country1<?country2)
 }`;
-
-export interface RecommendationProps {
-  chart: ChartType;
-  rating: number;
-}
-
-function SparqlPage(props: any) {
-  const { repo_graphDB, db_prefix_URL } = props;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [ConceptualModelInfo, setConceptualModelInfo] = useState<any>({});

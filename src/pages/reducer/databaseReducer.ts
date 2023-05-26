@@ -17,13 +17,13 @@ export const databaseSlice = createSlice({
     setRepo: (state, action) => {
       state.repo = action.payload;
     },
-    setDb_prefix_URL: (state, action) => {
+    setPrefixURL: (state, action) => {
       state.db_prefix_URL = action.payload;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setRepo, setDb_prefix_URL } = databaseSlice.actions;
+export const { setRepo, setPrefixURL } = databaseSlice.actions;
 
 export default databaseSlice.reducer;
