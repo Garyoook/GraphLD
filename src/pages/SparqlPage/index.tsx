@@ -418,8 +418,11 @@ WHERE {
       const user_query_head = user_query_split[0];
       const user_query_body = user_query_split[1];
 
+      // regex to match variables in the query. old version, not supported by Safari
+      // const regex_vars = /(?<!rdf)(?:\?)[a-zA-Z_][a-zA-Z0-9_]*/gm;
+
       // regex to match variables in the query.
-      const regex_vars = /(?<!rdf)(?:\?)[a-zA-Z_][a-zA-Z0-9_]*/gm;
+      const regex_vars = /\?[a-zA-Z_][a-zA-Z0-9_]*/gm;
 
       // regex to match variables in the query head (text before 'WHERE').
       const vars_head: string[] = [];
