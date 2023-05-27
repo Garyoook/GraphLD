@@ -1,5 +1,7 @@
 # LD-Visualiser
 
+Deployed [Demo](http://146.169.43.78) on Imperial Private Cloud(Imperial VPN is needed out of campus);
+
 This project was initialy bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 And then migrate to [UmiJs](https://umijs.org/) for better file management & routing experience.
@@ -36,4 +38,8 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+<!-- See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information. -->
+
+### `npm run preview`
+
+After building the app, you can run this script to preview the production build locally, on [http://localhost:4172](http://localhost:4172)

@@ -285,7 +285,7 @@ function DashboardContent() {
                 </Grid>
 
                 <Grid item xs={12}>
-                  Edit the prefix of featured database:{' '}
+                  Edit the URI prefix of featured database:{' '}
                   <TextField
                     id="outlined-basic"
                     value={db_prefix_URL}

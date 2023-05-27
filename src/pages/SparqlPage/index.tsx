@@ -494,7 +494,8 @@ WHERE {
           if (
             ConceptualModelInfo.ObjectPropsList.some((pab: string) => {
               PAB = pab;
-              // ! the space after the PAB is important to avoid matching PABs that are substrings of other PABs
+              // ! the space after the PAB below
+              // ! is important to avoid matching PABs that are substrings of other PABs
               return sub_stmt_trim.includes(`${pab} `);
             })
           ) {
