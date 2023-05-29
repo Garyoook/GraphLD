@@ -1,12 +1,27 @@
+import { StreamLanguage } from '@codemirror/language';
+import { sparql } from '@codemirror/legacy-modes/mode/sparql';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import {
+  Alert,
   Backdrop,
+  Button,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   Grid,
+  ListItem,
+  ListItemText,
   Paper,
+  Snackbar,
   styled,
 } from '@mui/material';
 import { DataGridPro } from '@mui/x-data-grid-pro';
+import CodeMirror from '@uiw/react-codemirror';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { prefix_mapping } from '../../utils';
@@ -217,6 +232,156 @@ function SchemaPage() {
     },
   }));
 
+  const [selectedClass, setSelectedClass] = useState<string>('');
+  const [generatedQuery, setGeneratedQuery] = useState<string>('');
+  const [showEditWarning, setShowEditWarning] = useState<boolean>(false);
+  const [showCopySuccess, setShowCopySuccess] = useState<boolean>(false);
+  const [FDPList, setFDPList] = useState<string[]>([]);
+  const [showFDPList, setShowFDPList] = useState<boolean>(false);
+  // for FDP query generation
+  const [showFDPQueryGen, setShowFDPQueryGen] = useState<boolean>(false);
+
+  const handleCopyToClipboard = () => {
+    navigator.clipboard
+      .writeText(generatedQuery)
+      .then(() => {
+        setShowCopySuccess(true);
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setShowCopySuccess(false);
+        }, 2000);
+      });
+  };
+
+  function showGeneratedFDPList(class_name: string, FDPList: string[]) {
+    return (
+      <Dialog
+        fullWidth
+        maxWidth="sm"
+        open={showFDPList}
+        onClose={() => setShowFDPList(false)}
+      >
+        <DialogTitle>{`Related data properties of ${class_name}`}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Click one of the properties to get related SPARQL query
+          </DialogContentText>
+          {FDPList.map((dp) => {
+            return (
+              <>
+                <ListItem
+                  key={dp}
+                  button
+                  onClick={(e) => {
+                    const DP = e.currentTarget.textContent;
+                    const var_DP = DP?.split(':')[1].toLowerCase();
+                    const class_URI = class_name;
+                    const var_class = class_URI?.split(':')[1].toLowerCase();
+
+                    const generatedQuery = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <${db_prefix_URL}>
+SELECT ?${var_class} ?${var_DP}
+WHERE {
+    ?${var_class} rdf:type ${class_URI} ;
+		${DP} ?${var_DP} .
+}`;
+                    setGeneratedQuery(generatedQuery);
+                    setShowFDPQueryGen(true);
+                  }}
+                >
+                  <ListItemText primary={dp} />
+                </ListItem>
+                <Divider />
+              </>
+            );
+          })}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setShowFDPList(false);
+            }}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
+
+  function generatedContent(query: string) {
+    return (
+      <DialogContent>
+        <CodeMirror
+          value={query}
+          height="300px"
+          extensions={[StreamLanguage.define(sparql)]}
+          readOnly
+          onKeyDown={() => setShowEditWarning(true)}
+        />
+        <DialogContentText>
+          <Button
+            variant="text"
+            size="small"
+            endIcon={<ContentCopyIcon />}
+            onClick={handleCopyToClipboard}
+            aria-describedby={'copySuccess'}
+            style={{
+              textTransform: 'none',
+            }}
+          >
+            Copy to clipboard
+          </Button>
+          <br />
+
+          <Button
+            variant="text"
+            color="success"
+            size="medium"
+            endIcon={<OpenInNewIcon />}
+            style={{
+              fontWeight: 'bold',
+              textTransform: 'none',
+            }}
+            href={`/SparqlPage/?query=${encodeURIComponent(
+              query,
+            )}&repo_graphDB=${encodeURIComponent(
+              repo_graphDB,
+            )}&db_prefix_URL=${encodeURIComponent(db_prefix_URL)}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Try this query in SPARQL page!
+          </Button>
+        </DialogContentText>
+      </DialogContent>
+    );
+  }
+
+  function showGeneratedFDPQuery() {
+    return (
+      <Dialog
+        fullWidth
+        maxWidth="md"
+        open={showFDPQueryGen}
+        onClose={() => setShowFDPQueryGen(false)}
+      >
+        <DialogTitle>{`Generated query`}</DialogTitle>
+        {generatedContent(generatedQuery)}
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setShowFDPQueryGen(false);
+            }}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
+
   return (
     <Grid>
       {PABdataSource.length > 0 &&
@@ -251,18 +416,19 @@ function SchemaPage() {
                     const row = params.row;
                     const class_name = row.class;
                     const DP_list = classDPMapping[class_name];
-                    console.log(
-                      'DP of class ',
-                      class_name,
-                      ' : ',
-                      classDPMapping[class_name],
-                    );
+
+                    setSelectedClass(class_name);
+                    setFDPList(DP_list);
+                    setShowFDPList(true);
                   }}
                 />
               </Paper>
             </Grid>
           </Grid>
         )}
+
+      {showGeneratedFDPList(selectedClass, FDPList)}
+      {showGeneratedFDPQuery()}
 
       {(loading || tableLoading) && (
         <Backdrop
@@ -285,6 +451,36 @@ function SchemaPage() {
           <div style={{ marginLeft: 20 }}> Loading Schema ... </div>
         </Backdrop>
       )}
+
+      {/* Copied successful notification */}
+      <Snackbar
+        open={showCopySuccess}
+        autoHideDuration={2000}
+        onClose={() => setShowCopySuccess(false)}
+      >
+        <Alert
+          severity="success"
+          sx={{ width: '100%' }}
+          onClose={() => setShowCopySuccess(false)}
+        >
+          The SPARQL query has been copied to clipboard!
+        </Alert>
+      </Snackbar>
+
+      {/* readonly warning */}
+      <Snackbar
+        open={showEditWarning}
+        autoHideDuration={2000}
+        onClose={() => setShowEditWarning(false)}
+      >
+        <Alert
+          severity="error"
+          sx={{ width: '100%' }}
+          onClose={() => setShowEditWarning(false)}
+        >
+          This query is readonly.
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 }

@@ -132,7 +132,7 @@ const ChordSchema = (props: VisDataProps) => {
         onClose={() => setShowQueryGen(false)}
       >
         <DialogTitle>{`Generated query from ${source} to ${target}`}</DialogTitle>
-        {generatedContent()}
+        {generatedContent(generatedQuery)}
         <DialogActions>
           <Button
             onClick={() => {
@@ -164,6 +164,7 @@ const ChordSchema = (props: VisDataProps) => {
               <>
                 <ListItem
                   button
+                  key={dp}
                   onClick={(e) => {
                     const DP = e.currentTarget.textContent;
                     const var_DP = DP?.split(':')[1].toLowerCase();
@@ -210,7 +211,7 @@ WHERE {
         onClose={() => setShowFDPQueryGen(false)}
       >
         <DialogTitle>{`Generated query of class ${source} on property ${target}`}</DialogTitle>
-        {generatedContent()}
+        {generatedContent(generatedQuery)}
         <DialogActions>
           <Button
             onClick={() => {
@@ -274,11 +275,11 @@ WHERE{
     }
   };
 
-  function generatedContent() {
+  function generatedContent(query: string) {
     return (
       <DialogContent>
         <CodeMirror
-          value={generatedQuery}
+          value={query}
           height="300px"
           extensions={[StreamLanguage.define(sparql)]}
           readOnly
@@ -309,7 +310,7 @@ WHERE{
               textTransform: 'none',
             }}
             href={`/SparqlPage/?query=${encodeURIComponent(
-              generatedQuery,
+              query,
             )}&repo_graphDB=${encodeURIComponent(
               repo_graphDB,
             )}&db_prefix_URL=${encodeURIComponent(db_prefix_URL)}`}
