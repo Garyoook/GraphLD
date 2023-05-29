@@ -10,6 +10,10 @@ import { DataGridPro } from '@mui/x-data-grid-pro';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { prefix_mapping } from '../../utils';
+import {
+  getClasses,
+  getDPByClass,
+} from '../SparqlPage/ConceptualModel/service';
 import { DatabaseState } from '../reducer/databaseReducer';
 import { sendSPARQLquery } from '../services/api';
 import ChordSchema from './schemaGraph/Chord';
@@ -22,7 +26,12 @@ function SchemaPage() {
     (state: DatabaseState) => state.database.db_prefix_URL,
   );
 
-  const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  const [PABdataSource, setPABDataSource] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const [headers, setHeaders] = useState<string[]>([]);
+
+  const query_for_PAB_relation = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
   PREFIX : <${db_prefix_URL}>
   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -39,18 +48,98 @@ function SchemaPage() {
       FILTER(STRSTARTS(STR(?PAB), STR(:)) &&STRSTARTS(STR(?domain), STR(:)) && STRSTARTS(STR(?range), STR(:)))
   }
   GROUP BY ?PAB ?domain ?range`;
-  const [columns, setColumns] = useState([]);
-  const [dataSource, setDataSource] = useState([]);
-  const [loading, setLoading] = useState(false);
 
-  const [headers, setHeaders] = useState<string[]>([]);
+  const [classColumn, setClassColumn] = useState<any>([]);
+  const [classDataSource, setClassDataSource] = useState<any>([]);
+  const [classDPMapping, setClassDPMapping] = useState<any>({});
+  const [tableLoading, setTableLoading] = useState(false);
 
-  const handleQuery = async () => {
+  async function initClassInfo(repo_graphDB: string, db_prefix_URL: string) {
+    try {
+      const classesList = await getClasses(repo_graphDB, db_prefix_URL);
+
+      const columns = [
+        {
+          field: 'class',
+          headerName: 'Class Name',
+          width: 300,
+        },
+        {
+          field: 'hasDP',
+          headerName: 'Has Direct Functional Property?',
+          width: 300,
+        },
+      ];
+
+      const data = classesList.map((classItem: string, index: number) => {
+        return {
+          id: index,
+          class: classItem,
+        };
+      });
+
+      const newData = await initDPInfo(data);
+
+      setClassColumn(columns);
+      setClassDataSource([
+        ...newData
+          .filter((item: any) => item.hasDP)
+          .sort((a: { class: string }, b: { class: string }) =>
+            a.class.localeCompare(b.class),
+          ),
+        ...newData
+          .filter((item: any) => !item.hasDP)
+          .sort((a: { class: string }, b: { class: string }) =>
+            a.class.localeCompare(b.class),
+          ),
+      ]);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function initDPInfo(classDataSource: any) {
+    try {
+      setTableLoading(true);
+      for (const classItem of classDataSource) {
+        const class_name = classItem.class;
+        try {
+          const DP_list = await getDPByClass(
+            class_name,
+            repo_graphDB,
+            db_prefix_URL,
+          );
+          classDPMapping[class_name] = DP_list;
+          setClassDPMapping(classDPMapping);
+
+          classItem.hasDP = DP_list.length > 0;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setTableLoading(false);
+    }
+
+    return classDataSource;
+  }
+
+  useEffect(() => {
+    initClassInfo(repo_graphDB, db_prefix_URL);
+  }, [repo_graphDB, db_prefix_URL]);
+
+  const loadDataForPABRelation = async () => {
     const repositoryID = repo_graphDB;
 
     try {
       setLoading(true);
-      const queryRes = await sendSPARQLquery(repositoryID, query, false);
+      const queryRes = await sendSPARQLquery(
+        repositoryID,
+        query_for_PAB_relation,
+        false,
+      );
 
       const head = queryRes.head.vars;
       const results_bindings = queryRes.results.bindings;
@@ -61,7 +150,6 @@ function SchemaPage() {
         minWidth: 300,
         maxWidth: 600,
       }));
-      setColumns(columns);
 
       const colKeys = columns.map((col: any) => col.field);
 
@@ -108,7 +196,7 @@ function SchemaPage() {
 
       setHeaders(headers);
 
-      setDataSource(data);
+      setPABDataSource(data);
     } catch (e) {
       console.log('Error', e);
     } finally {
@@ -117,7 +205,7 @@ function SchemaPage() {
   };
 
   useEffect(() => {
-    handleQuery();
+    loadDataForPABRelation();
   }, []);
 
   const DividerWrapper = styled('div')(({ theme }) => ({
@@ -131,45 +219,52 @@ function SchemaPage() {
 
   return (
     <Grid>
-      {dataSource.length > 0 && columns.length > 0 && headers.length > 0 && (
-        <Grid container spacing={3} style={{ paddingTop: 20 }}>
-          <DividerWrapper>
-            <Divider>Relationships</Divider>
-          </DividerWrapper>
-          <Grid item xs={12}>
-            <ChordSchema headers={headers} data={dataSource} />
-          </Grid>
+      {PABdataSource.length > 0 &&
+        classColumn.length > 0 &&
+        headers.length > 0 && (
+          <Grid container spacing={3} style={{ paddingTop: 20 }}>
+            <DividerWrapper>
+              <Divider>Relationships</Divider>
+            </DividerWrapper>
+            <Grid item xs={12}>
+              <ChordSchema headers={headers} data={PABdataSource} />
+            </Grid>
 
-          <DividerWrapper>
-            <Divider>Table</Divider>
-          </DividerWrapper>
-          {/* Table */}
-          <Grid item xs={12}>
-            <Paper
-              sx={{
-                height: '100vh',
-              }}
-            >
-              <DataGridPro
-                rows={dataSource}
-                columns={columns}
-                pagination
-                rowSpacingType="border"
-                showCellRightBorder
-                rowsPerPageOptions={[100, 200, 1000]}
-                // onRowClick={(params) => {
-                //     fetchStatementsFromRepo(
-                //         (params.row as IRepository)
-                //             .title
-                //     );
-                // }}
-              />
-            </Paper>
-          </Grid>
-        </Grid>
-      )}
+            <DividerWrapper>
+              <Divider>Table</Divider>
+            </DividerWrapper>
 
-      {loading && (
+            {/* Table for content of all classes */}
+            <Grid item xs={12}>
+              <Paper
+                sx={{
+                  height: '100vh',
+                }}
+              >
+                <DataGridPro
+                  rows={classDataSource}
+                  columns={classColumn}
+                  rowSpacingType="border"
+                  showCellRightBorder
+                  key={Date.now()}
+                  onRowClick={async (params) => {
+                    const row = params.row;
+                    const class_name = row.class;
+                    const DP_list = classDPMapping[class_name];
+                    console.log(
+                      'DP of class ',
+                      class_name,
+                      ' : ',
+                      classDPMapping[class_name],
+                    );
+                  }}
+                />
+              </Paper>
+            </Grid>
+          </Grid>
+        )}
+
+      {(loading || tableLoading) && (
         <Backdrop
           sx={{
             marginLeft: `${
@@ -181,10 +276,10 @@ function SchemaPage() {
             color: '#fff',
             fontSize: 20,
             fontWeight: 'bold',
-            backgroundColor: '#1976d2dd',
+            backgroundColor: '#1976d2',
             zIndex: (theme) => theme.zIndex.drawer + 1,
           }}
-          open={loading}
+          open={loading || tableLoading}
         >
           <CircularProgress color="inherit" />
           <div style={{ marginLeft: 20 }}> Loading Schema ... </div>
