@@ -1,3 +1,4 @@
+import { GRAPHDB_HOST } from '@/config';
 import {
   Button,
   Dialog,
@@ -164,7 +165,7 @@ function Repositories() {
                     <Button
                       variant="text"
                       size="small"
-                      href={`http://146.169.43.78:7200`}
+                      href={`${GRAPHDB_HOST}/repository`}
                       target="_blank"
                       rel="noreferrer"
                       style={{ textTransform: 'none' }}
