@@ -5,7 +5,9 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import {
   Alert,
   Backdrop,
+  Box,
   Button,
+  Checkbox,
   CircularProgress,
   Dialog,
   DialogActions,
@@ -13,6 +15,11 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormHelperText,
+  FormLabel,
   Grid,
   ListItem,
   ListItemText,
@@ -20,6 +27,7 @@ import {
   Snackbar,
   styled,
 } from '@mui/material';
+import { DataGrid, GridRowId } from '@mui/x-data-grid';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import CodeMirror from '@uiw/react-codemirror';
 import { useEffect, useState } from 'react';
@@ -41,7 +49,9 @@ function SchemaPage() {
     (state: DatabaseState) => state.database.db_prefix_URL,
   );
 
-  const [PABdataSource, setPABDataSource] = useState([]);
+  const [PABdataSource, setPABDataSource] = useState<any[]>([]);
+  const [PABdataSourceCopy, setPABDataSourceCopy] = useState<any[]>([]);
+  const [classesInPAB, setClassesInPAB] = useState<IClassFilter[]>([]);
   const [loading, setLoading] = useState(false);
 
   const [headers, setHeaders] = useState<string[]>([]);
@@ -69,6 +79,12 @@ function SchemaPage() {
   const [classDPMapping, setClassDPMapping] = useState<any>({});
   const [tableLoading, setTableLoading] = useState(false);
 
+  interface IClassFilter {
+    id: GridRowId;
+    class: string;
+    checked: boolean;
+  }
+
   async function initClassInfo(repo_graphDB: string, db_prefix_URL: string) {
     try {
       const classesList = await getClasses(repo_graphDB, db_prefix_URL);
@@ -81,7 +97,7 @@ function SchemaPage() {
         },
         {
           field: 'hasDP',
-          headerName: 'Has Direct Functional Property?',
+          headerName: 'Has Data Property?',
           width: 300,
         },
       ];
@@ -209,9 +225,25 @@ function SchemaPage() {
         headers.splice(spliceIndex, 1);
       }
 
-      setHeaders(headers);
+      const classList = new Set<string>();
+      for (const item of data) {
+        classList.add(item.domain);
+        classList.add(item.range);
+      }
+      setClassesInPAB(
+        [...classList].sort().map((item, index) => {
+          return {
+            id: index,
+            class: item,
+            checked: true,
+          };
+        }),
+      );
 
+      setHeaders(headers);
+      console.log('PAB data: ', data);
       setPABDataSource(data);
+      setPABDataSourceCopy(data);
     } catch (e) {
       console.log('Error', e);
     } finally {
@@ -232,6 +264,135 @@ function SchemaPage() {
     },
   }));
 
+  // effect in filter state changes
+  useEffect(() => {
+    const newPABdataSource = PABdataSourceCopy.filter((chordItem: any) => {
+      const cd = classesInPAB.find(
+        (classItem) => classItem.class === chordItem.domain,
+      );
+      const cr = classesInPAB.find(
+        (classItem) => classItem.class === chordItem.domain,
+      );
+      return cd?.checked && cr?.checked;
+    });
+
+    setPABDataSource(newPABdataSource);
+  }, [classesInPAB]);
+
+  function classFilterforChord() {
+    return (
+      <Box sx={{ display: 'flex' }}>
+        <Paper
+          sx={{
+            height: '75vh',
+            width: 300,
+          }}
+        >
+          <DataGrid
+            rows={classesInPAB}
+            columns={[
+              {
+                field: 'class',
+                headerName: 'Class',
+                width: 200,
+              },
+              {
+                field: 'checked',
+                headerName: 'Include',
+                width: 100,
+                disableColumnMenu: true,
+                hideSortIcons: true,
+                renderCell: (params) => {
+                  const row = params.row;
+                  const checked = row.checked;
+                  const class_id = row.id;
+                  return checked ? (
+                    <Checkbox
+                      checked
+                      onClick={() => {
+                        const item = classesInPAB.find(
+                          (item) => item.id === class_id,
+                        );
+                        item!.checked = false;
+                        setClassesInPAB([...classesInPAB]);
+                      }}
+                    />
+                  ) : (
+                    <Checkbox
+                      checked={false}
+                      onClick={() => {
+                        const item = classesInPAB.find(
+                          (item) => item.id === class_id,
+                        );
+                        item!.checked = true;
+                        setClassesInPAB([...classesInPAB]);
+                      }}
+                    />
+                  );
+                },
+              },
+            ]}
+            pageSize={classDataSource.length}
+            rowsPerPageOptions={[classDataSource.length]}
+            key={Date.now()}
+          />
+        </Paper>
+        <FormControl
+          style={{ display: 'none' }}
+          sx={{ m: 3 }}
+          component="fieldset"
+          variant="standard"
+        >
+          <FormLabel component="legend">Assign responsibility</FormLabel>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  // checked={a}
+                  onChange={(e, c) => {
+                    console.log(e.target.checked);
+                    console.log(c);
+                  }}
+                  name="a"
+                />
+              }
+              label="a"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  // checked={b}
+                  onChange={(e, c) => {
+                    console.log(e.target.checked);
+                    console.log(c);
+                  }}
+                  name="b"
+                />
+              }
+              label="b "
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  // checked={c}
+                  onChange={(e, c) => {
+                    console.log(e.target.checked);
+                    console.log(c);
+                  }}
+                  name="c"
+                />
+              }
+              label="c"
+            />
+          </FormGroup>
+          <FormHelperText>Be careful</FormHelperText>
+        </FormControl>
+      </Box>
+    );
+  }
+
+  // states for code generation,
+  // TODO: duplicated code with schemaGraph/Chord, should be refactored in the future
   const [selectedClass, setSelectedClass] = useState<string>('');
   const [generatedQuery, setGeneratedQuery] = useState<string>('');
   const [showEditWarning, setShowEditWarning] = useState<boolean>(false);
@@ -391,8 +552,11 @@ WHERE {
             <DividerWrapper>
               <Divider>Relationships</Divider>
             </DividerWrapper>
-            <Grid item xs={12}>
-              <ChordSchema headers={headers} data={PABdataSource} />
+            <Grid item xs={12} display="flex" flexDirection="row">
+              <Grid margin={2}>{classFilterforChord()}</Grid>
+              <Grid marginLeft={10} maxWidth="60%">
+                <ChordSchema headers={headers} data={PABdataSource} />
+              </Grid>
             </Grid>
 
             <DividerWrapper>

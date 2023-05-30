@@ -78,6 +78,9 @@ const ChordSchema = (props: VisDataProps) => {
 
   const config = {
     data: dataSource,
+    width: 550,
+    height: 550,
+    interactions: [{ type: 'element-active' }],
     sourceField,
     targetField,
     weightField,
