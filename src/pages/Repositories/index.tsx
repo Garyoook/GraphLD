@@ -92,6 +92,10 @@ function Repositories() {
         );
 
         setRepoList(['None', ...repoList]);
+        // set default repo to the first of the list.
+        if (repoList.length > 0) {
+          dispatch({ type: 'database/setRepo', payload: repoList[0] });
+        }
         setColumnsRepoTable(columns);
         setDataRepoTable(dataSource);
       }
