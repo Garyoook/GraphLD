@@ -271,7 +271,7 @@ function SchemaPage() {
         (classItem) => classItem.class === chordItem.domain,
       );
       const cr = classesInPAB.find(
-        (classItem) => classItem.class === chordItem.domain,
+        (classItem) => classItem.class === chordItem.range,
       );
       return cd?.checked && cr?.checked;
     });
