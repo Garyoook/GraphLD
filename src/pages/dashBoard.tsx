@@ -90,7 +90,7 @@ function DashboardContent() {
     TABS_DASHBOARD.REPOSITORIES,
     TABS_DASHBOARD.SPARQL_QUERY,
     TABS_DASHBOARD.SCHEMA,
-    TABS_DASHBOARD.GRAPHS,
+    // TABS_DASHBOARD.GRAPHS,
   ];
 
   const sider_icon_map = {
