@@ -130,7 +130,7 @@ function DashboardContent() {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Semantic Web Visualiser
+              Graph LD (App name TBD)
             </Typography>
             {/* <IconButton color='inherit'>
                             <Badge badgeContent={4} color='secondary'>
