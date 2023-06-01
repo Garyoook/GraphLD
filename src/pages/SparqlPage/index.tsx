@@ -1,3 +1,4 @@
+import { CompletionContext, autocompletion } from '@codemirror/autocomplete';
 import { StreamLanguage } from '@codemirror/language';
 import { sparql } from '@codemirror/legacy-modes/mode/sparql';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
@@ -35,8 +36,10 @@ import {
 } from '../../utils';
 import { sendSPARQLquery } from '../services/api';
 import VisOptions, { ChartType } from './VisOptions';
+import './autocompletionIcons.scss';
 
 import LoadingButton from '@mui/lab/LoadingButton';
+import { EditorView } from 'codemirror';
 import { useSearchParams } from 'umi';
 import { conceptualModelFunctions } from './ConceptualModel/function';
 import {
@@ -53,6 +56,17 @@ import {
 export interface VisDataProps {
   headers: string[];
   data: (number | string)[][];
+}
+
+export interface ConceptialModelInfoProps {
+  DP_Range_mapping?: any;
+  classesList?: string[];
+  FunctionalPropsList?: string[];
+  DatatypePropsList?: string[];
+  ObjectPropsList?: string[];
+  ObjectPropsMapping?: any;
+  DP_domain_mapping?: any;
+  DPKList?: string[];
 }
 
 const Transition = forwardRef(function Transition(
@@ -139,7 +153,8 @@ WHERE {
 }`;
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [ConceptualModelInfo, setConceptualModelInfo] = useState<any>({});
+  const [ConceptualModelInfo, setConceptualModelInfo] =
+    useState<ConceptialModelInfoProps>({});
   const [fullLoading, setFullLoading] = useState(false);
 
   const [query, setQuery] = useState<string>(initialString);
@@ -221,6 +236,8 @@ WHERE {
       conceptualModelInfo['ObjectPropsMapping'] = ObjectPropsMapping;
       conceptualModelInfo['DP_domain_mapping'] = DP_domain_mapping;
       conceptualModelInfo['DPKList'] = DPKList;
+      console.log('conceptualModelInfo: ', conceptualModelInfo);
+
       setConceptualModelInfo(conceptualModelInfo);
     } catch (error) {
       console.log(error);
@@ -470,11 +487,11 @@ WHERE {
           // get DP and range
           let DP: string = '';
           if (
-            ConceptualModelInfo.DatatypePropsList.some((dp: string) => {
+            ConceptualModelInfo.DatatypePropsList?.some((dp: string) => {
               DP = dp;
               return sub_stmt_trim.includes(dp);
             }) ||
-            ConceptualModelInfo.FunctionalPropsList.some((dp: string) => {
+            ConceptualModelInfo.FunctionalPropsList?.some((dp: string) => {
               DP = dp;
               return sub_stmt_trim.includes(dp);
             })
@@ -492,7 +509,7 @@ WHERE {
           // get PAB and its domain&range (2 linked classes)
           let PAB: string = '';
           if (
-            ConceptualModelInfo.ObjectPropsList.some((pab: string) => {
+            ConceptualModelInfo.ObjectPropsList?.some((pab: string) => {
               PAB = pab;
               // ! the space after the PAB below
               // ! is important to avoid matching PABs that are substrings of other PABs
@@ -656,7 +673,7 @@ WHERE {
     }
   };
 
-  const onChange = useCallback((value: string, viewUpdate: any) => {
+  const onChangeCodeArea = useCallback((value: string, viewUpdate: any) => {
     setQuery(value);
   }, []);
 
@@ -693,17 +710,88 @@ WHERE {
       }
       return dataRow;
     });
-    console.log('preprocessed data for Google Charts: ', { headers, data });
+    // console.log('preprocessed data for Google Charts: ', { headers, data });
     return { headers, data };
   }
+
+  const [completionsContent, setCompletionsContent] = useState<any[]>([]);
+  // side effects for generating autocompletions content
+  useEffect(() => {
+    // generate completions for Functional Data Properties
+    const completions = [];
+    if (
+      ConceptualModelInfo.FunctionalPropsList &&
+      ConceptualModelInfo.DP_domain_mapping
+    ) {
+      const DP_list = ConceptualModelInfo.FunctionalPropsList;
+
+      const completions_DP = DP_list.map((dp: string) => {
+        // !this handles the case when DP's domain is a collection (unhandled limitation in SPARQL results)
+        const domains = ConceptualModelInfo.DP_domain_mapping[dp]
+          ? ConceptualModelInfo.DP_domain_mapping[dp]
+          : 'unknown';
+        return {
+          label: dp,
+          type: 'property',
+          info: `owl:FunctionalProperty of domain ${domains}`,
+        };
+      });
+
+      completions.push(...completions_DP);
+    }
+
+    // generate completions for Classes
+    if (ConceptualModelInfo.classesList) {
+      const classList = ConceptualModelInfo.classesList;
+
+      const completions_Class = classList.map((c: string) => {
+        return {
+          label: c,
+          type: 'class',
+          detail: 'owl:Class',
+        };
+      });
+      completions.push(...completions_Class);
+    }
+    setCompletionsContent(completions);
+  }, [ConceptualModelInfo]);
+
+  function myCompletions(context: CompletionContext) {
+    let before = context.matchBefore(/(\:|\?|\w)+/);
+    // If completion wasn't explicitly started and there
+    // is no word before the cursor, don't open completions.
+    if (!context.explicit && !before) return null;
+    return {
+      from: before ? before.from : context.pos,
+      options: completionsContent,
+      validFor: /^\w*$/,
+    };
+  }
+
+  const customIconsTheme = /*@__PURE__*/ EditorView.theme({
+    '.cm-completionIcon-class': {
+      '&:after': {
+        content: "'C'",
+      },
+    },
+
+    '.cm-completionIcon-property': {
+      '&:after': { content: "'DP'", fontSize: '50%', verticalAlign: 'middle' },
+    },
+  });
 
   return (
     <Grid style={{ margin: 10 }}>
       <CodeMirror
         value={query}
         height="300px"
-        extensions={[StreamLanguage.define(sparql)]}
-        onChange={onChange}
+        theme={customIconsTheme}
+        extensions={[
+          StreamLanguage.define(sparql),
+          autocompletion({ override: [myCompletions] }),
+        ]}
+        onChange={onChangeCodeArea}
+        basicSetup={{ autocompletion: true }}
       />
       <Grid container spacing={2}>
         <Grid item xs={12}></Grid>
