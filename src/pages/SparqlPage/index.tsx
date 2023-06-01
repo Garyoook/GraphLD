@@ -87,12 +87,12 @@ function SparqlPage(props: any) {
 
   const initialString = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-prefix : <${db_prefix_URL}>
-		
+prefix : <http://www.semwebtech.org/mondial/10/meta#>
+      
 SELECT ?country ?population
 WHERE {
-	?country rdf:type :Country ;
-        :population ?population .
+  ?country rdf:type :Country ;
+           :population ?population .
 } ORDER BY DESC(?population) LIMIT 50`;
 
   const f3a = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
