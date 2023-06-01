@@ -3,6 +3,7 @@ import { StreamLanguage } from '@codemirror/language';
 import { sparql } from '@codemirror/legacy-modes/mode/sparql';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import CloseIcon from '@mui/icons-material/Close';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import SendIcon from '@mui/icons-material/Send';
 import {
   Alert,
@@ -19,6 +20,7 @@ import {
   IconButton,
   LinearProgress,
   Paper,
+  Snackbar,
   Switch,
   Toolbar,
   Typography,
@@ -88,7 +90,7 @@ function SparqlPage(props: any) {
   const initialString = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
-prefix : <http://www.semwebtech.org/mondial/10/meta#>
+PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
       
 SELECT ?country ?population
 WHERE {
@@ -162,6 +164,7 @@ WHERE {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
   const [openVis, setOpenVisOption] = useState(false);
+  const [showCopySuccess, setShowCopySuccess] = useState<boolean>(false);
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertText, setAlertText] = useState('');
@@ -795,15 +798,76 @@ WHERE {
     };
   }
 
+  const handleCopyPrefixesReference = () => {
+    navigator.clipboard
+      .writeText(
+        `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX : <${db_prefix_URL}>`,
+      )
+      .then(() => {
+        setShowCopySuccess(true);
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setShowCopySuccess(false);
+        }, 2000);
+      });
+  };
+
   return (
     <Grid style={{ margin: 10 }}>
+      <Grid sx={{ marginBottom: 3, maxWidth: 500 }}>
+        <Paper sx={{ padding: 2 }}>
+          <Typography variant="h6" component="div">
+            Quick Reference to Prefixes
+          </Typography>
+          <Grid
+            sx={{
+              padding: 1,
+              borderRadius: 2,
+              ':hover': { backgroundColor: '#1976d233' },
+              ':active': { backgroundColor: '#1976d266' },
+              cursor: 'pointer',
+            }}
+            onClick={handleCopyPrefixesReference}
+          >
+            <Typography variant="subtitle2" component="div">
+              {`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>`}
+            </Typography>
+            <Typography variant="subtitle2" component="div">
+              {`PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>`}
+            </Typography>
+            <Typography variant="subtitle2" component="div">
+              {`PREFIX owl: <http://www.w3.org/2002/07/owl#>`}
+            </Typography>
+            <Typography variant="subtitle2" component="div" color={'#22cc22'}>
+              {`PREFIX : <${db_prefix_URL}>`}
+            </Typography>
+          </Grid>
+
+          <Button
+            variant="text"
+            size="small"
+            endIcon={<ContentCopyIcon />}
+            onClick={handleCopyPrefixesReference}
+            aria-describedby={'copySuccess'}
+            style={{
+              textTransform: 'none',
+            }}
+          >
+            Click to copy
+          </Button>
+        </Paper>
+      </Grid>
       <CodeMirror
         value={query}
         height="300px"
-        theme={customIconsTheme}
         extensions={[
           StreamLanguage.define(sparql),
           autocompletion({ override: [myCompletions] }),
+          customIconsTheme,
         ]}
         onChange={onChangeCodeArea}
         basicSetup={{ autocompletion: true }}
@@ -978,6 +1042,21 @@ WHERE {
           </Box>
         </Backdrop>
       )}
+
+      {/* Copied successful notification */}
+      <Snackbar
+        open={showCopySuccess}
+        autoHideDuration={2000}
+        onClose={() => setShowCopySuccess(false)}
+      >
+        <Alert
+          severity="success"
+          sx={{ width: '100%' }}
+          onClose={() => setShowCopySuccess(false)}
+        >
+          The Prefixes reference has been copied to clipboard!
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 }
