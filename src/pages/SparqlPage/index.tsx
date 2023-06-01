@@ -674,6 +674,29 @@ WHERE {
   };
 
   const onChangeCodeArea = useCallback((value: string, viewUpdate: any) => {
+    const splitUpper = value.split('WHERE');
+    const splitLower = value.split('where');
+    if (splitUpper.length == 2 || splitLower.length == 2) {
+      const varsDirty = splitUpper.length == 2 ? splitUpper[0] : splitLower[0];
+      const varsClean =
+        varsDirty.split('SELECT').length == 2
+          ? varsDirty.split('SELECT')[1]
+          : varsDirty.split('select')[1];
+      const varsList = varsClean
+        ? varsClean.split(' ').filter((v: string) => v.length > 0)
+        : [];
+
+      if (varsList.length > 0) {
+        const varsAutocompletion = varsList.map((v: string) => {
+          return {
+            label: v,
+            type: 'variable',
+          };
+        });
+        setCompletionsContent([...completionsContent, ...varsAutocompletion]);
+      }
+    }
+
     setQuery(value);
   }, []);
 
