@@ -36,7 +36,6 @@ import {
 } from '../../utils';
 import { sendSPARQLquery } from '../services/api';
 import VisOptions, { ChartType } from './VisOptions';
-import './autocompletionIcons.scss';
 
 import LoadingButton from '@mui/lab/LoadingButton';
 import { EditorView } from 'codemirror';
