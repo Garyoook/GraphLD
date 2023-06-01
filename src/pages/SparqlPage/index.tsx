@@ -677,33 +677,6 @@ WHERE {
     }
   };
 
-  const onChangeCodeArea = useCallback((value: string, viewUpdate: any) => {
-    const splitUpper = value.split('WHERE');
-    const splitLower = value.split('where');
-    if (splitUpper.length == 2 || splitLower.length == 2) {
-      const varsDirty = splitUpper.length == 2 ? splitUpper[0] : splitLower[0];
-      const varsClean =
-        varsDirty.split('SELECT').length == 2
-          ? varsDirty.split('SELECT')[1]
-          : varsDirty.split('select')[1];
-      const varsList = varsClean
-        ? varsClean.split(' ').filter((v: string) => v.length > 0)
-        : [];
-
-      if (varsList.length > 0) {
-        const varsAutocompletion = varsList.map((v: string) => {
-          return {
-            label: v,
-            type: 'variable',
-          };
-        });
-        setCompletionsContent([...completionsContent, ...varsAutocompletion]);
-      }
-    }
-
-    setQuery(value);
-  }, []);
-
   function preprocessDataForGoogleCharts(dataSource: any[]): VisDataProps {
     const headers: string[] = [];
     if (dataSource.length > 0) {
@@ -746,6 +719,32 @@ WHERE {
     defaultAutocompletions,
   );
 
+  const onChangeCodeArea = useCallback((value: string, viewUpdate: any) => {
+    const splitUpper = value.split('WHERE');
+    const splitLower = value.split('where');
+    if (splitUpper.length == 2 || splitLower.length == 2) {
+      const varsDirty = splitUpper.length == 2 ? splitUpper[0] : splitLower[0];
+      const varsClean =
+        varsDirty.split('SELECT').length == 2
+          ? varsDirty.split('SELECT')[1]
+          : varsDirty.split('select')[1];
+      const varsList = varsClean
+        ? varsClean.split(' ').filter((v: string) => v.length > 0)
+        : [];
+
+      if (varsList.length > 0) {
+        const varsAutocompletion = varsList.map((v: string) => {
+          return {
+            label: v,
+            type: 'variable',
+          };
+        });
+        setCompletionsContent([...completionsContent, ...varsAutocompletion]);
+      }
+    }
+    setQuery(value);
+  }, []);
+
   // side effects for generating autocompletions content
   useEffect(() => {
     // generate completions for Functional Data Properties
@@ -784,8 +783,9 @@ WHERE {
       });
       completions.push(...completions_Class);
     }
+
     setCompletionsContent([...completionsContent, ...completions]);
-  }, [ConceptualModelInfo]);
+  }, [ConceptualModelInfo, query]);
 
   function myCompletions(context: CompletionContext) {
     let before = context.matchBefore(/(\:|\?|\w)+/);
