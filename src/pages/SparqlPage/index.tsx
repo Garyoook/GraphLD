@@ -38,7 +38,6 @@ import { sendSPARQLquery } from '../services/api';
 import VisOptions, { ChartType } from './VisOptions';
 
 import LoadingButton from '@mui/lab/LoadingButton';
-import { EditorView } from 'codemirror';
 import { useSearchParams } from 'umi';
 import { conceptualModelFunctions } from './ConceptualModel/function';
 import {
@@ -51,6 +50,7 @@ import {
   getObjectPropertyMapping,
   getRangeMapping,
 } from './ConceptualModel/service';
+import { customIconsTheme, defaultAutocompletions } from './codeMirrorConfigs';
 
 export interface VisDataProps {
   headers: string[];
@@ -87,6 +87,7 @@ function SparqlPage(props: any) {
 
   const initialString = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
 prefix : <http://www.semwebtech.org/mondial/10/meta#>
       
 SELECT ?country ?population
@@ -713,7 +714,11 @@ WHERE {
     return { headers, data };
   }
 
-  const [completionsContent, setCompletionsContent] = useState<any[]>([]);
+  // below are code for the auto-completion feature
+  const [completionsContent, setCompletionsContent] = useState<any[]>(
+    defaultAutocompletions,
+  );
+
   // side effects for generating autocompletions content
   useEffect(() => {
     // generate completions for Functional Data Properties
@@ -752,7 +757,7 @@ WHERE {
       });
       completions.push(...completions_Class);
     }
-    setCompletionsContent(completions);
+    setCompletionsContent([...completionsContent, ...completions]);
   }, [ConceptualModelInfo]);
 
   function myCompletions(context: CompletionContext) {
@@ -766,18 +771,6 @@ WHERE {
       validFor: /^\w*$/,
     };
   }
-
-  const customIconsTheme = /*@__PURE__*/ EditorView.theme({
-    '.cm-completionIcon-class': {
-      '&:after': {
-        content: "'C'",
-      },
-    },
-
-    '.cm-completionIcon-property': {
-      '&:after': { content: "'DP'", fontSize: '50%', verticalAlign: 'middle' },
-    },
-  });
 
   return (
     <Grid style={{ margin: 10 }}>
@@ -806,19 +799,6 @@ WHERE {
           >
             Execute Query
           </LoadingButton>
-          {/* {loading && (
-            <Backdrop
-              sx={{
-                color: '#fff',
-                zIndex: (theme) => theme.zIndex.drawer + 1,
-              }}
-              open={loading}
-            >
-              <CircularProgress color="inherit" />
-
-              <div style={{ marginLeft: 20 }}> Processing query ... </div>
-            </Backdrop>
-          )} */}
         </Grid>
 
         <Grid item xs={12}></Grid>
