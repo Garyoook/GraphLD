@@ -32,7 +32,7 @@ import { DataGridPro } from '@mui/x-data-grid-pro';
 import CodeMirror from '@uiw/react-codemirror';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { prefix_mapping } from '../../utils';
+import { prefix_mapping, unsecuredCopyToClipboard } from '../../utils';
 import {
   getClasses,
   getDPByClass,
@@ -403,16 +403,29 @@ function SchemaPage() {
   const [showFDPQueryGen, setShowFDPQueryGen] = useState<boolean>(false);
 
   const handleCopyToClipboard = () => {
-    navigator.clipboard
-      .writeText(generatedQuery)
-      .then(() => {
+    if (window.isSecureContext && navigator.clipboard) {
+      navigator.clipboard
+        .writeText(generatedQuery)
+        .then(() => {
+          setShowCopySuccess(true);
+        })
+        .finally(() => {
+          setTimeout(() => {
+            setShowCopySuccess(false);
+          }, 2000);
+        });
+    } else {
+      try {
+        unsecuredCopyToClipboard(generatedQuery);
         setShowCopySuccess(true);
-      })
-      .finally(() => {
+      } catch (error) {
+        console.log(error);
+      } finally {
         setTimeout(() => {
           setShowCopySuccess(false);
         }, 2000);
-      });
+      }
+    }
   };
 
   function showGeneratedFDPList(class_name: string, FDPList: string[]) {

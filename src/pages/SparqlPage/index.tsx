@@ -35,6 +35,7 @@ import {
   DATA_DIMENTION_TYPE,
   prefix_mapping,
   ranges_type_mapping,
+  unsecuredCopyToClipboard,
 } from '../../utils';
 import { sendSPARQLquery } from '../services/api';
 import VisOptions, { ChartType } from './VisOptions';
@@ -799,21 +800,33 @@ WHERE {
   }
 
   const handleCopyPrefixesReference = () => {
-    navigator.clipboard
-      .writeText(
-        `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    const prefixes = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
-PREFIX : <${db_prefix_URL}>`,
-      )
-      .then(() => {
+PREFIX : <${db_prefix_URL}>`;
+    if (window.isSecureContext && navigator.clipboard) {
+      navigator.clipboard
+        .writeText(prefixes)
+        .then(() => {
+          setShowCopySuccess(true);
+        })
+        .finally(() => {
+          setTimeout(() => {
+            setShowCopySuccess(false);
+          }, 2000);
+        });
+    } else {
+      try {
+        unsecuredCopyToClipboard(prefixes);
         setShowCopySuccess(true);
-      })
-      .finally(() => {
+      } catch (error) {
+        console.log(error);
+      } finally {
         setTimeout(() => {
           setShowCopySuccess(false);
         }, 2000);
-      });
+      }
+    }
   };
 
   return (
