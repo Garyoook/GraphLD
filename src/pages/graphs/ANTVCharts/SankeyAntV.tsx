@@ -80,7 +80,11 @@ const SankeyAntV = (props: VisDataProps) => {
               }}
             >
               {fieldsAll.map((item, index) => {
-                return <MenuItem value={index}>{item}</MenuItem>;
+                return (
+                  <MenuItem key={index} value={index}>
+                    {item}
+                  </MenuItem>
+                );
               })}
             </Select>
           </FormControl>
@@ -98,7 +102,11 @@ const SankeyAntV = (props: VisDataProps) => {
               }}
             >
               {fieldsAll.map((item, index) => {
-                return <MenuItem value={index}>{item}</MenuItem>;
+                return (
+                  <MenuItem key={index} value={index}>
+                    {item}
+                  </MenuItem>
+                );
               })}
             </Select>
           </FormControl>
@@ -116,7 +124,11 @@ const SankeyAntV = (props: VisDataProps) => {
               }}
             >
               {fieldsAll.map((item, index) => {
-                return <MenuItem value={index}>{item}</MenuItem>;
+                return (
+                  <MenuItem key={index} value={index}>
+                    {item}
+                  </MenuItem>
+                );
               })}
             </Select>
           </FormControl>

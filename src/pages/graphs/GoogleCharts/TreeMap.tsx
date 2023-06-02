@@ -141,7 +141,11 @@ function TreeMap(props: VisDataProps) {
             }}
           >
             {renderModes.map((item, index) => {
-              return <MenuItem value={index}>{item.name}</MenuItem>;
+              return (
+                <MenuItem key={index} value={index}>
+                  {item.name}
+                </MenuItem>
+              );
             })}
           </Select>
           <FormHelperText>Select Render Mode</FormHelperText>
