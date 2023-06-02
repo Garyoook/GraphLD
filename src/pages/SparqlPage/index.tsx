@@ -9,16 +9,14 @@ import {
   Alert,
   AppBar,
   Backdrop,
-  Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogContent,
   FormControlLabel,
   FormGroup,
   Grid,
-  Grow,
   IconButton,
-  LinearProgress,
   Paper,
   Snackbar,
   Switch,
@@ -160,7 +158,7 @@ WHERE {
     useState<ConceptialModelInfoProps>({});
   const [fullLoading, setFullLoading] = useState(false);
 
-  const [query, setQuery] = useState<string>(f3c);
+  const [query, setQuery] = useState<string>(f3d);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -1201,42 +1199,25 @@ PREFIX : <${db_prefix_URL}>`;
       {fullLoading && (
         <Backdrop
           sx={{
+            marginLeft: `${
+              document.getElementById('DashBoardDrawer')?.offsetWidth
+            }px`,
+            marginTop: `${
+              document.getElementById('DashBoardToolbar')?.offsetHeight
+            }px`,
             color: '#fff',
-            fontSize: 30,
+            fontSize: 20,
             fontWeight: 'bold',
             backgroundColor: '#1976d2',
             zIndex: (theme) => theme.zIndex.drawer + 1,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
           }}
           open={fullLoading}
-          TransitionComponent={Grow}
         >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              margin: 30,
-            }}
-          >
-            <div
-              style={{
-                marginRight: 20,
-                alignSelf: 'flex-end',
-              }}
-            >
-              Collecting info for the conceptual model...
-            </div>
+          <CircularProgress color="inherit" />
+          <div style={{ marginLeft: 20 }}>
+            {' '}
+            Collecting info for Conceptual Model ...{' '}
           </div>
-
-          <Box
-            sx={{
-              width: '60%',
-            }}
-          >
-            <LinearProgress color="inherit" />
-          </Box>
         </Backdrop>
       )}
 
