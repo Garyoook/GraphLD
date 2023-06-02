@@ -63,6 +63,7 @@ function MultipleLineChart(props: VisDataProps) {
           `${v}`.replace(/\d{1,3}(?=(\d{3})+$)/g, (s) => `${s},`),
       },
     },
+    interactions: [{ type: 'element-highlight-by-x' }, { type: 'brush' }],
   };
 
   return dataSource.length > 0 ? (

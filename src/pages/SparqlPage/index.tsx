@@ -160,7 +160,7 @@ WHERE {
     useState<ConceptialModelInfoProps>({});
   const [fullLoading, setFullLoading] = useState(false);
 
-  const [query, setQuery] = useState<string>(f3b);
+  const [query, setQuery] = useState<string>(f3c);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -400,8 +400,8 @@ WHERE {
 
       if (dataResults.length > 100) {
         ratings.treeMap += 30;
-        ratings.sunburst += 30;
-        ratings.circlePacking += 30;
+        ratings.sunburst += 10;
+        ratings.circlePacking += 10;
 
         messages.push(
           'The query result is too large, please consider applying a filter in your query.',
@@ -412,6 +412,76 @@ WHERE {
     if (key_var_count == 2) {
       if (dataResults.length >= 1 && dataResults.length <= 100) {
         ratings.hierarchyTree += 100;
+      }
+    }
+
+    return ratings;
+  }
+
+  function generateRatingsFor2C1DP(
+    dataResults: any[],
+    key_var_count: number,
+    nonKey_var_count: number,
+    key_var_list: string[],
+    nonKey_var_list: string[],
+    var_to_range_mapping: any,
+    messages: string[],
+  ) {
+    const ratings: any = {
+      multiLine: 0,
+      spider: 0,
+      stackedBar: 0,
+      groupedBar: 0,
+    };
+    if (key_var_count == 2 && nonKey_var_count === 1) {
+      if (
+        // scalar exists in the key variables and non-key variables
+        nonKey_var_list.some((v: string) => {
+          const range = var_to_range_mapping[v];
+          return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR;
+        }) &&
+        key_var_list.some((v: string) => {
+          const range = var_to_range_mapping[v];
+          return (
+            ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR ||
+            ranges_type_mapping(range) === DATA_DIMENTION_TYPE.DISCRETE
+          );
+        })
+      ) {
+        // in the paper it state that 100 is recommended upper limit for treemap, but it is actually too conservarive estimation, here we use 300.
+        if (dataResults.length >= 1) {
+          ratings.multiLine += 100;
+        }
+        if (dataResults.length >= 1 && dataResults.length <= 20) {
+          ratings.spider += 100;
+          ratings.stackedBar += 100;
+          ratings.groupedBar += 100;
+        }
+      }
+
+      if (
+        // scalar exists in the key variables and non-key variables
+        nonKey_var_list.some((v: string) => {
+          const range = var_to_range_mapping[v];
+          return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR;
+        })
+      ) {
+        if (dataResults.length >= 1 && dataResults.length <= 20) {
+          ratings.spider += 100;
+          ratings.stackedBar += 100;
+          ratings.groupedBar += 100;
+        }
+      }
+
+      if (dataResults.length > 20) {
+        ratings.multiLine += 5;
+        ratings.spider += 5;
+        ratings.stackedBar += 5;
+        ratings.groupedBar += 5;
+
+        messages.push(
+          'The query result is too large, please consider applying a filter in your query.',
+        );
       }
     }
 
@@ -521,7 +591,10 @@ WHERE {
               var_to_range_mapping[var_in_stmt] = range;
               DP_RANGE_LOCAL[DP] = range;
               CA_DPA_mapping[class_type]?.push(DP);
-              if (ranges_type_mapping(range) === DATA_DIMENTION_TYPE.LEXICAL) {
+              if (
+                ranges_type_mapping(range) === DATA_DIMENTION_TYPE.LEXICAL ||
+                ranges_type_mapping(range) === DATA_DIMENTION_TYPE.DISCRETE
+              ) {
                 if (vars_head.includes(var_in_stmt)) {
                   potential_key_var_DP_map[var_in_stmt] = DP;
                 }
@@ -623,7 +696,7 @@ WHERE {
             )
           : {};
 
-      const ratings_2_class =
+      const ratings_2_class_1PAB =
         total_class_num === 2 && total_PAB_num === 1
           ? generateRatingsFor2C1PAB(
               dataResults,
@@ -635,10 +708,24 @@ WHERE {
             )
           : {};
 
+      const ratings_2_class_1DP =
+        total_class_num === 2
+          ? generateRatingsFor2C1DP(
+              dataResults,
+              key_var_count,
+              nonKey_var_count,
+              key_var_list,
+              nonKey_var_list,
+              var_to_range_mapping,
+              messages,
+            )
+          : {};
+
       ratings_recommendation = {
         ...ratings_recommendation,
         ...ratings_1_class,
-        ...ratings_2_class,
+        ...ratings_2_class_1PAB,
+        ...ratings_2_class_1DP,
       };
 
       console.log('ratings_recommendation: ', ratings_recommendation);

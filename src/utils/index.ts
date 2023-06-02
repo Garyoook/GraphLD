@@ -41,6 +41,11 @@ export const ChartType_mapping = {
   hierarchyTree: ChartType.TREE_ANTV,
   sunburst: ChartType.SUNBURST_ANTV,
   circlePacking: ChartType.CIRCLE_PACKING_ANTV,
+  multiLine: ChartType.MULTI_LINE_CHART,
+  // spider: ChartType.SPIDER_CHART_ANTV,
+  // stackedBar: ChartType.STACKED_BAR_CHART_ANTV,
+  // groupedBar: ChartType.GROUPED_BAR_CHART_ANTV,
+
   // 3-class vis:
   sankey: ChartType.SANKEY_ANTV,
   chord: ChartType.CHORD_DIAGRAM_ANTV,
