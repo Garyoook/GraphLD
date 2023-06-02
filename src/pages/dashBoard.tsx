@@ -20,7 +20,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Repositories from './Repositories';
 import SparqlPage from './SparqlPage';
 import {
@@ -57,9 +57,7 @@ function DashboardContent() {
     (state: DatabaseState) => state.database.db_prefix_URL,
   );
 
-  const dispatch = useDispatch();
-
-  const [siderOpen, setSiderOpen] = useState(false);
+  const [siderOpen, setSiderOpen] = useState(true);
   const [tab, setTab] = useState(TABS_DASHBOARD.REPOSITORIES);
 
   const toggleDrawer = () => {

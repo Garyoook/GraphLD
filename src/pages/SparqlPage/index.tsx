@@ -440,8 +440,7 @@ WHERE {
     return ratings;
   }
 
-  const [showKeyVarNotInHeadWarning, setShowKeyVarNotInHeadWarning] =
-    useState(false);
+  const [showMissingKeyWarning, setShowMissingKeyWarning] = useState(false);
 
   function generateVisRecommendation(
     user_query: string,
@@ -589,7 +588,7 @@ WHERE {
         !vars_head.some((v: string) => {
           return Object.keys(var_to_class).includes(v);
         }) && potential_DPK.length === 0;
-      setShowKeyVarNotInHeadWarning(noKeyWarning);
+      setShowMissingKeyWarning(noKeyWarning);
 
       console.log('step2 Classes CA found: ', CLASSES);
       console.log('step2 var_to_class: ', var_to_class);
@@ -893,6 +892,21 @@ PREFIX : <${db_prefix_URL}>`;
     }
   };
 
+  function missingKeyWarning() {
+    return (
+      <Alert
+        sx={{
+          display: showMissingKeyWarning ? 'flex' : 'none',
+          width: '100%',
+        }}
+        severity="warning"
+        onClose={() => setShowMissingKeyWarning(false)}
+      >
+        Key is missing in your query, this may affect your data visualisation
+        please consider adding one
+      </Alert>
+    );
+  }
   return (
     <Grid style={{ margin: 10 }}>
       <Grid sx={{ marginBottom: 3, maxWidth: 500 }}>
@@ -948,10 +962,11 @@ PREFIX : <${db_prefix_URL}>`;
           customIconsTheme,
         ]}
         onChange={onChangeCodeArea}
-        basicSetup={{ autocompletion: true }}
       />
       <Grid container spacing={2}>
-        <Grid item xs={12}></Grid>
+        <Grid item xs={12}>
+          {missingKeyWarning()}
+        </Grid>
         <Grid item xs={4}>
           <LoadingButton
             variant="contained"
@@ -1053,17 +1068,6 @@ PREFIX : <${db_prefix_URL}>`;
                 height: '100vh',
               }}
             >
-              <Alert
-                sx={{
-                  display: showKeyVarNotInHeadWarning ? 'flex' : 'none',
-                  width: '100%',
-                }}
-                severity="warning"
-                onClose={() => setShowKeyVarNotInHeadWarning(false)}
-              >
-                Key is missing in the query head, please consider adding one in
-                the query
-              </Alert>
               {showAlert ? (
                 <Alert severity="error" style={{ height: '100%' }}>
                   {alertText}
