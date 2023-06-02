@@ -509,7 +509,7 @@ WHERE {
       const PAB_LIST: any = [];
       const CA_DPA_mapping: any = {};
       const CA_PAB_mapping: any = {};
-      const potential_DPK: string[] = [];
+      const potential_key_var_DP_map: any = {};
       for (const stmt of parent_statements) {
         const children_stmt = stmt.split(';');
         let class_type = '';
@@ -554,13 +554,13 @@ WHERE {
               CA_DPA_mapping[class_type]?.push(DP);
               if (ranges_type_mapping(range) === DATA_DIMENTION_TYPE.LEXICAL) {
                 if (vars_head.includes(var_in_stmt)) {
-                  potential_DPK.push(DP);
+                  potential_key_var_DP_map[var_in_stmt] = DP;
                 }
               }
             }
           }
 
-          // get PAB and its domain&range (2 linked classes)
+          // === STEP 4 get PAB and its domain&range (2 linked classes) ===
           let PAB: string = '';
           if (
             ConceptualModelInfo.ObjectPropsList?.some((pab: string) => {
@@ -587,7 +587,7 @@ WHERE {
       const noKeyWarning =
         !vars_head.some((v: string) => {
           return Object.keys(var_to_class).includes(v);
-        }) && potential_DPK.length === 0;
+        }) && Object.keys(potential_key_var_DP_map).length === 0;
       setShowMissingKeyWarning(noKeyWarning);
 
       console.log('step2 Classes CA found: ', CLASSES);
@@ -596,23 +596,88 @@ WHERE {
       console.log('step3 var_range mapping: ', var_to_range_mapping);
       console.log(`DP and its Range TA found: `, DP_RANGE_LOCAL);
       console.log('step3 CA_DPA mapping found: ', CA_DPA_mapping);
-      console.log('step3 CA_PAB mapping found: ', CA_PAB_mapping);
+      console.log('step3 potential key DP found: ', potential_key_var_DP_map);
 
-      console.log('step3 potential key DP found: ', potential_DPK);
+      console.log('step4 CA_PAB mapping found: ', CA_PAB_mapping);
 
-      for (const dp of Object.keys(DP_RANGE_LOCAL)) {
-        let class_local = '';
+      // !Recommendation rating algorithm here this one is based on analysing the query head and link to query content and data results.
+
+      const query_head_count = vars_head.length;
+      let nonKey_var_count = query_head_count;
+      let key_var_count = 0;
+
+      // key variables are the variables who is classes, or whose ranges are lexical
+      // ! constains variables in query body !
+      const key_var_list: string[] = [
+        ...Object.keys(potential_key_var_DP_map),
+        ...Object.keys(var_to_class),
+      ];
+      const nonKey_var_list: string[] = vars_head.filter((v) => {
+        return (
+          !key_var_list.includes(v) && !Object.keys(var_to_class).includes(v)
+        );
+      });
+
+      console.log('key_var_list: ', key_var_list);
+      console.log('nonKey_var_list: ', nonKey_var_list);
+
+      // ! cannot use the length of key_var_list to determine the number of key variables
+      // ! because that includes vars in query body.
+      // this means the query head contains variables whose ranges are lexical (so potential keys)
+      if (Object.keys(potential_key_var_DP_map).length > 0) {
+        nonKey_var_count -= Object.keys(potential_key_var_DP_map).length;
+        key_var_count += Object.keys(potential_key_var_DP_map).length;
+      }
+      // this means the query head contains variables whose type are classes
+      if (
+        vars_head.some((v: string) => {
+          return Object.keys(var_to_class).includes(v);
+        })
+      ) {
+        nonKey_var_count -= Object.keys(var_to_class).length;
+        key_var_count += Object.keys(var_to_class).length;
+      }
+
+      console.log('nonKey_var_count: ', nonKey_var_count);
+      console.log('key_var_count: ', key_var_count);
+
+      const ratings_1_c = {
+        scatter: 0,
+        bubble: 0,
+        bar: 0,
+        line: 0,
+        wordClouds: 0,
+        calendar: 0,
+        pie: 0,
+      };
+
+      if (key_var_count >= 1 && nonKey_var_count === 1) {
+        const nonKey_var = nonKey_var_list[0];
+        const nonKey_var_range = var_to_range_mapping[nonKey_var];
         if (
-          CLASSES.some((c: string) => {
-            class_local = c;
-            return functions_conceptualModel.DataPropertyDomain(dp, c);
-          })
+          ranges_type_mapping(nonKey_var_range) === DATA_DIMENTION_TYPE.SCALAR
         ) {
-          CLASS_DP_LOCAL[class_local] = dp;
+          ratings_1_c.bar = 100;
+          ratings_1_c.pie = 100;
+          ratings_1_c.wordClouds = 100;
         }
       }
 
-      // !Recommendation rating algorithm here
+      if (nonKey_var_count == 2) {
+        ratings_1_c.scatter = 100;
+      }
+
+      ratings_recommendation = {
+        ...ratings_recommendation,
+        ...ratings_1_c,
+        // ...ratings_1_class,
+        // ...ratings_2_classes,
+        // ...ratings_3_classes,
+      };
+
+      // then the rest of the variables in query head are scalars variables for visualisation
+
+      // !Recommendation rating algorithm here this one is based on the number of classes and ranges
       // first check number of Classes(C) and Ranges(T)
       // let c_num = 0;
       let t_num = 0;
@@ -652,12 +717,12 @@ WHERE {
         var_to_range_mapping,
       );
 
-      ratings_recommendation = {
-        ...ratings_recommendation,
-        ...ratings_1_class,
-        ...ratings_2_classes,
-        ...ratings_3_classes,
-      };
+      // ratings_recommendation = {
+      //   ...ratings_recommendation,
+      //   ...ratings_1_class,
+      //   ...ratings_2_classes,
+      //   ...ratings_3_classes,
+      // };
     }
 
     const recommendations: RecommendationProps[] = [];
