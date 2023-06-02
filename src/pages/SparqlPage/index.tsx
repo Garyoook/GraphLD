@@ -158,7 +158,7 @@ WHERE {
     useState<ConceptialModelInfoProps>({});
   const [fullLoading, setFullLoading] = useState(false);
 
-  const [query, setQuery] = useState<string>(f3d);
+  const [query, setQuery] = useState<string>(f3c);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -430,12 +430,12 @@ WHERE {
         if (dataResults.length >= 1) {
           ratings.multiLine += 100;
         } else if (dataResults.length >= 1 && dataResults.length <= 20) {
-          ratings.spider += 100;
+          // ratings.spider += 100; // spider should not appear when DPK has scalar range
           ratings.stackedBar += 100;
           ratings.groupedBar += 100;
         } else {
           ratings.multiLine += 10;
-          ratings.spider += 10;
+          // ratings.spider += 10;
           ratings.stackedBar += 10;
           ratings.groupedBar += 10;
         }
@@ -457,9 +457,9 @@ WHERE {
 
       if (dataResults.length > 20) {
         ratings.multiLine += 5;
-        ratings.spider += 5;
-        ratings.stackedBar += 5;
-        ratings.groupedBar += 5;
+        // ratings.spider += 5;
+        // ratings.stackedBar += 5;
+        // ratings.groupedBar += 5;
 
         messages.push(
           'The query result is too large, please consider applying a filter in your query.',

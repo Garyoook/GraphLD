@@ -7,6 +7,7 @@ import LineChartAntV from '@/pages/graphs/ANTVCharts/LineChartAntV';
 import PieChartAntV from '@/pages/graphs/ANTVCharts/PieChartAntV';
 import SankeyAntV from '@/pages/graphs/ANTVCharts/SankeyAntV';
 import ScatterPlotAntV from '@/pages/graphs/ANTVCharts/ScatterPlotAntV';
+import SpiderChart from '@/pages/graphs/ANTVCharts/SpiderAntV';
 import SunBurst from '@/pages/graphs/ANTVCharts/SunBurstAntV';
 import TreeAntV from '@/pages/graphs/ANTVCharts/TreeAntV';
 import TreeMapAntV from '@/pages/graphs/ANTVCharts/TreeMapAntV';
@@ -140,6 +141,8 @@ function VisOptions(props: {
         return <SankeyAntV headers={headers} data={originalData} />;
       case ChartType.CALENDAR_ANTV:
         return <CalendarChart headers={headers} data={originalData} />;
+      case ChartType.SPIDER_CHART_ANTV:
+        return <SpiderChart headers={headers} data={originalData} />;
 
       default:
         return 'You specified an invalid chart type, please check the code';
