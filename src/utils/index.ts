@@ -13,6 +13,7 @@ export enum DATA_DIMENTION_TYPE {
   DISCRETE,
   SCALAR,
   LEXICAL,
+  TEMPORAL,
 }
 
 export const ranges_type_mapping = (range: string) => {
@@ -21,7 +22,7 @@ export const ranges_type_mapping = (range: string) => {
     'xsd:gYear': DATA_DIMENTION_TYPE.DISCRETE,
     'xsd:decimal': DATA_DIMENTION_TYPE.SCALAR,
     'xsd:string': DATA_DIMENTION_TYPE.LEXICAL,
-    'xsd:date': DATA_DIMENTION_TYPE.DISCRETE,
+    'xsd:date': DATA_DIMENTION_TYPE.TEMPORAL,
   };
 
   return mapping[range];

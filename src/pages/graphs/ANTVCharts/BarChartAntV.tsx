@@ -46,6 +46,12 @@ const BarChartAntV = (props: VisDataProps) => {
         autoRotate: false,
       },
     },
+    interactions: [{ type: 'element-active' }],
+    brush: {
+      enabled: true,
+      type: 'x-rect' as 'x-rect',
+      action: 'filter' as 'filter',
+    },
     // scrollbar: {
     //   type: 'horizontal' as 'horizontal',
     //   categorySize: 12.5,

@@ -160,7 +160,7 @@ WHERE {
     useState<ConceptialModelInfoProps>({});
   const [fullLoading, setFullLoading] = useState(false);
 
-  const [query, setQuery] = useState<string>(initialString);
+  const [query, setQuery] = useState<string>(f3b);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -261,163 +261,6 @@ WHERE {
     setOpenVisOption(false);
   };
 
-  function generateRatingsFor1C(
-    c_num: number,
-    t_num: number,
-    var_to_range_mapping: any,
-  ) {
-    console.log('var_to_range_mapping: ', var_to_range_mapping);
-
-    // ratings for 1 class with DPs:
-    const ratings: any = {
-      scatter: 0,
-      bubble: 0,
-      bar: 0,
-      wordClouds: 0,
-      calendar: 0,
-      pie: 0,
-    };
-
-    // 1 class(key) and 2 numericals
-    if (c_num == 1 && t_num == 2) {
-      let allScalar = true;
-      if (
-        Object.values(var_to_range_mapping).some((v: any) => {
-          return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.LEXICAL;
-        })
-      ) {
-        allScalar = false;
-        ratings.wordClouds += 100;
-      }
-      if (
-        Object.values(var_to_range_mapping).some((v: any) => {
-          return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.DISCRETE;
-        })
-      ) {
-        allScalar = false;
-      }
-      ratings.scatter += allScalar ? 100 : 30;
-    }
-    // to cover the case of 1 class(key) and 2 DP, but one of DP is key DP
-    if (c_num == 1 && t_num == 2) {
-      if (
-        Object.values(var_to_range_mapping).some((v: any) => {
-          return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.LEXICAL;
-        }) &&
-        Object.values(var_to_range_mapping).some((v: any) => {
-          return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.SCALAR;
-        })
-      ) {
-        ratings.bar += 100;
-        ratings.pie += 100;
-        ratings.wordClouds += 80;
-      } else if (
-        !Object.values(var_to_range_mapping).some((v: any) => {
-          return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.LEXICAL;
-        })
-      ) {
-        ratings.scatter += 100;
-      }
-    }
-
-    // 1 class(key) and 3 numericals
-    if (
-      c_num == 1 &&
-      t_num >= 2 &&
-      t_num <= 4 &&
-      Object.values(var_to_range_mapping).some((v: any) => {
-        return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.SCALAR;
-      })
-    ) {
-      ratings.bubble += 100;
-    }
-
-    if (
-      c_num == 1 &&
-      t_num == 2 &&
-      Object.values(var_to_range_mapping).some((v: any) => {
-        return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.SCALAR;
-      })
-    ) {
-      ratings.scatter += 100;
-    }
-
-    // TODO: here will be a checker & new branch for the key(a must) to apply bar/wordClouds/pie chart.
-    if (
-      c_num == 1 &&
-      t_num == 1 &&
-      Object.values(var_to_range_mapping).some((v: any) => {
-        return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.SCALAR;
-      })
-    ) {
-      ratings.bar += 100;
-      ratings.wordClouds += 70;
-      ratings.pie += 100;
-    }
-    if (
-      c_num == 1 &&
-      t_num == 1 &&
-      Object.values(var_to_range_mapping).some((v: any) => {
-        return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.SCALAR;
-      }) &&
-      Object.values(var_to_range_mapping).some((v: any) => {
-        return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.LEXICAL;
-      })
-    ) {
-      ratings.bar += 100;
-      ratings.wordClouds += 100;
-    }
-    if (
-      c_num == 1 &&
-      t_num == 1 &&
-      Object.values(var_to_range_mapping).some((v: any) => {
-        return v == 'xsd:date';
-      })
-    ) {
-      ratings.calendar += 80;
-    }
-    console.log('Final 1 class vis ratings: ', ratings);
-
-    return ratings;
-  }
-
-  function generateratingsFor2C1PAB(
-    c_num: number,
-    t_num: number,
-    pab_num: number,
-    var_to_class: any,
-    var_to_range_mapping: any,
-  ) {
-    // ratings for 1 class with DPs:
-    const ratings: any = {
-      treeMap: 0,
-      hierarchyTree: 0,
-      sunburst: 0,
-      circlePacking: 0,
-    };
-
-    if (c_num == 2 && t_num == 2) {
-      ratings.hierarchyTree += 100;
-    }
-
-    if (
-      c_num == 2 &&
-      t_num == 3 &&
-      Object.values(var_to_range_mapping).some((v: any) => {
-        return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.SCALAR;
-      })
-    ) {
-      ratings.treeMap += 100;
-      ratings.hierarchyTree += 20;
-      ratings.sunburst += 70;
-      ratings.circlePacking += 70;
-    }
-
-    console.log('Final 2 class vis ratings: ', ratings);
-
-    return ratings;
-  }
-
   function generateRatingsFor3C(
     c_num: number,
     t_num: number,
@@ -440,13 +283,155 @@ WHERE {
     return ratings;
   }
 
+  function generateRatingsFor1C(
+    dataResults: any[],
+    key_var_count: number,
+    nonKey_var_count: number,
+    nonKey_var_list: string[],
+    var_to_range_mapping: any,
+    messages: string[],
+  ) {
+    const ratings = {
+      scatter: 0,
+      bubble: 0,
+      bar: 0,
+      line: 0,
+      wordClouds: 0,
+      calendar: 0,
+      pie: 0,
+    };
+
+    if (key_var_count >= 1 && nonKey_var_count === 1) {
+      const nonKey_var = nonKey_var_list[0];
+      const nonKey_var_range = var_to_range_mapping[nonKey_var];
+      if (
+        ranges_type_mapping(nonKey_var_range) === DATA_DIMENTION_TYPE.SCALAR
+      ) {
+        ratings.bar += 100;
+        ratings.pie += 100;
+        ratings.wordClouds = 100;
+      }
+      if (dataResults.length > 100) {
+        messages.push(
+          'The query result is too large, please consider applying a filter in your query.',
+        );
+      }
+    }
+
+    // for calendar chart, one of the variables must have a temporal range
+    if (nonKey_var_count >= 1 && key_var_count <= 1) {
+      if (
+        nonKey_var_list.some((v: any) => {
+          const range = var_to_range_mapping[v];
+          const range_type = ranges_type_mapping(range);
+          return range_type === DATA_DIMENTION_TYPE.TEMPORAL;
+        })
+      ) {
+        ratings.calendar += 80;
+      }
+    }
+
+    if (nonKey_var_count === 2) {
+      let allScalar = true;
+
+      if (
+        nonKey_var_list.some((v: string) => {
+          const range = var_to_range_mapping[v];
+          if (ranges_type_mapping(range) !== DATA_DIMENTION_TYPE.SCALAR) {
+            return true;
+          }
+        })
+      ) {
+        allScalar = false;
+      }
+      ratings.scatter += allScalar ? 100 : 0;
+    }
+
+    if (nonKey_var_count === 3) {
+      let allScalar = true;
+
+      if (
+        nonKey_var_list.some((v: string) => {
+          const range = var_to_range_mapping[v];
+          if (ranges_type_mapping(range) !== DATA_DIMENTION_TYPE.SCALAR) {
+            return true;
+          }
+        })
+      ) {
+        allScalar = false;
+      }
+      ratings.scatter += allScalar ? 50 : 0;
+      ratings.bubble += allScalar ? 100 : 0;
+    }
+
+    return ratings;
+  }
+
+  function generateRatingsFor2C1PAB(
+    dataResults: any[],
+    key_var_count: number,
+    nonKey_var_count: number,
+    nonKey_var_list: string[],
+    var_to_range_mapping: any,
+    messages: string[],
+  ) {
+    const ratings: any = {
+      treeMap: 0,
+      hierarchyTree: 0,
+      sunburst: 0,
+      circlePacking: 0,
+    };
+    if (key_var_count == 2 && nonKey_var_count === 1) {
+      if (
+        nonKey_var_list.some((v: string) => {
+          const range = var_to_range_mapping[v];
+          return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR;
+        })
+      ) {
+        // in the paper it state that 100 is recommended upper limit for treemap, but it is actually too conservarive estimation, here we use 300.
+        if (dataResults.length >= 1 && dataResults.length <= 300) {
+          ratings.treeMap += 100;
+        }
+        if (dataResults.length >= 1 && dataResults.length <= 20) {
+          ratings.sunburst += 100;
+          ratings.circlePacking += 100;
+        }
+      }
+
+      if (dataResults.length > 100) {
+        ratings.treeMap += 30;
+        ratings.sunburst += 30;
+        ratings.circlePacking += 30;
+
+        messages.push(
+          'The query result is too large, please consider applying a filter in your query.',
+        );
+      }
+    }
+
+    if (key_var_count == 2) {
+      if (dataResults.length >= 1 && dataResults.length <= 100) {
+        ratings.hierarchyTree += 100;
+      }
+    }
+
+    return ratings;
+  }
+
   const [showMissingKeyWarning, setShowMissingKeyWarning] = useState(false);
 
   function generateVisRecommendation(
     user_query: string,
-  ): RecommendationProps[] {
+    dataResults: any[] = [],
+  ): {
+    recommendations: RecommendationProps[];
+    messages?: string;
+    missingKeyWarning?: boolean;
+    needFilteringWarning?: boolean;
+  } {
+    const messages: string[] = [];
+    let needFilteringWarning = false;
     const CLASSES: string[] = [];
-    const CLASS_DP_LOCAL: any = {};
     const DP_RANGE_LOCAL: any = {};
     const var_to_class: any = {};
     const var_to_range_mapping: any = {};
@@ -489,22 +474,6 @@ WHERE {
 
       // split the query body by '.' (parent statements) and ';'(children statements)
       const parent_statements = user_query_body.split('.');
-      // for (const stmt of parent_statements) {
-      //   const children_stmt = stmt.split(';');
-      //   for (const sub_stmt of children_stmt) {
-      //     const sub_stmt_trim = sub_stmt.trim();
-      //     // console.log('statements, ', sub_stmt_trim);
-      //     if (sub_stmt_trim.includes('rdf:type')) {
-      //       const type_split = sub_stmt_trim.split('rdf:type');
-      //       const variable = type_split[0].split('?')[1].trim();
-      //       if (variable && variable.length > 0) {
-      //         const class_type = type_split[1].trim();
-      //         var_to_class[variable] = class_type;
-      //         CLASSES.push(class_type);
-      //       }
-      //     }
-      //   }
-      // }
 
       const PAB_LIST: any = [];
       const CA_DPA_mapping: any = {};
@@ -598,10 +567,13 @@ WHERE {
       console.log('step3 CA_DPA mapping found: ', CA_DPA_mapping);
       console.log('step3 potential key DP found: ', potential_key_var_DP_map);
 
+      console.log('step4 PAB found: ', PAB_LIST);
       console.log('step4 CA_PAB mapping found: ', CA_PAB_mapping);
 
       // !Recommendation rating algorithm here this one is based on analysing the query head and link to query content and data results.
 
+      const total_class_num = CLASSES.length;
+      const total_PAB_num = PAB_LIST.length;
       const query_head_count = vars_head.length;
       let nonKey_var_count = query_head_count;
       let key_var_count = 0;
@@ -617,7 +589,6 @@ WHERE {
           !key_var_list.includes(v) && !Object.keys(var_to_class).includes(v)
         );
       });
-
       console.log('key_var_list: ', key_var_list);
       console.log('nonKey_var_list: ', nonKey_var_list);
 
@@ -637,43 +608,40 @@ WHERE {
         nonKey_var_count -= Object.keys(var_to_class).length;
         key_var_count += Object.keys(var_to_class).length;
       }
-
       console.log('nonKey_var_count: ', nonKey_var_count);
       console.log('key_var_count: ', key_var_count);
 
-      const ratings_1_c = {
-        scatter: 0,
-        bubble: 0,
-        bar: 0,
-        line: 0,
-        wordClouds: 0,
-        calendar: 0,
-        pie: 0,
-      };
+      const ratings_1_class =
+        total_class_num === 1
+          ? generateRatingsFor1C(
+              dataResults,
+              key_var_count,
+              nonKey_var_count,
+              nonKey_var_list,
+              var_to_range_mapping,
+              messages,
+            )
+          : {};
 
-      if (key_var_count >= 1 && nonKey_var_count === 1) {
-        const nonKey_var = nonKey_var_list[0];
-        const nonKey_var_range = var_to_range_mapping[nonKey_var];
-        if (
-          ranges_type_mapping(nonKey_var_range) === DATA_DIMENTION_TYPE.SCALAR
-        ) {
-          ratings_1_c.bar = 100;
-          ratings_1_c.pie = 100;
-          ratings_1_c.wordClouds = 100;
-        }
-      }
-
-      if (nonKey_var_count == 2) {
-        ratings_1_c.scatter = 100;
-      }
+      const ratings_2_class =
+        total_class_num === 2 && total_PAB_num === 1
+          ? generateRatingsFor2C1PAB(
+              dataResults,
+              key_var_count,
+              nonKey_var_count,
+              nonKey_var_list,
+              var_to_range_mapping,
+              messages,
+            )
+          : {};
 
       ratings_recommendation = {
         ...ratings_recommendation,
-        ...ratings_1_c,
-        // ...ratings_1_class,
-        // ...ratings_2_classes,
-        // ...ratings_3_classes,
+        ...ratings_1_class,
+        ...ratings_2_class,
       };
+
+      console.log('ratings_recommendation: ', ratings_recommendation);
 
       // then the rest of the variables in query head are scalars variables for visualisation
 
@@ -693,36 +661,12 @@ WHERE {
       let c_num = CLASSES.length;
 
       let pab_num = PAB_LIST.length;
-      console.log(
-        `The query contains ${c_num} Cs, ${t_num} Ts, and ${pab_num} PABs`,
-      );
-
-      // ratings for 1 class with DPs:
-      const ratings_1_class = generateRatingsFor1C(
-        c_num,
-        t_num,
-        var_to_range_mapping,
-      );
-      const ratings_2_classes = generateratingsFor2C1PAB(
-        c_num,
-        t_num,
-        pab_num,
-        var_to_class,
-        var_to_range_mapping,
-      );
 
       const ratings_3_classes = generateRatingsFor3C(
         c_num,
         t_num,
         var_to_range_mapping,
       );
-
-      // ratings_recommendation = {
-      //   ...ratings_recommendation,
-      //   ...ratings_1_class,
-      //   ...ratings_2_classes,
-      //   ...ratings_3_classes,
-      // };
     }
 
     const recommendations: RecommendationProps[] = [];
@@ -736,7 +680,12 @@ WHERE {
     }
 
     // Final recommendation results:
-    const result = recommendations.sort((a, b) => b.rating - a.rating);
+    const result = {
+      recommendations: recommendations.sort((a, b) => b.rating - a.rating),
+      messages: messages.join('\n'),
+      missingKeyWarning: showMissingKeyWarning,
+      needFilteringWarning,
+    };
 
     console.log('recommended vis: ', result);
     return result;
@@ -790,6 +739,10 @@ WHERE {
       });
 
       // console.log('remapped data', data);
+
+      setRecommendations(
+        generateVisRecommendation(query, data).recommendations,
+      );
       setDataSource(data);
       setShowAlert(false);
     } catch (e: any) {
@@ -800,7 +753,6 @@ WHERE {
           'Error: either missing content in the query or unknown syntax error, please check your query and try again.',
       );
     } finally {
-      setRecommendations(generateVisRecommendation(query));
       setLoading(false);
     }
   };
