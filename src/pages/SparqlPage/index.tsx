@@ -940,7 +940,8 @@ PREFIX : <${db_prefix_URL}>`;
       </Grid>
       <CodeMirror
         value={query}
-        height="300px"
+        minHeight="300px"
+        maxHeight="500px"
         extensions={[
           StreamLanguage.define(sparql),
           autocompletion({ override: [myCompletions] }),
