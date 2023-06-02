@@ -1,5 +1,5 @@
 import { VisDataProps } from '@/pages/SparqlPage';
-import { Bar } from '@ant-design/plots';
+import { Column } from '@ant-design/plots';
 import { FormControl, Grid, MenuItem, Select } from '@mui/material';
 import { useEffect, useState } from 'react';
 import {
@@ -8,7 +8,7 @@ import {
   safeGetFieldIndex,
 } from './utils';
 
-const BarChartAntV = (props: VisDataProps) => {
+const ColumnChartAntV = (props: VisDataProps) => {
   const { headers, data } = props;
 
   const [dataSource, setDataSource] = useState<any[]>([]);
@@ -25,8 +25,8 @@ const BarChartAntV = (props: VisDataProps) => {
   }, [headers]);
 
   useEffect(() => {
-    setXField(headers[1]);
-    setYField(headers[0]);
+    setXField(headers[0]);
+    setYField(headers[1]);
 
     const typedData = preprocessDataForVisualisation(data);
     // sort is not necessary
@@ -59,7 +59,7 @@ const BarChartAntV = (props: VisDataProps) => {
   };
   return dataSource.length > 0 ? (
     <Grid>
-      <Bar {...config} />
+      <Column {...config} />
 
       <Grid container spacing={2}>
         <Grid item>
@@ -110,4 +110,4 @@ const BarChartAntV = (props: VisDataProps) => {
   );
 };
 
-export default BarChartAntV;
+export default ColumnChartAntV;

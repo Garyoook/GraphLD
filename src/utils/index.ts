@@ -32,6 +32,7 @@ export const ChartType_mapping = {
   // 1-class vis:
   scatter: ChartType.SCATTER_PLOT_ANTV,
   bar: ChartType.BAR_CHART_ANTV,
+  column: ChartType.COLUMN_CHART_ANTV,
   bubble: ChartType.BUBBLE_CHART_ANTV,
   wordClouds: ChartType.WORD_CLOUDS_ANTV,
   calendar: ChartType.CALENDAR_ANTV,
@@ -45,6 +46,8 @@ export const ChartType_mapping = {
   spider: ChartType.SPIDER_CHART_ANTV,
   stackedBar: ChartType.STACKED_BAR_CHART_ANTV,
   groupedBar: ChartType.GROUPED_BAR_CHART_ANTV,
+  stackedColumn: ChartType.STACKED_COLUMN_CHART_ANTV,
+  groupedColumn: ChartType.GROUPED_COLUMN_CHART_ANTV,
 
   // 3-class vis:
   sankey: ChartType.SANKEY_ANTV,

@@ -3,11 +3,16 @@ import BubbleChartAntV from '@/pages/graphs/ANTVCharts/BubbleChartAntV';
 import CalendarChart from '@/pages/graphs/ANTVCharts/CalendarAntV';
 import ChordAntV from '@/pages/graphs/ANTVCharts/ChordAntV';
 import CirclePackingAntV from '@/pages/graphs/ANTVCharts/CirclePackingAntV';
+import ColumnChartAntV from '@/pages/graphs/ANTVCharts/ColumnChartAntV';
+import GroupedBarChart from '@/pages/graphs/ANTVCharts/GroupedBarAntV';
+import GroupedColumnChart from '@/pages/graphs/ANTVCharts/GroupedColumnAntV';
 import LineChartAntV from '@/pages/graphs/ANTVCharts/LineChartAntV';
 import PieChartAntV from '@/pages/graphs/ANTVCharts/PieChartAntV';
 import SankeyAntV from '@/pages/graphs/ANTVCharts/SankeyAntV';
 import ScatterPlotAntV from '@/pages/graphs/ANTVCharts/ScatterPlotAntV';
 import SpiderChart from '@/pages/graphs/ANTVCharts/SpiderAntV';
+import StackedBarChart from '@/pages/graphs/ANTVCharts/StackedBarAntV';
+import StackedColumnChart from '@/pages/graphs/ANTVCharts/StackedColumnAntV';
 import SunBurst from '@/pages/graphs/ANTVCharts/SunBurstAntV';
 import TreeAntV from '@/pages/graphs/ANTVCharts/TreeAntV';
 import TreeMapAntV from '@/pages/graphs/ANTVCharts/TreeMapAntV';
@@ -62,9 +67,12 @@ export enum ChartType {
   LINE_CHART_ANTV = 'line chart ',
   MULTI_LINE_CHART = 'Multiple Line Chart ',
   SPIDER_CHART_ANTV = 'Spider Chart ',
-  STACKED_BAR_CHART_ANTV = 'Stacked Bar Chart ',
-  GROUPED_BAR_CHART_ANTV = 'Grouped Bar Chart ',
-  BAR_CHART_ANTV = 'Bar Chart ',
+  STACKED_COLUMN_CHART_ANTV = 'Stacked Bar Chart (vertical)',
+  GROUPED_COLUMN_CHART_ANTV = 'Grouped Bar Chart (vertical)',
+  STACKED_BAR_CHART_ANTV = 'Stacked Bar Chart (horizontal)',
+  GROUPED_BAR_CHART_ANTV = 'Grouped Bar Chart (horizontal)',
+  BAR_CHART_ANTV = 'Bar Chart (horizontal)',
+  COLUMN_CHART_ANTV = 'Bar Chart (vertical)',
   PIE_CHART_ANTV = 'Pie Chart ',
   SCATTER_PLOT_ANTV = 'Scatter Plot ',
   TREE_MAP_ANTV = 'Tree Map ',
@@ -115,12 +123,22 @@ function VisOptions(props: {
         return <TreeMap headers={headers} data={data} />;
       case ChartType.BAR_CHART_ANTV:
         return <BarChartAntV headers={headers} data={originalData} />;
+      case ChartType.PIE_CHART_ANTV:
+        return <PieChartAntV headers={headers} data={originalData} />;
+      case ChartType.COLUMN_CHART_ANTV:
+        return <ColumnChartAntV headers={headers} data={originalData} />;
       case ChartType.LINE_CHART_ANTV:
         return <LineChartAntV headers={headers} data={originalData} />;
       case ChartType.MULTI_LINE_CHART:
         return <MultipleLineChart headers={headers} data={originalData} />;
-      case ChartType.PIE_CHART_ANTV:
-        return <PieChartAntV headers={headers} data={originalData} />;
+      case ChartType.STACKED_COLUMN_CHART_ANTV:
+        return <StackedColumnChart headers={headers} data={originalData} />;
+      case ChartType.GROUPED_COLUMN_CHART_ANTV:
+        return <GroupedColumnChart headers={headers} data={originalData} />;
+      case ChartType.STACKED_BAR_CHART_ANTV:
+        return <StackedBarChart headers={headers} data={originalData} />;
+      case ChartType.GROUPED_BAR_CHART_ANTV:
+        return <GroupedBarChart headers={headers} data={originalData} />;
       case ChartType.SCATTER_PLOT_ANTV:
         return <ScatterPlotAntV headers={headers} data={originalData} />;
       case ChartType.TREE_MAP_ANTV:

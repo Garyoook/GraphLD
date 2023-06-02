@@ -8,7 +8,7 @@ import {
   safeGetFieldIndex,
 } from './utils';
 
-const BarChartAntV = (props: VisDataProps) => {
+const StackedBarChart = (props: VisDataProps) => {
   const { headers, data } = props;
 
   const [dataSource, setDataSource] = useState<any[]>([]);
@@ -16,6 +16,7 @@ const BarChartAntV = (props: VisDataProps) => {
   // axis, set to states for future column switching requirements
   const [xField, setXField] = useState<string>('');
   const [yField, setYField] = useState<string>('');
+  const [seriesField, setSeriesField] = useState<string>('');
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
 
@@ -27,6 +28,7 @@ const BarChartAntV = (props: VisDataProps) => {
   useEffect(() => {
     setXField(headers[1]);
     setYField(headers[0]);
+    setSeriesField(headers[2]);
 
     const typedData = preprocessDataForVisualisation(data);
     // sort is not necessary
@@ -37,26 +39,44 @@ const BarChartAntV = (props: VisDataProps) => {
 
   const config = {
     data: dataSource,
+    isStack: true,
     xField,
     yField,
-    columnWidthRatio: 0.8,
-    xAxis: {
-      label: {
-        autoHide: true,
-        autoRotate: false,
+    seriesField,
+    //color: ['#1ca9e6', '#f88c24'],
+    // marginRatio: 0.1,
+    label: {
+      position: 'middle' as 'middle',
+      // 'left', 'middle', 'right'
+      layout: [
+        {
+          type: 'interval-adjust-position' as 'interval-adjust-position',
+        },
+        {
+          type: 'interval-hide-overlap' as 'interval-hide-overlap',
+        },
+        {
+          type: 'adjust-color' as 'adjust-color',
+        },
+      ],
+    },
+    interactions: [
+      {
+        type: 'active-region' as 'active-region',
+        enable: false,
+      },
+    ],
+    connectedArea: {
+      style: (oldStyle: any, element: any) => {
+        return {
+          fill: 'rgba(0,0,0,0.25)',
+          stroke: oldStyle.fill,
+          lineWidth: 0.5,
+        };
       },
     },
-    interactions: [{ type: 'element-active' }],
-    brush: {
-      enabled: true,
-      type: 'x-rect' as 'x-rect',
-      action: 'filter' as 'filter',
-    },
-    // scrollbar: {
-    //   type: 'horizontal' as 'horizontal',
-    //   categorySize: 12.5,
-    // },
   };
+
   return dataSource.length > 0 ? (
     <Grid>
       <Bar {...config} />
@@ -103,6 +123,27 @@ const BarChartAntV = (props: VisDataProps) => {
             </Select>
           </FormControl>
         </Grid>
+
+        <Grid item>
+          <FormControl sx={{ m: 1, minWidth: 120 }}>
+            source for series
+            <Select
+              value={safeGetFieldIndex(fieldsAll, seriesField)}
+              onChange={(e) => {
+                const field = safeGetField(
+                  fieldsAll,
+                  Number(e.target.value),
+                  emptyHeader,
+                );
+                setSeriesField(field);
+              }}
+            >
+              {fieldsAll.map((item, index) => {
+                return <MenuItem value={index}>{item}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+        </Grid>
       </Grid>
     </Grid>
   ) : (
@@ -110,4 +151,4 @@ const BarChartAntV = (props: VisDataProps) => {
   );
 };
 
-export default BarChartAntV;
+export default StackedBarChart;

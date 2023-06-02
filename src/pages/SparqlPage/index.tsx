@@ -158,7 +158,7 @@ WHERE {
     useState<ConceptialModelInfoProps>({});
   const [fullLoading, setFullLoading] = useState(false);
 
-  const [query, setQuery] = useState<string>(f3c);
+  const [query, setQuery] = useState<string>(initialString);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -271,6 +271,7 @@ WHERE {
       scatter: 0,
       bubble: 0,
       bar: 0,
+      column: 0,
       line: 0,
       wordClouds: 0,
       calendar: 0,
@@ -284,6 +285,7 @@ WHERE {
         ranges_type_mapping(nonKey_var_range) === DATA_DIMENTION_TYPE.SCALAR
       ) {
         ratings.bar += 100;
+        ratings.column += 100;
         ratings.pie += 100;
         ratings.wordClouds = 100;
       }
