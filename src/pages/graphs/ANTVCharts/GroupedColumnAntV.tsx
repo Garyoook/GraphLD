@@ -30,12 +30,25 @@ const GroupedColumnChart = (props: VisDataProps) => {
     setYField(headers[1]);
     setSeriesField(headers[2]);
 
-    const typedData = preprocessDataForVisualisation(data);
+    const typedData = preprocessDataForVisualisation(data).sort(
+      (a: any, b: any) => {
+        return a[xField] - b[xField];
+      },
+    );
     // sort is not necessary
     // .sort((a: any, b: any) => a[headers[1]] - b[headers[1]],);
 
     setDataSource(typedData);
   }, [headers, data]);
+
+  useEffect(() => {
+    if (dataSource.length > 0) {
+      const orderedData = dataSource.sort((a, b) => {
+        return a[xField] - b[xField];
+      });
+      setDataSource(orderedData);
+    }
+  }, [xField, yField, seriesField]);
 
   const config = {
     data: dataSource,
@@ -81,7 +94,11 @@ const GroupedColumnChart = (props: VisDataProps) => {
               }}
             >
               {fieldsAll.map((item, index) => {
-                return <MenuItem value={index}>{item}</MenuItem>;
+                return (
+                  <MenuItem key={index} value={index}>
+                    {item}
+                  </MenuItem>
+                );
               })}
             </Select>
           </FormControl>
@@ -102,7 +119,11 @@ const GroupedColumnChart = (props: VisDataProps) => {
               }}
             >
               {fieldsAll.map((item, index) => {
-                return <MenuItem value={index}>{item}</MenuItem>;
+                return (
+                  <MenuItem key={index} value={index}>
+                    {item}
+                  </MenuItem>
+                );
               })}
             </Select>
           </FormControl>
@@ -123,7 +144,11 @@ const GroupedColumnChart = (props: VisDataProps) => {
               }}
             >
               {fieldsAll.map((item, index) => {
-                return <MenuItem value={index}>{item}</MenuItem>;
+                return (
+                  <MenuItem key={index} value={index}>
+                    {item}
+                  </MenuItem>
+                );
               })}
             </Select>
           </FormControl>

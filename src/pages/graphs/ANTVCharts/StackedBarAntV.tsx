@@ -30,12 +30,21 @@ const StackedBarChart = (props: VisDataProps) => {
     setYField(headers[0]);
     setSeriesField(headers[2]);
 
-    const typedData = preprocessDataForVisualisation(data);
-    // sort is not necessary
-    // .sort((a: any, b: any) => a[headers[1]] - b[headers[1]],);
+    const typedData = preprocessDataForVisualisation(data).sort(
+      (a: any, b: any) => {
+        return a[yField] - b[yField];
+      },
+    );
 
     setDataSource(typedData);
   }, [headers, data]);
+
+  useEffect(() => {
+    const orderedData = dataSource.sort((a, b) => {
+      return a[yField] - b[yField];
+    });
+    setDataSource(orderedData);
+  }, [xField, yField, seriesField]);
 
   const config = {
     data: dataSource,
@@ -97,7 +106,11 @@ const StackedBarChart = (props: VisDataProps) => {
               }}
             >
               {fieldsAll.map((item, index) => {
-                return <MenuItem value={index}>{item}</MenuItem>;
+                return (
+                  <MenuItem key={index} value={index}>
+                    {item}
+                  </MenuItem>
+                );
               })}
             </Select>
           </FormControl>
@@ -118,7 +131,11 @@ const StackedBarChart = (props: VisDataProps) => {
               }}
             >
               {fieldsAll.map((item, index) => {
-                return <MenuItem value={index}>{item}</MenuItem>;
+                return (
+                  <MenuItem key={index} value={index}>
+                    {item}
+                  </MenuItem>
+                );
               })}
             </Select>
           </FormControl>
@@ -139,7 +156,11 @@ const StackedBarChart = (props: VisDataProps) => {
               }}
             >
               {fieldsAll.map((item, index) => {
-                return <MenuItem value={index}>{item}</MenuItem>;
+                return (
+                  <MenuItem key={index} value={index}>
+                    {item}
+                  </MenuItem>
+                );
               })}
             </Select>
           </FormControl>

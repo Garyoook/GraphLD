@@ -158,7 +158,7 @@ WHERE {
     useState<ConceptialModelInfoProps>({});
   const [fullLoading, setFullLoading] = useState(false);
 
-  const [query, setQuery] = useState<string>(initialString);
+  const [query, setQuery] = useState<string>(f3c);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -412,6 +412,8 @@ WHERE {
       spider: 0,
       stackedBar: 0,
       groupedBar: 0,
+      stackedColumn: 0,
+      groupedColumn: 0,
     };
     if (key_var_count == 2 && nonKey_var_count === 1) {
       if (
@@ -435,11 +437,15 @@ WHERE {
           // ratings.spider += 100; // spider should not appear when DPK has scalar range
           ratings.stackedBar += 100;
           ratings.groupedBar += 100;
+          ratings.stackedColumn += 100;
+          ratings.groupedColumn += 100;
         } else {
           ratings.multiLine += 10;
           // ratings.spider += 10;
           ratings.stackedBar += 10;
           ratings.groupedBar += 10;
+          ratings.stackedColumn += 10;
+          ratings.groupedColumn += 10;
         }
       }
 
