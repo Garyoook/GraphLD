@@ -75,6 +75,8 @@ export enum ChartType {
   SUNBURST_ANTV = 'Sunburst Chart ',
   SANKEY_ANTV = 'Sankey Chart ',
   CALENDAR_ANTV = 'Calendar Chart ',
+  NETWORK_ANTV = 'Network Chart ',
+  HEATMAP_ANTV = 'Heatmap',
 }
 
 function VisOptions(props: {

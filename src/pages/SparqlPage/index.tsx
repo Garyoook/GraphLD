@@ -259,28 +259,6 @@ WHERE {
     setOpenVisOption(false);
   };
 
-  function generateRatingsFor3C(
-    c_num: number,
-    t_num: number,
-    var_to_range_mapping: any,
-  ) {
-    // ratings for 1 class with DPs:
-    const ratings: any = {
-      sankey: 0,
-      chord: 0,
-    };
-
-    if (c_num == 3) {
-      // TODO: separate sankey and chord ratings by checking the reflexivity.
-      ratings.sankey += 100;
-      ratings.chord += 100;
-    }
-
-    console.log('Final 2 class vis ratings: ', ratings);
-
-    return ratings;
-  }
-
   function generateRatingsFor1C(
     dataResults: any[],
     key_var_count: number,
@@ -410,6 +388,8 @@ WHERE {
     if (key_var_count == 2) {
       if (dataResults.length >= 1 && dataResults.length <= 100) {
         ratings.hierarchyTree += 100;
+      } else {
+        ratings.hierarchyTree += 30;
       }
     }
 
@@ -449,11 +429,15 @@ WHERE {
         // in the paper it state that 100 is recommended upper limit for treemap, but it is actually too conservarive estimation, here we use 300.
         if (dataResults.length >= 1) {
           ratings.multiLine += 100;
-        }
-        if (dataResults.length >= 1 && dataResults.length <= 20) {
+        } else if (dataResults.length >= 1 && dataResults.length <= 20) {
           ratings.spider += 100;
           ratings.stackedBar += 100;
           ratings.groupedBar += 100;
+        } else {
+          ratings.multiLine += 10;
+          ratings.spider += 10;
+          ratings.stackedBar += 10;
+          ratings.groupedBar += 10;
         }
       }
 
@@ -480,6 +464,64 @@ WHERE {
         messages.push(
           'The query result is too large, please consider applying a filter in your query.',
         );
+      }
+    }
+
+    return ratings;
+  }
+
+  function generateRatingsFor3C(
+    dataResults: any[],
+    key_var_count: number,
+    nonKey_var_count: number,
+    key_var_list: string[],
+    nonKey_var_list: string[],
+    var_to_range_mapping: any,
+    messages: string[],
+  ) {
+    const ratings: any = {
+      chord: 0,
+      sankey: 0,
+      network: 0,
+      heatMap: 0,
+    };
+    if (key_var_count == 2 && nonKey_var_count === 1) {
+      if (
+        // scalar exists in the key variables and non-key variables
+        nonKey_var_list.some((v: string) => {
+          const range = var_to_range_mapping[v];
+          return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR;
+        })
+      ) {
+        if (dataResults.length >= 1 && dataResults.length <= 20) {
+          ratings.sankey += 100;
+        } else if (dataResults.length >= 1 && dataResults.length <= 100) {
+          ratings.chord += 100;
+          ratings.heatMap += 100;
+        } else {
+          ratings.sankey += 10;
+          ratings.chord += 10;
+          ratings.heatMap += 10;
+        }
+      }
+    }
+
+    if (key_var_count == 2 && nonKey_var_count === 0) {
+      if (
+        // scalar exists in the key variables and non-key variables
+        nonKey_var_list.some((v: string) => {
+          const range = var_to_range_mapping[v];
+          return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR;
+        })
+      ) {
+        if (dataResults.length >= 1 && dataResults.length <= 100) {
+          ratings.chord += 100;
+        } else if (dataResults.length >= 1 && dataResults.length <= 1000) {
+          ratings.network += 100;
+        } else {
+          ratings.chord += 10;
+          ratings.network += 30;
+        }
       }
     }
 
@@ -719,39 +761,28 @@ WHERE {
             )
           : {};
 
+      const ratings_3_class =
+        total_class_num === 3
+          ? generateRatingsFor3C(
+              dataResults,
+              key_var_count,
+              nonKey_var_count,
+              key_var_list,
+              nonKey_var_list,
+              var_to_range_mapping,
+              messages,
+            )
+          : {};
+
       ratings_recommendation = {
         ...ratings_recommendation,
         ...ratings_1_class,
         ...ratings_2_class_1PAB,
         ...ratings_2_class_1DP,
+        ...ratings_3_class,
       };
 
       console.log('ratings_recommendation: ', ratings_recommendation);
-
-      // then the rest of the variables in query head are scalars variables for visualisation
-
-      // !Recommendation rating algorithm here this one is based on the number of classes and ranges
-      // first check number of Classes(C) and Ranges(T)
-      // let c_num = 0;
-      let t_num = 0;
-      for (const v of vars_head) {
-        // if (Object.keys(var_to_class).includes(v)) {
-        //   c_num++;
-        // }
-        if (Object.keys(var_to_range_mapping).includes(v)) {
-          t_num++;
-        }
-      }
-
-      let c_num = CLASSES.length;
-
-      let pab_num = PAB_LIST.length;
-
-      const ratings_3_classes = generateRatingsFor3C(
-        c_num,
-        t_num,
-        var_to_range_mapping,
-      );
     }
 
     const recommendations: RecommendationProps[] = [];

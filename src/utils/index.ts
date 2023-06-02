@@ -49,6 +49,8 @@ export const ChartType_mapping = {
   // 3-class vis:
   sankey: ChartType.SANKEY_ANTV,
   chord: ChartType.CHORD_DIAGRAM_ANTV,
+  network: ChartType.NETWORK_ANTV,
+  heatMap: ChartType.HEATMAP_ANTV,
 };
 
 export function convertPrefixToNamespace(jsonldItem: any) {
