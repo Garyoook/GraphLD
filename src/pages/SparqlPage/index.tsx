@@ -158,7 +158,7 @@ WHERE {
     useState<ConceptialModelInfoProps>({});
   const [fullLoading, setFullLoading] = useState(false);
 
-  const [query, setQuery] = useState<string>(f3c);
+  const [query, setQuery] = useState<string>(initialString);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
