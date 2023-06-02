@@ -177,7 +177,12 @@ function VisOptions(props: {
   ];
 
   const VisOptions_ANTV = [
+    ChartType.COLUMN_CHART_ANTV,
     ChartType.BAR_CHART_ANTV,
+    ChartType.STACKED_COLUMN_CHART_ANTV,
+    ChartType.GROUPED_COLUMN_CHART_ANTV,
+    ChartType.STACKED_BAR_CHART_ANTV,
+    ChartType.GROUPED_BAR_CHART_ANTV,
     ChartType.SCATTER_PLOT_ANTV,
     ChartType.BUBBLE_CHART_ANTV,
     ChartType.LINE_CHART_ANTV,
@@ -191,6 +196,7 @@ function VisOptions(props: {
     ChartType.CIRCLE_PACKING_ANTV,
     ChartType.SUNBURST_ANTV,
     ChartType.CALENDAR_ANTV,
+    ChartType.SPIDER_CHART_ANTV,
   ];
 
   function renderVisOptions(options: RecommendationProps[]) {
