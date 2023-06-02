@@ -266,6 +266,8 @@ WHERE {
     t_num: number,
     var_to_range_mapping: any,
   ) {
+    console.log('var_to_range_mapping: ', var_to_range_mapping);
+
     // ratings for 1 class with DPs:
     const ratings: any = {
       scatter: 0,
@@ -276,11 +278,12 @@ WHERE {
       pie: 0,
     };
 
+    // 1 class(key) and 2 numericals
     if (c_num == 1 && t_num == 2) {
       let allScalar = true;
       if (
         Object.values(var_to_range_mapping).some((v: any) => {
-          return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.LEXICAL;
+          return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.LEXICAL;
         })
       ) {
         allScalar = false;
@@ -288,20 +291,42 @@ WHERE {
       }
       if (
         Object.values(var_to_range_mapping).some((v: any) => {
-          return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.DISCRETE;
+          return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.DISCRETE;
         })
       ) {
         allScalar = false;
       }
       ratings.scatter += allScalar ? 100 : 30;
     }
+    // to cover the case of 1 class(key) and 2 DP, but one of DP is key DP
+    if (c_num == 1 && t_num == 2) {
+      if (
+        Object.values(var_to_range_mapping).some((v: any) => {
+          return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.LEXICAL;
+        }) &&
+        Object.values(var_to_range_mapping).some((v: any) => {
+          return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.SCALAR;
+        })
+      ) {
+        ratings.bar += 100;
+        ratings.pie += 100;
+        ratings.wordClouds += 80;
+      } else if (
+        !Object.values(var_to_range_mapping).some((v: any) => {
+          return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.LEXICAL;
+        })
+      ) {
+        ratings.scatter += 100;
+      }
+    }
 
+    // 1 class(key) and 3 numericals
     if (
       c_num == 1 &&
       t_num >= 2 &&
       t_num <= 4 &&
       Object.values(var_to_range_mapping).some((v: any) => {
-        return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
+        return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.SCALAR;
       })
     ) {
       ratings.bubble += 100;
@@ -311,7 +336,7 @@ WHERE {
       c_num == 1 &&
       t_num == 2 &&
       Object.values(var_to_range_mapping).some((v: any) => {
-        return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
+        return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.SCALAR;
       })
     ) {
       ratings.scatter += 100;
@@ -322,7 +347,7 @@ WHERE {
       c_num == 1 &&
       t_num == 1 &&
       Object.values(var_to_range_mapping).some((v: any) => {
-        return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
+        return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.SCALAR;
       })
     ) {
       ratings.bar += 100;
@@ -333,10 +358,10 @@ WHERE {
       c_num == 1 &&
       t_num == 1 &&
       Object.values(var_to_range_mapping).some((v: any) => {
-        return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
+        return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.SCALAR;
       }) &&
       Object.values(var_to_range_mapping).some((v: any) => {
-        return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.LEXICAL;
+        return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.LEXICAL;
       })
     ) {
       ratings.bar += 100;
@@ -379,7 +404,7 @@ WHERE {
       c_num == 2 &&
       t_num == 3 &&
       Object.values(var_to_range_mapping).some((v: any) => {
-        return ranges_type_mapping[v] == DATA_DIMENTION_TYPE.SCALAR;
+        return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.SCALAR;
       })
     ) {
       ratings.treeMap += 100;
@@ -415,6 +440,9 @@ WHERE {
     return ratings;
   }
 
+  const [showKeyVarNotInHeadWarning, setShowKeyVarNotInHeadWarning] =
+    useState(false);
+
   function generateVisRecommendation(
     user_query: string,
   ): RecommendationProps[] {
@@ -424,7 +452,7 @@ WHERE {
     const var_to_class: any = {};
     const var_to_range_mapping: any = {};
 
-    // ratings for 1 class with DPs:
+    // ratings dictionary:
     let ratings_recommendation: any = {};
 
     const user_query_normalised = user_query.replace(/[\n\t]/g, '');
@@ -438,14 +466,14 @@ WHERE {
     if (user_query_split.length === 2) {
       const user_query_head = user_query_split[0];
       const user_query_body = user_query_split[1];
+      // === STEP 1 analysis to the query head, to find the variables. ===
 
-      // regex to match variables in the query. old version, not supported by Safari
+      // regex to match variables in the query. old version, not supported by Safari so replaced for now.
       // const regex_vars = /(?<!rdf)(?:\?)[a-zA-Z_][a-zA-Z0-9_]*/gm;
 
       // regex to match variables in the query.
       const regex_vars = /\?[a-zA-Z_][a-zA-Z0-9_]*/gm;
-
-      // regex to match variables in the query head (text before 'WHERE').
+      // match variables in the query head (text before 'WHERE').
       const vars_head: string[] = [];
       let m_head;
       while ((m_head = regex_vars.exec(user_query_head)) !== null) {
@@ -458,36 +486,53 @@ WHERE {
           vars_head.push(match.split('?')[1]);
         });
       }
-      console.log('matches head', vars_head);
+      console.log('step1 matches head', vars_head);
 
-      // analysis to the query body, to find the classes, data/object properties
-      // and ranges, and map them to the variables.
-      const statements = user_query_body.split('.');
-      for (const stmt of statements) {
-        const stmt_split = stmt.split(';');
-        for (const sub_stmt of stmt_split) {
+      // split the query body by '.' (parent statements) and ';'(children statements)
+      const parent_statements = user_query_body.split('.');
+      // for (const stmt of parent_statements) {
+      //   const children_stmt = stmt.split(';');
+      //   for (const sub_stmt of children_stmt) {
+      //     const sub_stmt_trim = sub_stmt.trim();
+      //     // console.log('statements, ', sub_stmt_trim);
+      //     if (sub_stmt_trim.includes('rdf:type')) {
+      //       const type_split = sub_stmt_trim.split('rdf:type');
+      //       const variable = type_split[0].split('?')[1].trim();
+      //       if (variable && variable.length > 0) {
+      //         const class_type = type_split[1].trim();
+      //         var_to_class[variable] = class_type;
+      //         CLASSES.push(class_type);
+      //       }
+      //     }
+      //   }
+      // }
+
+      const PAB_LIST: any = [];
+      const CA_DPA_mapping: any = {};
+      const CA_PAB_mapping: any = {};
+      const potential_DPK: string[] = [];
+      for (const stmt of parent_statements) {
+        const children_stmt = stmt.split(';');
+        let class_type = '';
+        for (const sub_stmt of children_stmt) {
           const sub_stmt_trim = sub_stmt.trim();
+
+          // === STEP 2 analysis to the query body, to find the classes ===
           // console.log('statements, ', sub_stmt_trim);
           if (sub_stmt_trim.includes('rdf:type')) {
             const type_split = sub_stmt_trim.split('rdf:type');
             const variable = type_split[0].split('?')[1].trim();
             if (variable && variable.length > 0) {
-              const class_type = type_split[1].trim();
+              class_type = type_split[1].trim();
               var_to_class[variable] = class_type;
               CLASSES.push(class_type);
+              CA_DPA_mapping[class_type] = [];
+              CA_PAB_mapping[class_type] = [];
             }
           }
-        }
-      }
-      console.log('var_to_class: ', var_to_class);
 
-      const PAB_LIST: any = [];
-      // const var_to_DPA_mapping: any = {};
-      for (const stmt of statements) {
-        const stmt_split = stmt.split(';');
-        for (const sub_stmt of stmt_split) {
-          const sub_stmt_trim = sub_stmt.trim();
-
+          // === STEP 3 analysis to the query body, to find the objectProperty,
+          // dataProperty and ranges, and map them to the variables. ===
           // get DP and range
           let DP: string = '';
           if (
@@ -507,6 +552,12 @@ WHERE {
               const range = ConceptualModelInfo.DP_Range_mapping[DP];
               var_to_range_mapping[var_in_stmt] = range;
               DP_RANGE_LOCAL[DP] = range;
+              CA_DPA_mapping[class_type]?.push(DP);
+              if (ranges_type_mapping(range) === DATA_DIMENTION_TYPE.LEXICAL) {
+                if (vars_head.includes(var_in_stmt)) {
+                  potential_DPK.push(DP);
+                }
+              }
             }
           }
 
@@ -529,14 +580,26 @@ WHERE {
             // if (CLASSES.includes(c1) && CLASSES.includes(c2)) {
             PAB_LIST.push(PAB);
             // }
+            CA_PAB_mapping[class_type]?.push(PAB);
           }
         }
       }
-      // console.log('var_DP mapping: ', var_to_DPA_mapping);
-      // console.log('var_range mapping: ', var_to_range_mapping);
 
-      // console.log(`Classes CA found: `, CLASSES);
-      // console.log(`DP and its Range TA found: `, DP_RANGE_LOCAL);
+      const noKeyWarning =
+        !vars_head.some((v: string) => {
+          return Object.keys(var_to_class).includes(v);
+        }) && potential_DPK.length === 0;
+      setShowKeyVarNotInHeadWarning(noKeyWarning);
+
+      console.log('step2 Classes CA found: ', CLASSES);
+      console.log('step2 var_to_class: ', var_to_class);
+
+      console.log('step3 var_range mapping: ', var_to_range_mapping);
+      console.log(`DP and its Range TA found: `, DP_RANGE_LOCAL);
+      console.log('step3 CA_DPA mapping found: ', CA_DPA_mapping);
+      console.log('step3 CA_PAB mapping found: ', CA_PAB_mapping);
+
+      console.log('step3 potential key DP found: ', potential_DPK);
 
       for (const dp of Object.keys(DP_RANGE_LOCAL)) {
         let class_local = '';
@@ -569,6 +632,7 @@ WHERE {
       console.log(
         `The query contains ${c_num} Cs, ${t_num} Ts, and ${pab_num} PABs`,
       );
+
       // ratings for 1 class with DPs:
       const ratings_1_class = generateRatingsFor1C(
         c_num,
@@ -629,7 +693,7 @@ WHERE {
         inferredDataQuery,
       );
 
-      console.log('original queryRes', queryRes);
+      // console.log('original queryRes', queryRes);
 
       const head = queryRes.head.vars;
       const results_bindings = queryRes.results.bindings;
@@ -661,7 +725,7 @@ WHERE {
         };
       });
 
-      console.log('remapped data', data);
+      // console.log('remapped data', data);
       setDataSource(data);
       setShowAlert(false);
     } catch (e: any) {
@@ -988,6 +1052,17 @@ PREFIX : <${db_prefix_URL}>`;
                 height: '100vh',
               }}
             >
+              <Alert
+                sx={{
+                  display: showKeyVarNotInHeadWarning ? 'flex' : 'none',
+                  width: '100%',
+                }}
+                severity="warning"
+                onClose={() => setShowKeyVarNotInHeadWarning(false)}
+              >
+                Key is missing in the query head, please consider adding one in
+                the query
+              </Alert>
               {showAlert ? (
                 <Alert severity="error" style={{ height: '100%' }}>
                   {alertText}

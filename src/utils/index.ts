@@ -15,12 +15,16 @@ export enum DATA_DIMENTION_TYPE {
   LEXICAL,
 }
 
-export const ranges_type_mapping: any = {
-  'xsd:nonNegativeInteger': DATA_DIMENTION_TYPE.SCALAR,
-  'xsd:gYear': DATA_DIMENTION_TYPE.DISCRETE,
-  'xsd:decimal': DATA_DIMENTION_TYPE.SCALAR,
-  'xsd:string': DATA_DIMENTION_TYPE.LEXICAL,
-  'xsd:date': DATA_DIMENTION_TYPE.DISCRETE,
+export const ranges_type_mapping = (range: string) => {
+  const mapping: any = {
+    'xsd:nonNegativeInteger': DATA_DIMENTION_TYPE.SCALAR,
+    'xsd:gYear': DATA_DIMENTION_TYPE.DISCRETE,
+    'xsd:decimal': DATA_DIMENTION_TYPE.SCALAR,
+    'xsd:string': DATA_DIMENTION_TYPE.LEXICAL,
+    'xsd:date': DATA_DIMENTION_TYPE.DISCRETE,
+  };
+
+  return mapping[range];
 };
 
 export const ChartType_mapping = {
