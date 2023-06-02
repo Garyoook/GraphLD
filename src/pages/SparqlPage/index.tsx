@@ -18,6 +18,7 @@ import {
   Grid,
   IconButton,
   Paper,
+  Popover,
   Snackbar,
   Switch,
   Toolbar,
@@ -91,9 +92,10 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
       
-SELECT ?country ?population
+SELECT ?name ?population
 WHERE {
   ?country rdf:type :Country ;
+           :name ?name ;
            :population ?population .
 } ORDER BY DESC(?population) LIMIT 50`;
 
@@ -1048,50 +1050,85 @@ PREFIX : <${db_prefix_URL}>`;
       </Alert>
     );
   }
+
+  const [showPrefixReference, setShowPrefixReference] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const canBeOpen = showPrefixReference && Boolean(anchorEl);
+  const id = canBeOpen ? 'simple-popover' : undefined;
+
   return (
     <Grid style={{ margin: 10 }}>
       <Grid sx={{ marginBottom: 3, maxWidth: 500 }}>
-        <Paper sx={{ padding: 2 }}>
-          <Typography variant="h6" component="div">
-            Quick Reference to Prefixes
-          </Typography>
-          <Grid
-            sx={{
-              padding: 1,
-              borderRadius: 2,
-              ':hover': { backgroundColor: '#1976d233' },
-              ':active': { backgroundColor: '#1976d266' },
-              cursor: 'pointer',
-            }}
-            onClick={handleCopyPrefixesReference}
-          >
-            <Typography variant="subtitle2" component="div">
-              {`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>`}
+        <Button
+          variant="outlined"
+          aria-describedby={id}
+          onClick={(event) => {
+            setAnchorEl(event.currentTarget);
+            setShowPrefixReference(!showPrefixReference);
+          }}
+          style={{
+            textTransform: 'none',
+          }}
+        >
+          {showPrefixReference
+            ? 'Close Prefix Reference'
+            : 'Open Prefix Reference'}
+        </Button>
+        <Popover
+          id={id}
+          open={showPrefixReference}
+          anchorEl={anchorEl}
+          onClose={() => {
+            setAnchorEl(null);
+            setShowPrefixReference(false);
+          }}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+        >
+          <Paper sx={{ padding: 2 }}>
+            <Typography variant="h6" component="div">
+              Quick Reference to Prefixes
             </Typography>
-            <Typography variant="subtitle2" component="div">
-              {`PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>`}
-            </Typography>
-            <Typography variant="subtitle2" component="div">
-              {`PREFIX owl: <http://www.w3.org/2002/07/owl#>`}
-            </Typography>
-            <Typography variant="subtitle2" component="div" color={'#22cc22'}>
-              {`PREFIX : <${db_prefix_URL}>`}
-            </Typography>
-          </Grid>
+            <Grid
+              sx={{
+                padding: 1,
+                borderRadius: 2,
+                ':hover': { backgroundColor: '#1976d233' },
+                ':active': { backgroundColor: '#1976d266' },
+                cursor: 'pointer',
+              }}
+              onClick={handleCopyPrefixesReference}
+            >
+              <Typography variant="subtitle2" component="div">
+                {`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>`}
+              </Typography>
+              <Typography variant="subtitle2" component="div">
+                {`PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>`}
+              </Typography>
+              <Typography variant="subtitle2" component="div">
+                {`PREFIX owl: <http://www.w3.org/2002/07/owl#>`}
+              </Typography>
+              <Typography variant="subtitle2" component="div" color={'#22cc22'}>
+                {`PREFIX : <${db_prefix_URL}>`}
+              </Typography>
+            </Grid>
 
-          <Button
-            variant="text"
-            size="small"
-            endIcon={<ContentCopyIcon />}
-            onClick={handleCopyPrefixesReference}
-            aria-describedby={'copySuccess'}
-            style={{
-              textTransform: 'none',
-            }}
-          >
-            Click to copy
-          </Button>
-        </Paper>
+            <Button
+              variant="text"
+              size="small"
+              endIcon={<ContentCopyIcon />}
+              onClick={handleCopyPrefixesReference}
+              aria-describedby={'copySuccess'}
+              style={{
+                textTransform: 'none',
+              }}
+            >
+              Click to copy
+            </Button>
+          </Paper>
+        </Popover>
       </Grid>
       <CodeMirror
         value={query}
