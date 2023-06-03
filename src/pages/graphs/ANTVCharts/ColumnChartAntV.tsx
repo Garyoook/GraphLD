@@ -37,8 +37,6 @@ const ColumnChartAntV = (props: VisDataProps) => {
     setYField(headers[1]);
 
     const typedData = preprocessDataForVisualisation(data);
-    // sort is not necessary
-    // .sort((a: any, b: any) => a[headers[1]] - b[headers[1]],);
 
     setDataSource(typedData);
   }, [headers, data]);

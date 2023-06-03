@@ -1,6 +1,14 @@
 import { VisDataProps } from '@/pages/SparqlPage';
 import { Pie } from '@ant-design/plots';
-import { FormControl, Grid, MenuItem, Select } from '@mui/material';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
+import {
+  Button,
+  FormControl,
+  Grid,
+  MenuItem,
+  Select,
+  Tooltip,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import {
   preprocessDataForVisualisation,
@@ -28,22 +36,10 @@ const PieChartAntV = (props: VisDataProps) => {
     setColorField(headers[0]);
     setAngleField(headers[1]);
 
-    const typedData = preprocessDataForVisualisation(data).sort(
-      (a: any, b: any) => a[headers[1]] - b[headers[1]],
-    );
+    const typedData = preprocessDataForVisualisation(data);
 
     setDataSource(typedData);
   }, [headers, data]);
-
-  useEffect(() => {
-    if (dataSource.length !== 0) {
-      const orderedData = dataSource.sort(
-        (a: any, b: any) => a[angleField] - b[angleField],
-      );
-
-      setDataSource(orderedData);
-    }
-  }, [colorField, angleField]);
 
   const config = {
     appendPadding: 10,
@@ -66,8 +62,45 @@ const PieChartAntV = (props: VisDataProps) => {
     ],
   };
 
+  const [sortAngle, setSortAngle] = useState(false);
+
   return dataSource.length > 0 ? (
     <Grid>
+      <Tooltip
+        title="Some data can be sorted by certain values in its columns, try it out!"
+        placement="bottom-start"
+        arrow
+      >
+        <Grid
+          container
+          spacing={2}
+          sx={{ alignItems: 'center', marginBottom: 2 }}
+        >
+          <Grid item>
+            <Button
+              variant="outlined"
+              color="success"
+              size="small"
+              sx={{
+                textTransform: 'none',
+              }}
+              endIcon={<CompareArrowsIcon />}
+              onClick={() => {
+                const orderedData = dataSource.sort((a, b) => {
+                  return sortAngle
+                    ? a[angleField] - b[angleField]
+                    : b[angleField] - a[angleField];
+                });
+                setDataSource(orderedData);
+
+                setSortAngle(!sortAngle);
+              }}
+            >
+              Sort by axis {angleField}
+            </Button>
+          </Grid>
+        </Grid>
+      </Tooltip>
       <Pie {...config} />
 
       <Grid container spacing={2}>
