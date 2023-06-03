@@ -22,6 +22,7 @@ import {
   Snackbar,
   Switch,
   Toolbar,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import Slide from '@mui/material/Slide';
@@ -377,8 +378,8 @@ WHERE {
 
       if (dataResults.length > 100) {
         ratings.treeMap += 30;
-        ratings.sunburst += 10;
-        ratings.circlePacking += 10;
+        ratings.sunburst += 20;
+        ratings.circlePacking += 20;
         setShowTooManyDataWarning(true);
         messages.push(
           'The query result is too large, please consider applying a filter in your query.',
@@ -467,7 +468,7 @@ WHERE {
       }
 
       if (dataResults.length > 20) {
-        ratings.multiLine += 30;
+        ratings.multiLine += 20;
         // ratings.spider += 5;
         ratings.stackedBar += 10;
         ratings.groupedBar += 10;
@@ -1040,49 +1041,55 @@ PREFIX : <${db_prefix_URL}>`;
     }
   };
 
-  function missingKeyWarning() {
+  const exampleQueryList = [initialString, f3a, f3b, f3c, f3d];
+  const exampleQueryFeatures = [
+    'Countries with their population count',
+    'Countries with their inflation rate and unemployment rate, key missing in query header',
+    'Countries with their continent and population count',
+    'Historical population statictics through time',
+    'Countries with neighbouring countries and border length',
+  ];
+
+  function exampleQueries() {
     return (
-      <Alert
-        sx={{
-          display: showMissingKeyWarning ? 'flex' : 'none',
-          width: '100%',
-        }}
-        severity="warning"
-        onClose={() => setShowMissingKeyWarning(false)}
-      >
-        Key is missing in your query, this may affect your data visualisation
-        please consider adding one
-      </Alert>
+      <Grid sx={{ marginBottom: 2 }}>
+        Example querys:
+        {exampleQueryList.map((q, index) => {
+          return (
+            <Tooltip
+              title={exampleQueryFeatures[index]}
+              arrow
+              placement="bottom"
+            >
+              <Button
+                variant="outlined"
+                size="small"
+                color={query == q ? 'success' : 'primary'}
+                onClick={() => {
+                  setQuery(q);
+                  setDataSource([]);
+                  setRecommendations([]);
+                }}
+                style={{
+                  textTransform: 'none',
+                  marginLeft: 4,
+                }}
+              >
+                query {index + 1}
+              </Button>
+            </Tooltip>
+          );
+        })}
+      </Grid>
     );
   }
 
-  function tooManyDataForVisWarning() {
+  function PrefixReference() {
     return (
-      <Alert
-        sx={{
-          display: showTooManyDataWarning ? 'flex' : 'none',
-          width: '100%',
-        }}
-        severity="warning"
-        onClose={() => setShowTooManyDataWarning(false)}
-      >
-        Your query result contains too many data items, this may be toublesome
-        when visualisation applied. Please consider applying a filter in your
-        query.
-      </Alert>
-    );
-  }
-
-  const [showPrefixReference, setShowPrefixReference] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const canBeOpen = showPrefixReference && Boolean(anchorEl);
-  const id = canBeOpen ? 'simple-popover' : undefined;
-
-  return (
-    <Grid style={{ margin: 10 }}>
       <Grid sx={{ marginBottom: 3, maxWidth: 500 }}>
         <Button
-          variant="outlined"
+          variant="contained"
+          color="success"
           aria-describedby={id}
           onClick={(event) => {
             setAnchorEl(event.currentTarget);
@@ -1152,6 +1159,51 @@ PREFIX : <${db_prefix_URL}>`;
           </Paper>
         </Popover>
       </Grid>
+    );
+  }
+
+  function missingKeyWarning() {
+    return (
+      <Alert
+        sx={{
+          display: showMissingKeyWarning ? 'flex' : 'none',
+          width: '100%',
+        }}
+        severity="warning"
+        onClose={() => setShowMissingKeyWarning(false)}
+      >
+        Key is missing in your query, this may affect your data visualisation
+        please consider adding one
+      </Alert>
+    );
+  }
+
+  function tooManyDataForVisWarning() {
+    return (
+      <Alert
+        sx={{
+          display: showTooManyDataWarning ? 'flex' : 'none',
+          width: '100%',
+        }}
+        severity="warning"
+        onClose={() => setShowTooManyDataWarning(false)}
+      >
+        Your query result contains too many data items, this may be toublesome
+        when visualisation applied. Please consider applying a filter in your
+        query.
+      </Alert>
+    );
+  }
+
+  const [showPrefixReference, setShowPrefixReference] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const canBeOpen = showPrefixReference && Boolean(anchorEl);
+  const id = canBeOpen ? 'simple-popover' : undefined;
+
+  return (
+    <Grid style={{ margin: 10 }}>
+      {PrefixReference()}
+      {exampleQueries()}
       <CodeMirror
         value={query}
         minHeight="300px"
