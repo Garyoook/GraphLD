@@ -545,6 +545,8 @@ WHERE {
 
   const [showMissingKeyWarning, setShowMissingKeyWarning] = useState(false);
   const [showTooManyDataWarning, setShowTooManyDataWarning] = useState(false);
+  const [showManyManyRelationWarning, setShowManyManyRelationWarning] =
+    useState(false);
 
   function generateVisRecommendation(
     user_query: string,
@@ -799,6 +801,40 @@ WHERE {
       };
 
       console.log('ratings_recommendation: ', ratings_recommendation);
+
+      // check for posibble many-many relations:
+      // by counting the number of unique values in the inferred key variables (lexical range)
+      const key_var_head: string[] = vars_head.filter((v) => {
+        const range = var_to_range_mapping[v];
+        return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.LEXICAL;
+      });
+      const instance_stats: any = {};
+      key_var_head.forEach((column: string) => {
+        instance_stats[column] = {};
+      });
+
+      dataResults.forEach((row: any, index) => {
+        key_var_head.forEach((column: string) => {
+          const data = row[column];
+          if (instance_stats[column][data]) {
+            instance_stats[column][data] += 1;
+          } else {
+            instance_stats[column][data] = 1;
+          }
+        });
+      });
+      console.log('instance_stats: ', instance_stats);
+
+      const key_var_head_atleast2instances = key_var_head.filter((column) => {
+        const instances_counts_dict = instance_stats[column];
+        return Object.values(instances_counts_dict).some(
+          (count: any) => count > 1,
+        );
+      });
+
+      if (key_var_head_atleast2instances.length > 1) {
+        setShowManyManyRelationWarning(true);
+      }
     }
 
     const recommendations: RecommendationProps[] = [];
@@ -830,6 +866,9 @@ WHERE {
   const handleQuery = async () => {
     const repositoryID = repo_graphDB || searchParams.get('repo_graphDB');
 
+    setShowMissingKeyWarning(false);
+    setShowTooManyDataWarning(false);
+    setShowManyManyRelationWarning(false);
     try {
       setLoading(true);
       const queryRes = await sendSPARQLquery(
@@ -889,7 +928,7 @@ WHERE {
     }
   };
 
-  function preprocessDataForGoogleCharts(dataSource: any[]): VisDataProps {
+  function separateHeader_Data(dataSource: any[]): VisDataProps {
     const headers: string[] = [];
     if (dataSource.length > 0) {
       const firstRow = dataSource[0];
@@ -1194,6 +1233,22 @@ PREFIX : <${db_prefix_URL}>`;
       </Alert>
     );
   }
+  function manyManyRelationshipWarning() {
+    return (
+      <Alert
+        sx={{
+          display: showManyManyRelationWarning ? 'flex' : 'none',
+          width: '100%',
+        }}
+        severity="warning"
+        onClose={() => setShowManyManyRelationWarning(false)}
+      >
+        Your query result contains many-many relationships, this may result in
+        incorrect visualisation. Please consider applying a filter in your query
+        to remove possible overlaps in datasets.
+      </Alert>
+    );
+  }
 
   const [showPrefixReference, setShowPrefixReference] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -1219,6 +1274,7 @@ PREFIX : <${db_prefix_URL}>`;
         <Grid item xs={12}>
           {missingKeyWarning()}
           {tooManyDataForVisWarning()}
+          {manyManyRelationshipWarning()}
         </Grid>
         <Grid item xs={4}>
           <LoadingButton
@@ -1303,7 +1359,7 @@ PREFIX : <${db_prefix_URL}>`;
             </AppBar>
             <DialogContent>
               <VisOptions
-                data={preprocessDataForGoogleCharts(dataSource)}
+                data={separateHeader_Data(dataSource)}
                 originalData={dataSource}
                 recommendations={recommendations}
               />
