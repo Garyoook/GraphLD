@@ -8,6 +8,7 @@ import GroupedBarChart from '@/pages/graphs/ANTVCharts/GroupedBarAntV';
 import GroupedColumnChart from '@/pages/graphs/ANTVCharts/GroupedColumnAntV';
 import HeatmapAntV from '@/pages/graphs/ANTVCharts/HeatmapAntv';
 import LineChartAntV from '@/pages/graphs/ANTVCharts/LineChartAntV';
+import NetworkChart from '@/pages/graphs/ANTVCharts/NetworkAntV';
 import PieChartAntV from '@/pages/graphs/ANTVCharts/PieChartAntV';
 import SankeyAntV from '@/pages/graphs/ANTVCharts/SankeyAntV';
 import ScatterPlotAntV from '@/pages/graphs/ANTVCharts/ScatterPlotAntV';
@@ -164,6 +165,8 @@ function VisOptions(props: {
         return <SpiderChart headers={headers} data={originalData} />;
       case ChartType.HEATMAP_ANTV:
         return <HeatmapAntV headers={headers} data={originalData} />;
+      case ChartType.NETWORK_ANTV:
+        return <NetworkChart headers={headers} data={originalData} />;
 
       default:
         return 'You specified an invalid chart type, please check the code';

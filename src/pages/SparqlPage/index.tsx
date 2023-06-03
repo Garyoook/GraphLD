@@ -156,7 +156,7 @@ WHERE {
     useState<ConceptialModelInfoProps>({});
   const [fullLoading, setFullLoading] = useState(false);
 
-  const [query, setQuery] = useState<string>(f3d);
+  const [query, setQuery] = useState<string>(initialString);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -501,13 +501,16 @@ WHERE {
       ) {
         if (dataResults.length >= 1 && dataResults.length <= 20) {
           ratings.sankey += 100;
+          ratings.network += 100;
         } else if (dataResults.length >= 1 && dataResults.length <= 100) {
           ratings.chord += 100;
           ratings.heatMap += 100;
+          ratings.network += 100;
         } else {
-          ratings.sankey += 10;
-          ratings.chord += 10;
+          ratings.sankey += 30;
+          ratings.chord += 30;
           ratings.heatMap += 10;
+          ratings.network += 100;
         }
       }
     }
