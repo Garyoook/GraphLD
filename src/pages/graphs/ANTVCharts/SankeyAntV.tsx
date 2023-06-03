@@ -36,6 +36,7 @@ const SankeyAntV = (props: VisDataProps) => {
   }, [data, headers]);
 
   const config = {
+    height: 470,
     data: dataSource,
     sourceField,
     targetField,

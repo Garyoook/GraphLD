@@ -1,5 +1,5 @@
 import { VisDataProps } from '@/pages/SparqlPage';
-import { Chord } from '@ant-design/plots';
+import { Heatmap } from '@ant-design/plots';
 import { FormControl, Grid, MenuItem, Select } from '@mui/material';
 import { useEffect, useState } from 'react';
 import {
@@ -8,15 +8,15 @@ import {
   safeGetFieldIndex,
 } from './utils';
 
-const ChordAntV = (props: VisDataProps) => {
+const HeatmapAntV = (props: VisDataProps) => {
   const { headers, data } = props;
 
   const [dataSource, setDataSource] = useState<any[]>([]);
 
-  // fields
-  const [sourceField, setSourceField] = useState<string>('');
-  const [targetField, setTargetField] = useState<string>('');
-  const [weightField, setWeightField] = useState<string>('');
+  // axis, set to states for future column switching requirements
+  const [xField, setXField] = useState<string>('');
+  const [yField, setYField] = useState<string>('');
+  const [colorField, setColorField] = useState<string>('');
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
 
@@ -26,60 +26,50 @@ const ChordAntV = (props: VisDataProps) => {
   }, [headers]);
 
   useEffect(() => {
-    setSourceField(headers[0]);
-    setTargetField(headers[1]);
-    setWeightField(headers[2]);
+    setXField(headers[0]);
+    setYField(headers[1]);
+    setColorField(headers[2]);
 
     const typedData = preprocessDataForVisualisation(data);
 
     setDataSource(typedData);
-  }, [data, headers]);
+  }, [headers, data]);
 
   const config = {
-    height: 500,
+    autoFit: true,
     data: dataSource,
-    sourceField,
-    targetField,
-    weightField,
+    xField,
+    yField,
+    colorField,
+    color: ['#174c83', '#7eb6d4', '#efefeb', '#efa759', '#9b4d16'],
     tooltip: {
-      fields: ['name', 'source', 'target', 'value', 'isNode'],
+      fields: [xField, yField, colorField],
       showContent: true,
       formatter: (datum: any) => {
-        const { isNode, name, source, target, value } = datum;
-
-        if (isNode) {
-          return {
-            name: `${name}(Source)`,
-            value: dataSource
-              .filter((d) => d[sourceField] === name)
-              .reduce((a, b) => a + b[weightField], 0),
-          };
-        }
-
         return {
-          name: `${source} -> ${target}`,
-          value: `${weightField}: ${value}`,
+          name: `${datum[xField]} - ${datum[yField]}`,
+          value: `${colorField}: ${datum[colorField]}`,
         };
       },
     },
   };
-
-  return dataSource.length > 0 ? (
+  return dataSource.length >= 0 ? (
     <Grid>
-      <Chord {...config} />
+      <Heatmap {...config} />
+
       <Grid container spacing={2}>
         <Grid item>
           <FormControl sx={{ m: 1, minWidth: 120 }}>
-            source field
+            source for x axis
             <Select
-              value={safeGetFieldIndex(fieldsAll, sourceField)}
+              value={safeGetFieldIndex(fieldsAll, xField)}
               onChange={(e) => {
                 const field = safeGetField(
                   fieldsAll,
                   Number(e.target.value),
                   emptyHeader,
                 );
-                setSourceField(field);
+                setXField(field);
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -95,16 +85,16 @@ const ChordAntV = (props: VisDataProps) => {
 
         <Grid item>
           <FormControl sx={{ m: 1, minWidth: 120 }}>
-            target field
+            source for y axis
             <Select
-              value={safeGetFieldIndex(fieldsAll, targetField)}
+              value={safeGetFieldIndex(fieldsAll, yField)}
               onChange={(e) => {
                 const field = safeGetField(
                   fieldsAll,
                   Number(e.target.value),
                   emptyHeader,
                 );
-                setTargetField(field);
+                setYField(field);
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -120,13 +110,16 @@ const ChordAntV = (props: VisDataProps) => {
 
         <Grid item>
           <FormControl sx={{ m: 1, minWidth: 120 }}>
-            weight field
+            source for series
             <Select
-              value={safeGetFieldIndex(fieldsAll, weightField)}
+              value={safeGetFieldIndex(fieldsAll, colorField)}
               onChange={(e) => {
-                setWeightField(
-                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
+                const field = safeGetField(
+                  fieldsAll,
+                  Number(e.target.value),
+                  emptyHeader,
                 );
+                setColorField(field);
               }}
             >
               {fieldsAll.map((item, index) => {
@@ -142,8 +135,8 @@ const ChordAntV = (props: VisDataProps) => {
       </Grid>
     </Grid>
   ) : (
-    <div>Loading ... </div>
+    <div>Loading ...</div>
   );
 };
 
-export default ChordAntV;
+export default HeatmapAntV;

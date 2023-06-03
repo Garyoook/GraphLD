@@ -6,6 +6,7 @@ import CirclePackingAntV from '@/pages/graphs/ANTVCharts/CirclePackingAntV';
 import ColumnChartAntV from '@/pages/graphs/ANTVCharts/ColumnChartAntV';
 import GroupedBarChart from '@/pages/graphs/ANTVCharts/GroupedBarAntV';
 import GroupedColumnChart from '@/pages/graphs/ANTVCharts/GroupedColumnAntV';
+import HeatmapAntV from '@/pages/graphs/ANTVCharts/HeatmapAntv';
 import LineChartAntV from '@/pages/graphs/ANTVCharts/LineChartAntV';
 import PieChartAntV from '@/pages/graphs/ANTVCharts/PieChartAntV';
 import SankeyAntV from '@/pages/graphs/ANTVCharts/SankeyAntV';
@@ -161,6 +162,8 @@ function VisOptions(props: {
         return <CalendarChart headers={headers} data={originalData} />;
       case ChartType.SPIDER_CHART_ANTV:
         return <SpiderChart headers={headers} data={originalData} />;
+      case ChartType.HEATMAP_ANTV:
+        return <HeatmapAntV headers={headers} data={originalData} />;
 
       default:
         return 'You specified an invalid chart type, please check the code';
@@ -190,6 +193,8 @@ function VisOptions(props: {
     ChartType.PIE_CHART_ANTV,
     ChartType.CHORD_DIAGRAM_ANTV,
     ChartType.SANKEY_ANTV,
+    ChartType.HEATMAP_ANTV,
+    ChartType.NETWORK_ANTV,
     ChartType.WORD_CLOUDS_ANTV,
     ChartType.TREE_ANTV,
     ChartType.TREE_MAP_ANTV,
@@ -201,10 +206,14 @@ function VisOptions(props: {
 
   function renderVisOptions(options: RecommendationProps[]) {
     if (options.length > 0) {
-      return options.map((option) => {
+      return options.map((option, index) => {
         return (
-          <>
-            <ListItem button onClick={() => handleVisOpen(option.chart)}>
+          <div key={index}>
+            <ListItem
+              key={index}
+              button
+              onClick={() => handleVisOpen(option.chart)}
+            >
               <ListItemText
                 primary={option.chart}
                 secondary={
@@ -213,7 +222,7 @@ function VisOptions(props: {
               />
             </ListItem>
             <Divider />
-          </>
+          </div>
         );
       });
     }
@@ -266,7 +275,6 @@ function VisOptions(props: {
 
             <IconButton
               edge="end"
-              autoFocus
               color="inherit"
               onClick={handleVisClose}
               aria-label="close"
@@ -276,7 +284,9 @@ function VisOptions(props: {
           </Toolbar>
         </AppBar>
         <DialogContent>{displayChart(chartType, data)}</DialogContent>
-        <DialogActions>
+        <DialogActions
+          sx={{ border: '#1976d255 solid 2px', borderRadius: '3px' }}
+        >
           <Button onClick={handleVisClose}>Close</Button>
         </DialogActions>
       </Dialog>

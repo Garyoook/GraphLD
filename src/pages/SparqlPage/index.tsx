@@ -133,11 +133,7 @@ WHERE {
         :year ?year;
         :value ?population .
     ?c 	:hadPopulation ?py .
-# Filter conditions
-    ?en :encompassedBy ?con .
-    ?con rdf:type :Continent ;
-         :name "Australia/Oceania" .
-}`;
+} LIMIT 50`;
 
   const f3d = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX : <${db_prefix_URL}>
@@ -160,7 +156,7 @@ WHERE {
     useState<ConceptialModelInfoProps>({});
   const [fullLoading, setFullLoading] = useState(false);
 
-  const [query, setQuery] = useState<string>(initialString);
+  const [query, setQuery] = useState<string>(f3d);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
