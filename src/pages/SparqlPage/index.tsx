@@ -288,6 +288,7 @@ WHERE {
         ratings.wordClouds = 100;
       }
       if (dataResults.length > 100) {
+        setShowTooManyDataWarning(true);
         messages.push(
           'The query result is too large, please consider applying a filter in your query.',
         );
@@ -378,7 +379,7 @@ WHERE {
         ratings.treeMap += 30;
         ratings.sunburst += 10;
         ratings.circlePacking += 10;
-
+        setShowTooManyDataWarning(true);
         messages.push(
           'The query result is too large, please consider applying a filter in your query.',
         );
@@ -390,6 +391,7 @@ WHERE {
         ratings.hierarchyTree += 80;
       } else {
         ratings.hierarchyTree += 30;
+        setShowTooManyDataWarning(true);
       }
     }
 
@@ -438,6 +440,7 @@ WHERE {
           ratings.stackedColumn += 100;
           ratings.groupedColumn += 100;
         } else {
+          setShowTooManyDataWarning(true);
           ratings.multiLine += 10;
           // ratings.spider += 10;
           // ratings.stackedBar += 30;
@@ -470,10 +473,6 @@ WHERE {
         ratings.groupedBar += 10;
         ratings.stackedColumn += 10;
         ratings.groupedColumn += 10;
-
-        messages.push(
-          'The query result is too large, please consider applying a filter in your query.',
-        );
       }
     }
 
@@ -511,6 +510,7 @@ WHERE {
           ratings.heatMap += 100;
           ratings.network += 100;
         } else {
+          setShowTooManyDataWarning(true);
           ratings.sankey += 30;
           ratings.chord += 30;
           ratings.heatMap += 10;
@@ -532,6 +532,7 @@ WHERE {
         } else if (dataResults.length >= 1 && dataResults.length <= 1000) {
           ratings.network += 100;
         } else {
+          setShowTooManyDataWarning(true);
           ratings.chord += 10;
           ratings.network += 30;
         }
@@ -542,6 +543,7 @@ WHERE {
   }
 
   const [showMissingKeyWarning, setShowMissingKeyWarning] = useState(false);
+  const [showTooManyDataWarning, setShowTooManyDataWarning] = useState(false);
 
   function generateVisRecommendation(
     user_query: string,
@@ -1054,6 +1056,23 @@ PREFIX : <${db_prefix_URL}>`;
     );
   }
 
+  function tooManyDataForVisWarning() {
+    return (
+      <Alert
+        sx={{
+          display: showTooManyDataWarning ? 'flex' : 'none',
+          width: '100%',
+        }}
+        severity="warning"
+        onClose={() => setShowTooManyDataWarning(false)}
+      >
+        Your query result contains too many data items, this may be toublesome
+        when visualisation applied. Please consider applying a filter in your
+        query.
+      </Alert>
+    );
+  }
+
   const [showPrefixReference, setShowPrefixReference] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const canBeOpen = showPrefixReference && Boolean(anchorEl);
@@ -1147,6 +1166,7 @@ PREFIX : <${db_prefix_URL}>`;
       <Grid container spacing={2}>
         <Grid item xs={12}>
           {missingKeyWarning()}
+          {tooManyDataForVisWarning()}
         </Grid>
         <Grid item xs={4}>
           <LoadingButton
