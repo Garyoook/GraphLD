@@ -26,12 +26,12 @@ function MultipleLineChart(props: VisDataProps) {
   }, [headers]);
 
   useEffect(() => {
-    setSeriesField(headers[0]);
-    setXField(headers[1]);
-    setYField(headers[2]);
+    setXField(headers[0]);
+    setYField(headers[1]);
+    setSeriesField(headers[2]);
 
     const typedData = preprocessDataForVisualisation(data).sort(
-      (a: any, b: any) => a[headers[1]] - b[headers[1]],
+      (a: any, b: any) => a[headers[0]] - b[headers[0]],
     );
 
     setDataSource(typedData);
@@ -73,28 +73,6 @@ function MultipleLineChart(props: VisDataProps) {
       <Grid container spacing={2}>
         <Grid item>
           <FormControl sx={{ m: 1, minWidth: 120 }}>
-            source for series
-            <Select
-              value={safeGetFieldIndex(fieldsAll, seriesField)}
-              onChange={(e) => {
-                setSeriesField(
-                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
-                );
-              }}
-            >
-              {fieldsAll.map((item, index) => {
-                return (
-                  <MenuItem key={index} value={index}>
-                    {item}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-        </Grid>
-
-        <Grid item>
-          <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for x axis
             <Select
               value={safeGetFieldIndex(fieldsAll, xField)}
@@ -122,6 +100,28 @@ function MultipleLineChart(props: VisDataProps) {
               value={safeGetFieldIndex(fieldsAll, yField)}
               onChange={(e) => {
                 setYField(
+                  safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
+                );
+              }}
+            >
+              {fieldsAll.map((item, index) => {
+                return (
+                  <MenuItem key={index} value={index}>
+                    {item}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid item>
+          <FormControl sx={{ m: 1, minWidth: 120 }}>
+            source for series
+            <Select
+              value={safeGetFieldIndex(fieldsAll, seriesField)}
+              onChange={(e) => {
+                setSeriesField(
                   safeGetField(fieldsAll, Number(e.target.value), emptyHeader),
                 );
               }}

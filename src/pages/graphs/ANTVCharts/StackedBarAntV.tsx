@@ -8,7 +8,7 @@ import {
   safeGetFieldIndex,
 } from './utils';
 
-const StackedBarChart = (props: VisDataProps) => {
+const StackedColumnChart = (props: VisDataProps) => {
   const { headers, data } = props;
 
   const [dataSource, setDataSource] = useState<any[]>([]);
@@ -32,7 +32,7 @@ const StackedBarChart = (props: VisDataProps) => {
 
     const typedData = preprocessDataForVisualisation(data).sort(
       (a: any, b: any) => {
-        return a[yField] - b[yField];
+        return a[headers[0]] - b[headers[0]];
       },
     );
 
@@ -40,10 +40,12 @@ const StackedBarChart = (props: VisDataProps) => {
   }, [headers, data]);
 
   useEffect(() => {
-    const orderedData = dataSource.sort((a, b) => {
-      return a[yField] - b[yField];
-    });
-    setDataSource(orderedData);
+    if (dataSource.length > 0) {
+      const orderedData = dataSource.sort((a, b) => {
+        return a[xField] - b[xField];
+      });
+      setDataSource(orderedData);
+    }
   }, [xField, yField, seriesField]);
 
   const config = {
@@ -55,19 +57,7 @@ const StackedBarChart = (props: VisDataProps) => {
     //color: ['#1ca9e6', '#f88c24'],
     // marginRatio: 0.1,
     label: {
-      position: 'middle' as 'middle',
-      // 'left', 'middle', 'right'
-      layout: [
-        {
-          type: 'interval-adjust-position' as 'interval-adjust-position',
-        },
-        {
-          type: 'interval-hide-overlap' as 'interval-hide-overlap',
-        },
-        {
-          type: 'adjust-color' as 'adjust-color',
-        },
-      ],
+      position: 'middle' as 'middle', // 'top', 'bottom', 'middle'
     },
     interactions: [
       {
@@ -172,4 +162,4 @@ const StackedBarChart = (props: VisDataProps) => {
   );
 };
 
-export default StackedBarChart;
+export default StackedColumnChart;

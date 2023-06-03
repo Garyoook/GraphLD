@@ -123,8 +123,8 @@ WHERE {
 }`;
 
   const f3c = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <${db_prefix_URL}>
-SELECT ?country ?year ?population 
+PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+SELECT  ?year  ?population ?country
 WHERE {
     ?c rdf:type :Country ; 
        :name ?country ;
@@ -366,11 +366,11 @@ WHERE {
       ) {
         // in the paper it state that 100 is recommended upper limit for treemap, but it is actually too conservarive estimation, here we use 300.
         if (dataResults.length >= 1 && dataResults.length <= 300) {
-          ratings.treeMap += 100;
+          ratings.treeMap += 80;
         }
         if (dataResults.length >= 1 && dataResults.length <= 20) {
-          ratings.sunburst += 100;
-          ratings.circlePacking += 100;
+          ratings.sunburst += 80;
+          ratings.circlePacking += 80;
         }
       }
 
@@ -387,7 +387,7 @@ WHERE {
 
     if (key_var_count == 2) {
       if (dataResults.length >= 1 && dataResults.length <= 100) {
-        ratings.hierarchyTree += 100;
+        ratings.hierarchyTree += 80;
       } else {
         ratings.hierarchyTree += 30;
       }
@@ -440,10 +440,10 @@ WHERE {
         } else {
           ratings.multiLine += 10;
           // ratings.spider += 10;
-          ratings.stackedBar += 10;
-          ratings.groupedBar += 10;
-          ratings.stackedColumn += 10;
-          ratings.groupedColumn += 10;
+          // ratings.stackedBar += 30;
+          // ratings.groupedBar += 30;
+          // ratings.stackedColumn += 30;
+          // ratings.groupedColumn += 30;
         }
       }
 
@@ -458,14 +458,18 @@ WHERE {
           ratings.spider += 100;
           ratings.stackedBar += 100;
           ratings.groupedBar += 100;
+          ratings.stackedColumn += 100;
+          ratings.groupedColumn += 100;
         }
       }
 
       if (dataResults.length > 20) {
-        ratings.multiLine += 5;
+        ratings.multiLine += 30;
         // ratings.spider += 5;
-        // ratings.stackedBar += 5;
-        // ratings.groupedBar += 5;
+        ratings.stackedBar += 10;
+        ratings.groupedBar += 10;
+        ratings.stackedColumn += 10;
+        ratings.groupedColumn += 10;
 
         messages.push(
           'The query result is too large, please consider applying a filter in your query.',

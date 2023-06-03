@@ -32,7 +32,7 @@ const GroupedColumnChart = (props: VisDataProps) => {
 
     const typedData = preprocessDataForVisualisation(data).sort(
       (a: any, b: any) => {
-        return a[xField] - b[xField];
+        return a[headers[0]] - b[headers[0]];
       },
     );
     // sort is not necessary

@@ -8,7 +8,7 @@ import {
   safeGetFieldIndex,
 } from './utils';
 
-const GroupedBarChart = (props: VisDataProps) => {
+const GroupedColumnChart = (props: VisDataProps) => {
   const { headers, data } = props;
 
   const [dataSource, setDataSource] = useState<any[]>([]);
@@ -32,18 +32,22 @@ const GroupedBarChart = (props: VisDataProps) => {
 
     const typedData = preprocessDataForVisualisation(data).sort(
       (a: any, b: any) => {
-        return a[yField] - b[yField];
+        return a[headers[0]] - b[headers[0]];
       },
     );
+    // sort is not necessary
+    // .sort((a: any, b: any) => a[headers[1]] - b[headers[1]],);
 
     setDataSource(typedData);
   }, [headers, data]);
 
   useEffect(() => {
-    const orderedData = dataSource.sort((a, b) => {
-      return a[yField] - b[yField];
-    });
-    setDataSource(orderedData);
+    if (dataSource.length > 0) {
+      const orderedData = dataSource.sort((a, b) => {
+        return a[xField] - b[xField];
+      });
+      setDataSource(orderedData);
+    }
   }, [xField, yField, seriesField]);
 
   const config = {
@@ -156,4 +160,4 @@ const GroupedBarChart = (props: VisDataProps) => {
   );
 };
 
-export default GroupedBarChart;
+export default GroupedColumnChart;
