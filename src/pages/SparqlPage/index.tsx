@@ -134,7 +134,7 @@ WHERE {
         :year ?year;
         :value ?population .
     ?c 	:hadPopulation ?py .
-} LIMIT 50`;
+} LIMIT 300`;
 
   const f3d = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX : <${db_prefix_URL}>
