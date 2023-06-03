@@ -1,6 +1,7 @@
 import { VisDataProps } from '@/pages/SparqlPage';
 import { Bar } from '@ant-design/plots';
-import { FormControl, Grid, MenuItem, Select } from '@mui/material';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
+import { Button, FormControl, Grid, MenuItem, Select } from '@mui/material';
 import { useEffect, useState } from 'react';
 import {
   preprocessDataForVisualisation,
@@ -57,8 +58,60 @@ const BarChartAntV = (props: VisDataProps) => {
     //   categorySize: 12.5,
     // },
   };
+
+  const [sortX, setSortX] = useState(false);
+  const [sortY, setSortY] = useState(false);
+
   return dataSource.length > 0 ? (
     <Grid>
+      <Grid
+        container
+        spacing={2}
+        sx={{ alignItems: 'center', marginBottom: 2 }}
+      >
+        <Grid item>
+          <Button
+            variant="outlined"
+            color="success"
+            size="small"
+            sx={{
+              textTransform: 'none',
+            }}
+            endIcon={<CompareArrowsIcon />}
+            onClick={() => {
+              const orderedData = dataSource.sort((a, b) => {
+                return sortX ? a[xField] - b[xField] : b[xField] - a[xField];
+              });
+              setDataSource(orderedData);
+
+              setSortX(!sortX);
+            }}
+          >
+            Sort by axis {xField}
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            variant="outlined"
+            color="success"
+            size="small"
+            sx={{
+              textTransform: 'none',
+            }}
+            endIcon={<CompareArrowsIcon />}
+            onClick={() => {
+              const orderedData = dataSource.sort((a, b) => {
+                return sortY ? a[yField] - b[yField] : b[yField] - a[yField];
+              });
+              setDataSource(orderedData);
+
+              setSortY(!sortY);
+            }}
+          >
+            Sort by axis {yField}
+          </Button>
+        </Grid>
+      </Grid>
       <Bar {...config} />
 
       <Grid container spacing={2}>

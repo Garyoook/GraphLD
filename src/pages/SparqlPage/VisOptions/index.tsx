@@ -286,10 +286,10 @@ function VisOptions(props: {
             </IconButton>
           </Toolbar>
         </AppBar>
-        <DialogContent sx={{ fontFamily: 'sans-serif' }}>
+        {/* <DialogContent sx={{ fontFamily: 'sans-serif' }}>
           Order of queried variables affect the visualisation, try to adjust the
           axis below the visualisation if you find it incorrect.
-        </DialogContent>
+        </DialogContent> */}
         <DialogContent>{displayChart(chartType, data)}</DialogContent>
         <DialogActions
           sx={{ border: '#1976d255 solid 2px', borderRadius: '3px' }}
