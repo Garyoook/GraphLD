@@ -548,6 +548,12 @@ WHERE {
   const [showManyManyRelationWarning, setShowManyManyRelationWarning] =
     useState(false);
 
+  function closeAllWarnings() {
+    setShowMissingKeyWarning(false);
+    setShowTooManyDataWarning(false);
+    setShowManyManyRelationWarning(false);
+  }
+
   function generateVisRecommendation(
     user_query: string,
     dataResults: any[] = [],
@@ -863,9 +869,7 @@ WHERE {
   const handleQuery = async () => {
     const repositoryID = repo_graphDB || searchParams.get('repo_graphDB');
 
-    setShowMissingKeyWarning(false);
-    setShowTooManyDataWarning(false);
-    setShowManyManyRelationWarning(false);
+    closeAllWarnings();
     try {
       setLoading(true);
       const queryRes = await sendSPARQLquery(
@@ -1105,6 +1109,7 @@ PREFIX : <${db_prefix_URL}>`;
                   setQuery(q);
                   setDataSource([]);
                   setRecommendations([]);
+                  closeAllWarnings();
                 }}
                 style={{
                   textTransform: 'none',
