@@ -823,15 +823,12 @@ WHERE {
           }
         });
       });
-      console.log('instance_stats: ', instance_stats);
-
       const key_var_head_atleast2instances = key_var_head.filter((column) => {
         const instances_counts_dict = instance_stats[column];
         return Object.values(instances_counts_dict).some(
           (count: any) => count > 1,
         );
       });
-
       if (key_var_head_atleast2instances.length > 1) {
         setShowManyManyRelationWarning(true);
       }
