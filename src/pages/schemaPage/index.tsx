@@ -645,7 +645,7 @@ WHERE {
           The SPARQL query has been copied to clipboard!
         </Alert>
       </Snackbar>
-      {/* Copy failed because clipboard not available in unsafe origin */}
+      {/* Copy failed  Clipboard not available in unsafe origin */}
       <Snackbar
         open={showCopyUnderUnsafeOrigin}
         autoHideDuration={2000}
@@ -656,8 +656,8 @@ WHERE {
           sx={{ width: '100%' }}
           onClose={() => setShowCopyUnderUnsafeOrigin(false)}
         >
-          Copy failed: because clipboard is not available under unsafe
-          (non-https) origin!
+          Copy failed: Clipboard is not available under unsafe (non-https)
+          origin!
         </Alert>
       </Snackbar>
 
