@@ -155,7 +155,7 @@ function DashboardContent() {
             <React.Fragment>
               {sider_tabs.map((t: TABS_DASHBOARD) => {
                 return (
-                  <Tooltip key={t} title={t} placement="right">
+                  <Tooltip key={t} title={siderOpen ? '' : t} placement="right">
                     <ListItemButton
                       selected={tab === t}
                       onClick={() => {
