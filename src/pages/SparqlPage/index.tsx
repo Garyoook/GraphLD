@@ -35,7 +35,6 @@ import {
   DATA_DIMENTION_TYPE,
   prefix_mapping,
   ranges_type_mapping,
-  unsecuredCopyToClipboard,
 } from '../../utils';
 import { sendSPARQLquery } from '../services/api';
 import VisOptions, { ChartType } from './VisOptions';
@@ -163,6 +162,8 @@ WHERE {
   const [loading, setLoading] = useState(false);
   const [openVis, setOpenVisOption] = useState(false);
   const [showCopySuccess, setShowCopySuccess] = useState<boolean>(false);
+  const [showCopyUnderUnsafeOrigin, setShowCopyUnderUnsafeOrigin] =
+    useState<boolean>(false);
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertText, setAlertText] = useState('');
@@ -1069,13 +1070,12 @@ PREFIX : <${db_prefix_URL}>`;
         });
     } else {
       try {
-        unsecuredCopyToClipboard(prefixes);
-        setShowCopySuccess(true);
+        setShowCopyUnderUnsafeOrigin(true);
       } catch (error) {
         console.log(error);
       } finally {
         setTimeout(() => {
-          setShowCopySuccess(false);
+          setShowCopyUnderUnsafeOrigin(false);
         }, 2000);
       }
     }
@@ -1442,6 +1442,22 @@ PREFIX : <${db_prefix_URL}>`;
           onClose={() => setShowCopySuccess(false)}
         >
           The Prefixes reference has been copied to clipboard!
+        </Alert>
+      </Snackbar>
+
+      {/* Copy failed because clipboard not available in unsafe origin */}
+      <Snackbar
+        open={showCopyUnderUnsafeOrigin}
+        autoHideDuration={2000}
+        onClose={() => setShowCopyUnderUnsafeOrigin(false)}
+      >
+        <Alert
+          severity="error"
+          sx={{ width: '100%' }}
+          onClose={() => setShowCopyUnderUnsafeOrigin(false)}
+        >
+          Copy failed: because clipboard is not available under unsafe
+          (non-https) origin!
         </Alert>
       </Snackbar>
     </Grid>

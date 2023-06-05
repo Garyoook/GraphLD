@@ -59,6 +59,8 @@ const ChordSchema = (props: VisDataProps) => {
   const [target, setTarget] = useState('');
   const [objectProp, setObjectProp] = useState('');
   const [showCopySuccess, setShowCopySuccess] = useState<boolean>(false);
+  const [showCopyUnderUnsafeOrigin, setShowCopyUnderUnsafeOrigin] =
+    useState<boolean>(false);
 
   // for FDP list
   const [showFDPList, setShowFDPList] = useState<boolean>(false);
@@ -114,16 +116,28 @@ const ChordSchema = (props: VisDataProps) => {
   };
 
   const handleCopyToClipboard = () => {
-    navigator.clipboard
-      .writeText(generatedQuery)
-      .then(() => {
-        setShowCopySuccess(true);
-      })
-      .finally(() => {
+    if (window.isSecureContext && navigator.clipboard) {
+      navigator.clipboard
+        .writeText(generatedQuery)
+        .then(() => {
+          setShowCopySuccess(true);
+        })
+        .finally(() => {
+          setTimeout(() => {
+            setShowCopySuccess(false);
+          }, 2000);
+        });
+    } else {
+      try {
+        setShowCopyUnderUnsafeOrigin(true);
+      } catch (error) {
+        console.log(error);
+      } finally {
         setTimeout(() => {
-          setShowCopySuccess(false);
+          setShowCopyUnderUnsafeOrigin(false);
         }, 2000);
-      });
+      }
+    }
   };
 
   function showGeneratedODPQuery() {
@@ -347,6 +361,22 @@ WHERE{
           onClose={() => setShowCopySuccess(false)}
         >
           The SPARQL query has been copied to clipboard!
+        </Alert>
+      </Snackbar>
+
+      {/* Copy failed because clipboard not available in unsafe origin */}
+      <Snackbar
+        open={showCopyUnderUnsafeOrigin}
+        autoHideDuration={2000}
+        onClose={() => setShowCopyUnderUnsafeOrigin(false)}
+      >
+        <Alert
+          severity="error"
+          sx={{ width: '100%' }}
+          onClose={() => setShowCopyUnderUnsafeOrigin(false)}
+        >
+          Copy failed: because clipboard is not available under unsafe
+          (non-https) origin!
         </Alert>
       </Snackbar>
 

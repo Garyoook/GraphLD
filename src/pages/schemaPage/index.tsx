@@ -391,26 +391,15 @@ function SchemaPage() {
     );
   }
 
-  function unsecuredCopyToClipboard(text: string) {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    try {
-      document.execCommand('copy');
-    } catch (err) {
-      console.error('Unable to copy to clipboard', err);
-    }
-    document.body.removeChild(textArea);
-  }
-
   // states for code generation,
   // TODO: duplicated code with schemaGraph/Chord, should be refactored in the future
   const [selectedClass, setSelectedClass] = useState<string>('');
   const [generatedQuery, setGeneratedQuery] = useState<string>('');
   const [showEditWarning, setShowEditWarning] = useState<boolean>(false);
   const [showCopySuccess, setShowCopySuccess] = useState<boolean>(false);
+  const [showCopyUnderUnsafeOrigin, setShowCopyUnderUnsafeOrigin] =
+    useState<boolean>(false);
+
   const [FDPList, setFDPList] = useState<string[]>([]);
   const [showFDPList, setShowFDPList] = useState<boolean>(false);
   // for FDP query generation
@@ -430,13 +419,12 @@ function SchemaPage() {
         });
     } else {
       try {
-        unsecuredCopyToClipboard(generatedQuery);
-        setShowCopySuccess(true);
+        setShowCopyUnderUnsafeOrigin(true);
       } catch (error) {
         console.log(error);
       } finally {
         setTimeout(() => {
-          setShowCopySuccess(false);
+          setShowCopyUnderUnsafeOrigin(false);
         }, 2000);
       }
     }
@@ -655,6 +643,21 @@ WHERE {
           onClose={() => setShowCopySuccess(false)}
         >
           The SPARQL query has been copied to clipboard!
+        </Alert>
+      </Snackbar>
+      {/* Copy failed because clipboard not available in unsafe origin */}
+      <Snackbar
+        open={showCopyUnderUnsafeOrigin}
+        autoHideDuration={2000}
+        onClose={() => setShowCopyUnderUnsafeOrigin(false)}
+      >
+        <Alert
+          severity="error"
+          sx={{ width: '100%' }}
+          onClose={() => setShowCopyUnderUnsafeOrigin(false)}
+        >
+          Copy failed: because clipboard is not available under unsafe
+          (non-https) origin!
         </Alert>
       </Snackbar>
 
