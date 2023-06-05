@@ -32,7 +32,7 @@ import { DataGridPro } from '@mui/x-data-grid-pro';
 import CodeMirror from '@uiw/react-codemirror';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { prefix_mapping, unsecuredCopyToClipboard } from '../../utils';
+import { prefix_mapping } from '../../utils';
 import {
   getClasses,
   getDPByClass,
@@ -389,6 +389,20 @@ function SchemaPage() {
         </FormControl>
       </Box>
     );
+  }
+
+  function unsecuredCopyToClipboard(text: string) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+    } catch (err) {
+      console.error('Unable to copy to clipboard', err);
+    }
+    document.body.removeChild(textArea);
   }
 
   // states for code generation,
