@@ -80,8 +80,8 @@ const ChordSchema = (props: VisDataProps) => {
 
   const config = {
     data: dataSource,
-    width: 550,
-    height: 550,
+    width: 600,
+    height: 600,
     interactions: [{ type: 'element-active' }],
     sourceField,
     targetField,

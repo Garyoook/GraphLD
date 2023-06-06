@@ -44,6 +44,7 @@ import {
 } from '../SparqlPage/ConceptualModel/service';
 import { DatabaseState } from '../reducer/databaseReducer';
 import { sendSPARQLquery } from '../services/api';
+import QueryFactory from './queryFactory';
 import ChordSchema from './schemaGraph/Chord';
 
 function SchemaPage() {
@@ -246,7 +247,6 @@ function SchemaPage() {
       );
 
       setHeaders(headers);
-      console.log('PAB data: ', data);
       setPABDataSource(data);
       setPABDataSourceCopy(data);
     } catch (e) {
@@ -565,6 +565,7 @@ WHERE {
 
   const [expandRelationships, setExpandRelationships] = useState<boolean>(true);
   const [expandClassTable, setExpandClassTable] = useState<boolean>(false);
+  const [expandQueryFactory, setExpandQueryFactory] = useState<boolean>(true);
 
   function toggleExpandRelationships() {
     setExpandRelationships(!expandRelationships);
@@ -572,6 +573,10 @@ WHERE {
 
   function toggleExpandClassTable() {
     setExpandClassTable(!expandClassTable);
+  }
+
+  function toggleExpandQueryFactory() {
+    setExpandQueryFactory(!expandQueryFactory);
   }
 
   return (
@@ -627,7 +632,7 @@ WHERE {
                 <AccordionDetails>
                   <Paper
                     sx={{
-                      height: '100vh',
+                      height: '90vh',
                     }}
                   >
                     <DataGridPro
@@ -647,6 +652,32 @@ WHERE {
                       }}
                     />
                   </Paper>
+                </AccordionDetails>
+              </Accordion>
+            </Grid>
+
+            {/* Experimental: query factory from schema */}
+            <Grid item xs={12}>
+              <Accordion
+                expanded={expandQueryFactory}
+                onChange={toggleExpandQueryFactory}
+                style={{
+                  border: '1px solid rgba(0, 0, 0, .125)',
+                }}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography sx={{ width: '60%', flexShrink: 0 }}>
+                    Query Factory (Under development)
+                  </Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>
+                    build your query from schema
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <QueryFactory
+                    classDPMapping={classDPMapping}
+                    PABData={PABdataSourceCopy}
+                  />
                 </AccordionDetails>
               </Accordion>
             </Grid>
