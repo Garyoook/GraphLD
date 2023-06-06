@@ -1,6 +1,7 @@
 import { StreamLanguage } from '@codemirror/language';
 import { sparql } from '@codemirror/legacy-modes/mode/sparql';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import {
   Alert,
@@ -27,6 +28,10 @@ import {
   Snackbar,
   styled,
 } from '@mui/material';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import Typography from '@mui/material/Typography';
 import { DataGrid, GridRowId } from '@mui/x-data-grid';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import CodeMirror from '@uiw/react-codemirror';
@@ -558,50 +563,92 @@ WHERE {
     );
   }
 
+  const [expandRelationships, setExpandRelationships] = useState<boolean>(true);
+  const [expandClassTable, setExpandClassTable] = useState<boolean>(false);
+
+  function toggleExpandRelationships() {
+    setExpandRelationships(!expandRelationships);
+  }
+
+  function toggleExpandClassTable() {
+    setExpandClassTable(!expandClassTable);
+  }
+
   return (
     <Grid>
       {PABdataSource.length > 0 &&
         classColumn.length > 0 &&
         headers.length > 0 && (
           <Grid container spacing={3} style={{ paddingTop: 20 }}>
-            <DividerWrapper>
-              <Divider>Relationships</Divider>
-            </DividerWrapper>
-            <Grid item xs={12} display="flex" flexDirection="row">
-              <Grid margin={2}>{classFilterforChord()}</Grid>
-              <Grid marginLeft={10} maxWidth="60%">
-                <ChordSchema headers={headers} data={PABdataSource} />
-              </Grid>
+            <Grid item xs={12}>
+              <Accordion
+                expanded={expandRelationships}
+                onChange={toggleExpandRelationships}
+                style={{
+                  border: '1px solid rgba(0, 0, 0, .125)',
+                }}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography sx={{ width: '33%', flexShrink: 0 }}>
+                    Relationships
+                  </Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>
+                    Visualised Schema
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid item xs={12} display="flex" flexDirection="row">
+                    <Grid margin={2}>{classFilterforChord()}</Grid>
+                    <Grid marginLeft={10} maxWidth="60%">
+                      <ChordSchema headers={headers} data={PABdataSource} />
+                    </Grid>
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
             </Grid>
-
-            <DividerWrapper>
-              <Divider>Table</Divider>
-            </DividerWrapper>
 
             {/* Table for content of all classes */}
             <Grid item xs={12}>
-              <Paper
-                sx={{
-                  height: '100vh',
+              <Accordion
+                expanded={expandClassTable}
+                onChange={toggleExpandClassTable}
+                style={{
+                  border: '1px solid rgba(0, 0, 0, .125)',
                 }}
               >
-                <DataGridPro
-                  rows={classDataSource}
-                  columns={classColumn}
-                  rowSpacingType="border"
-                  showCellRightBorder
-                  key={Date.now()}
-                  onRowClick={async (params) => {
-                    const row = params.row;
-                    const class_name = row.class;
-                    const DP_list = classDPMapping[class_name];
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography sx={{ width: '33%', flexShrink: 0 }}>
+                    Table of all Classes
+                  </Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>
+                    browse in tabular form
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Paper
+                    sx={{
+                      height: '100vh',
+                    }}
+                  >
+                    <DataGridPro
+                      rows={classDataSource}
+                      columns={classColumn}
+                      rowSpacingType="border"
+                      showCellRightBorder
+                      key={Date.now()}
+                      onRowClick={async (params) => {
+                        const row = params.row;
+                        const class_name = row.class;
+                        const DP_list = classDPMapping[class_name];
 
-                    setSelectedClass(class_name);
-                    setFDPList(DP_list);
-                    setShowFDPList(true);
-                  }}
-                />
-              </Paper>
+                        setSelectedClass(class_name);
+                        setFDPList(DP_list);
+                        setShowFDPList(true);
+                      }}
+                    />
+                  </Paper>
+                </AccordionDetails>
+              </Accordion>
             </Grid>
           </Grid>
         )}
