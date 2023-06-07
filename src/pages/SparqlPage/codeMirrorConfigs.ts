@@ -7,6 +7,7 @@ const SPARQLSyntax_basics = [
   'CONSTRUCT',
   'ASK',
   'DESCRIBE',
+  'WHERE',
   // solution sequence & modifiers:
   'ORDER BY',
   'DISTINCT',
