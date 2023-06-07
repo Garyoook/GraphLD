@@ -1380,7 +1380,7 @@ PREFIX : <${db_prefix_URL}>`;
         </Grid>
       </Grid>
 
-      {dataSource.length > 0 && columns.length > 0 && (
+      {columns.length > 0 && (
         <Grid container spacing={3} style={{ paddingTop: 20 }}>
           {/* Chart */}
           <Grid item xs={12}>
@@ -1392,6 +1392,13 @@ PREFIX : <${db_prefix_URL}>`;
               {showAlert ? (
                 <Alert severity="error" style={{ height: '100%' }}>
                   {alertText}
+                </Alert>
+              ) : dataSource.length === 0 ? (
+                <Alert
+                  severity="warning"
+                  style={{ height: '100%', textAlign: 'center' }}
+                >
+                  {`0 results found`}
                 </Alert>
               ) : (
                 <DataGridPro
