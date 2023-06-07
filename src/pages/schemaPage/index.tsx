@@ -70,11 +70,11 @@ function SchemaPage() {
   (count(?d) AS ?count) ?PAB
   WHERE {
       ?PAB rdf:type owl:ObjectProperty ;
-           rdfs:range ?range ;
-           rdfs:domain ?domain .
+           OPTIONAL {?PAB rdfs:range ?range ;}
+      OPTIONAL {?PAB rdfs:domain ?domain .}
       ?d ?PAB ?r .
-  #    ?d rdf:type ?domain .
-  #    ?r rdf:type ?range .
+      ?d rdf:type ?domain .
+      ?r rdf:type ?range .
       FILTER (!isBlank(?PAB) && !isBlank(?domain) && !isBlank(?range))
       FILTER(STRSTARTS(STR(?PAB), STR(:)) &&STRSTARTS(STR(?domain), STR(:)) && STRSTARTS(STR(?range), STR(:)))
   }

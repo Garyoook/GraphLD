@@ -61,6 +61,8 @@ const ChordSchema = (props: VisDataProps) => {
   const [showCopySuccess, setShowCopySuccess] = useState<boolean>(false);
   const [showCopyUnderUnsafeOrigin, setShowCopyUnderUnsafeOrigin] =
     useState<boolean>(false);
+  const [ODPList, setODPList] = useState<string[]>([]);
+  const [showODPList, setShowODPList] = useState(false);
 
   // for FDP list
   const [showFDPList, setShowFDPList] = useState<boolean>(false);
@@ -104,12 +106,11 @@ const ChordSchema = (props: VisDataProps) => {
         const filteredData = dataSource.filter(
           (d) => d[sourceField] === name && d[targetField] === target,
         );
-        const ObjectProp =
-          filteredData.length === 1 ? filteredData[0]['PAB'] : 'unknown';
+        const ObjectProps = filteredData.map((d) => d['PAB']).join(', ');
 
         return {
           name: `${source} -> ${target}`,
-          value: `${ObjectProp} : ${value} instances`,
+          value: `${ObjectProps}`,
         };
       },
     },
@@ -139,6 +140,65 @@ const ChordSchema = (props: VisDataProps) => {
       }
     }
   };
+
+  function showGeneratedODPList() {
+    return (
+      <Dialog
+        fullWidth
+        maxWidth="sm"
+        open={showODPList}
+        onClose={() => setShowODPList(false)}
+      >
+        <DialogTitle>{`Related Object Properties of ${source}`}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Click one of the Object Properties to get related SPARQL query
+          </DialogContentText>
+          {ODPList.map((pab) => {
+            return (
+              <>
+                <ListItem
+                  button
+                  key={pab}
+                  onClick={(e) => {
+                    const var_source = source?.split(':')[1].toLowerCase();
+                    const var_target = target?.split(':')[1].toLowerCase();
+
+                    const generatedQuery = `PREFIX : <${db_prefix_URL}>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+SELECT  ?${var_source} ?${var_target}
+WHERE{
+?${var_source} ${pab} ?${var_target} .
+?${var_source} rdf:type ${source} .
+?${var_target} rdf:type ${target} .
+}`;
+
+                    setSource(source);
+                    setTarget(target);
+                    setGeneratedQuery(generatedQuery);
+                    setShowQueryGen(pab !== 'unknown');
+                  }}
+                >
+                  <ListItemText primary={pab} />
+                </ListItem>
+                <Divider />
+              </>
+            );
+          })}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setShowODPList(false);
+            }}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
 
   function showGeneratedODPQuery() {
     return (
@@ -249,6 +309,7 @@ WHERE {
       if (isNode) {
         const source = data.name;
         try {
+          // ! limitations: some data properties are not here because of disjointUnionOf or other Collection relationship.
           const FDP_list = await getDPByClass(
             source,
             repo_graphDB,
@@ -267,26 +328,12 @@ WHERE {
           const filteredData = dataSource.filter(
             (d) => d[sourceField] === source && d[targetField] === target,
           );
-          const ObjectProp =
-            filteredData.length === 1 ? filteredData[0]['PAB'] : 'unknown';
-          const var_source = source?.split(':')[1].toLowerCase();
-          const var_target = target?.split(':')[1].toLowerCase();
 
-          const generatedQuery = `PREFIX : <${db_prefix_URL}>
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX owl: <http://www.w3.org/2002/07/owl#>
-SELECT  ?${var_source} ?${var_target}
-WHERE{
-?${var_source} ${ObjectProp} ?${var_target} .
-?${var_source} rdf:type ${source} .
-?${var_target} rdf:type ${target} .
-}`;
-
+          const ObjectProps = filteredData.map((d) => d['PAB']);
+          setODPList(ObjectProps);
           setSource(source);
           setTarget(target);
-          setObjectProp(ObjectProp);
-          setGeneratedQuery(generatedQuery);
-          setShowQueryGen(ObjectProp !== 'unknown');
+          setShowODPList(true);
         }
       }
     }
@@ -345,6 +392,7 @@ WHERE{
     <Grid>
       <Chord {...config} onEvent={handleClickChord} />
 
+      {showGeneratedODPList()}
       {showGeneratedODPQuery()}
       {showGeneratedFDPList()}
       {showGeneratedFDPQuery()}
