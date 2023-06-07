@@ -360,7 +360,8 @@ WHERE {
       sunburst: 0,
       circlePacking: 0,
     };
-    if (key_var_count == 2 && nonKey_var_count === 1) {
+    // if key var is explicitly specified as classes or lexical value
+    if (key_var_count === 2 && nonKey_var_count === 1) {
       if (
         nonKey_var_list.some((v: string) => {
           const range = var_to_range_mapping[v];
@@ -392,7 +393,7 @@ WHERE {
       if (dataResults.length >= 1 && dataResults.length <= 100) {
         ratings.hierarchyTree += 80;
       } else {
-        ratings.hierarchyTree += 30;
+        // ratings.hierarchyTree += 30;
         setShowTooManyDataWarning(true);
       }
     }
@@ -610,7 +611,7 @@ WHERE {
       // split the query body by '.' (parent statements) and ';'(children statements)
       const parent_statements = user_query_body.split('.');
 
-      const PAB_LIST: any = [];
+      const PAB_LIST: any = {};
       const CA_DPA_mapping: any = {};
       const CA_PAB_mapping: any = {};
       const potential_key_var_DP_map: any = {};
@@ -684,7 +685,10 @@ WHERE {
             const c2 = PAB_obj?.range;
             // TODO: this relationship bt PAB and classes should be checked, but currently no effective way, leave it for future work
             // if (CLASSES.includes(c1) && CLASSES.includes(c2)) {
-            PAB_LIST.push(PAB);
+            PAB_LIST[PAB] = {
+              domain: c1,
+              range: c2,
+            };
             // }
             CA_PAB_mapping[class_type]?.push(PAB);
           }
@@ -710,8 +714,8 @@ WHERE {
 
       // !Recommendation rating algorithm here this one is based on analysing the query head and link to query content and data results.
 
-      const total_class_num = CLASSES.length;
-      const total_PAB_num = PAB_LIST.length;
+      let total_class_num = CLASSES.length;
+      const total_PAB_num = Object.keys(PAB_LIST).length;
       const query_head_count = vars_head.length;
       let nonKey_var_count = query_head_count;
       let key_var_count = 0;
@@ -761,6 +765,14 @@ WHERE {
             )
           : {};
 
+      if (Object.keys(PAB_LIST).length === 1 && total_class_num === 1) {
+        const c1 = CLASSES[0];
+        if (PAB_LIST[Object.keys(PAB_LIST)[0]].domain === c1) {
+          total_class_num += 1;
+          key_var_count += 1;
+          nonKey_var_count -= 1;
+        }
+      }
       const ratings_2_class_1PAB =
         total_class_num === 2 && total_PAB_num === 1
           ? generateRatingsFor2C1PAB(
