@@ -1006,10 +1006,10 @@ WHERE {
       ConceptualModelInfo.FunctionalPropsList &&
       ConceptualModelInfo.DP_domain_mapping
     ) {
+      // Functional Data Properties
       const DP_list = ConceptualModelInfo.FunctionalPropsList;
-
       const completions_DP = DP_list.map((dp: string) => {
-        // !this handles the case when DP's domain is a collection (unhandled limitation in SPARQL results)
+        // !this handles the case when DP's domain is a collection (unhandled limitation in SPARQL handling collections)
         const domains = ConceptualModelInfo.DP_domain_mapping[dp]
           ? ConceptualModelInfo.DP_domain_mapping[dp]
           : 'unknown';
@@ -1020,7 +1020,17 @@ WHERE {
         };
       });
 
-      completions.push(...completions_DP);
+      // Object Properties
+      const PAB_list = ConceptualModelInfo.ObjectPropsList as string[];
+      const completions_PAB = PAB_list.map((pab: string) => {
+        return {
+          label: pab,
+          type: 'property',
+          info: 'owl:ObjectProperty',
+        };
+      });
+
+      completions.push(...completions_DP, ...completions_PAB);
     }
 
     // generate completions for Classes

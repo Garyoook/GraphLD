@@ -168,10 +168,9 @@ export async function getObjectPropertiesList(
   SELECT ?PAB ?range
   WHERE {
       {
-          ?PAB rdf:type owl:ObjectProperty .
-          ?PAB rdfs:range ?range .
+          ?PAB rdf:type owl:ObjectProperty ;
+               OPTIONAL {?PAB rdfs:range ?range ;}
       }
-      FILTER (!isBlank(?PAB))
       FILTER(STRSTARTS(STR(?PAB), STR(:)))
   }`;
 
