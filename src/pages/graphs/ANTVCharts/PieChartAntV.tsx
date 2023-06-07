@@ -67,7 +67,7 @@ const PieChartAntV = (props: VisDataProps) => {
   return dataSource.length > 0 ? (
     <Grid>
       <Tooltip
-        title="Some data can be sorted by certain values in its columns, try it out!"
+        title="Some data can be sorted by certain values of its attributes, try it out!"
         placement="bottom-start"
         arrow
       >
