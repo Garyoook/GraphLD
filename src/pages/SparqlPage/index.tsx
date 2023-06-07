@@ -765,12 +765,13 @@ WHERE {
             )
           : {};
 
-      if (Object.keys(PAB_LIST).length === 1 && total_class_num === 1) {
+      if (Object.keys(PAB_LIST).length === 1 && total_class_num !== 2) {
         const c1 = CLASSES[0];
         if (PAB_LIST[Object.keys(PAB_LIST)[0]].domain === c1) {
-          total_class_num += 1;
-          key_var_count += 1;
-          nonKey_var_count -= 1;
+          let difference_true_class = 2 - total_class_num;
+          total_class_num += difference_true_class;
+          key_var_count += difference_true_class;
+          nonKey_var_count -= difference_true_class;
         }
       }
       const ratings_2_class_1PAB =
