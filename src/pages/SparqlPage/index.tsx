@@ -47,7 +47,7 @@ import {
   getDatatypeProperties,
   getDomainMapping,
   getFunctionalProperties,
-  getKeyDataProperties,
+  getKeyFunctionalProperties,
   getObjectPropertiesList,
   getObjectPropertyMapping,
   getRangeMapping,
@@ -228,7 +228,10 @@ WHERE {
         repo_graphDB,
         db_prefix_URL,
       );
-      const DPKList = await getKeyDataProperties(repo_graphDB, db_prefix_URL);
+      const DPKList = await getKeyFunctionalProperties(
+        repo_graphDB,
+        db_prefix_URL,
+      );
 
       conceptualModelInfo['DP_Range_mapping'] = DP_Range_mapping;
       conceptualModelInfo['classesList'] = classesList;
@@ -647,6 +650,10 @@ WHERE {
             ConceptualModelInfo.FunctionalPropsList?.some((dp: string) => {
               DP = dp;
               return sub_stmt_trim.includes(dp);
+            }) ||
+            ConceptualModelInfo.DPKList?.some((dp: string) => {
+              DP = dp;
+              return sub_stmt_trim.includes(dp);
             })
           ) {
             const DP_split = sub_stmt_trim.split(DP);
@@ -765,17 +772,16 @@ WHERE {
             )
           : {};
 
-      if (Object.keys(PAB_LIST).length === 1 && total_class_num !== 2) {
-        const c1 = CLASSES[0];
-        if (PAB_LIST[Object.keys(PAB_LIST)[0]].domain === c1) {
-          let difference_true_class = 2 - total_class_num;
-          total_class_num += difference_true_class;
-          key_var_count += difference_true_class;
-          nonKey_var_count -= difference_true_class;
-        }
-      }
+      const hasKeyFunctionalProperty = Object.keys(DP_RANGE_LOCAL).some(
+        (dp) => {
+          return ConceptualModelInfo.DPKList?.includes(dp);
+        },
+      );
+
       const ratings_2_class_1PAB =
-        total_class_num === 2 && total_PAB_num === 1
+        total_class_num === 2 &&
+        total_PAB_num === 1 &&
+        !hasKeyFunctionalProperty
           ? generateRatingsFor2C1PAB(
               dataResults,
               key_var_count,
@@ -787,7 +793,7 @@ WHERE {
           : {};
 
       const ratings_2_class_1DP =
-        total_class_num === 2
+        total_class_num === 2 && hasKeyFunctionalProperty
           ? generateRatingsFor2C1DP(
               dataResults,
               key_var_count,
@@ -836,6 +842,33 @@ WHERE {
         );
       }
 
+      let total_class_num_l2 = total_class_num;
+      let key_var_count_l2 = key_var_count;
+      let nonKey_var_count_l2 = nonKey_var_count;
+      // level-2 recommendations for 2class 1PAB:
+      if (Object.keys(PAB_LIST).length === 1 && total_class_num !== 2) {
+        const c1 = CLASSES[0];
+        if (PAB_LIST[Object.keys(PAB_LIST)[0]].domain === c1) {
+          let difference_true_class = 2 - total_class_num;
+          total_class_num_l2 += difference_true_class;
+          key_var_count_l2 += difference_true_class;
+          nonKey_var_count_l2 -= difference_true_class;
+        }
+      }
+      const ratings_2_class_1PAB_l2 =
+        total_class_num_l2 === 2 &&
+        total_PAB_num === 1 &&
+        !hasKeyFunctionalProperty
+          ? generateRatingsFor2C1PAB(
+              dataResults,
+              key_var_count_l2,
+              nonKey_var_count_l2,
+              nonKey_var_list,
+              var_to_range_mapping,
+              messages,
+            )
+          : {};
+
       ratings_recommendation = {
         ...ratings_recommendation,
         ...ratings_1_class,
@@ -843,6 +876,7 @@ WHERE {
         ...ratings_2_class_1DP,
         ...ratings_3_class,
         ...ratings_1_class_l2,
+        ...ratings_2_class_1PAB_l2,
       };
 
       console.log('ratings_recommendation: ', ratings_recommendation);
@@ -1433,10 +1467,10 @@ PREFIX : <${db_prefix_URL}>`;
                 </Alert>
               ) : dataSource.length === 0 ? (
                 <Alert
-                  severity="warning"
+                  severity="info"
                   style={{ height: '100%', textAlign: 'center' }}
                 >
-                  {`0 results found`}
+                  {`Empty result`}
                 </Alert>
               ) : (
                 <DataGridPro

@@ -269,7 +269,7 @@ export async function getDomainMapping(
   return mapping;
 }
 
-export async function getKeyDataProperties(
+export async function getKeyFunctionalProperties(
   repo_graphDB: string,
   db_prefix_URL: string,
 ) {
@@ -282,8 +282,6 @@ export async function getKeyDataProperties(
   SELECT ?DP
   WHERE {
       ?DP rdf:type owl:InverseFunctionalProperty ;
-  #    	owl:inverseOf ?inverseDP .
-  #    ?DP rdf:type owl:ObjectProperty .
       FILTER (!isBlank(?DP))
   } 
   
