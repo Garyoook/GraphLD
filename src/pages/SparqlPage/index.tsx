@@ -570,7 +570,7 @@ WHERE {
     const CLASSES: string[] = [];
     const DP_RANGE_LOCAL: any = {};
     const var_to_class: any = {};
-    const var_to_range_mapping: Object = {};
+    const var_to_range_mapping: any = {};
 
     // ratings dictionary:
     let ratings_recommendation: any = {};
@@ -816,14 +816,13 @@ WHERE {
       let ratings_1_class_l2 = {};
       const var_total = vars_head.length;
       const var_class = Object.keys(var_to_class).length;
-      const var_range = Object.keys(var_to_range_mapping).length;
       if (
         var_total == 2 &&
         (var_class == 1 ||
-          Object.values(var_to_range_mapping).some((v) => {
+          Object.values(var_to_range_mapping).some((v: any) => {
             return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.LEXICAL;
           })) &&
-        Object.values(var_to_range_mapping).some((v) => {
+        Object.values(var_to_range_mapping).some((v: any) => {
           return ranges_type_mapping(v) == DATA_DIMENTION_TYPE.SCALAR;
         })
       ) {
