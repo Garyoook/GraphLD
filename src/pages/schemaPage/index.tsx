@@ -16,11 +16,6 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  FormHelperText,
-  FormLabel,
   Grid,
   ListItem,
   ListItemText,
@@ -35,7 +30,7 @@ import Typography from '@mui/material/Typography';
 import { DataGrid, GridRowId } from '@mui/x-data-grid';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import CodeMirror from '@uiw/react-codemirror';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { prefix_mapping } from '../../utils';
 import {
@@ -58,6 +53,7 @@ function SchemaPage() {
   const [PABdataSource, setPABDataSource] = useState<any[]>([]);
   const [PABdataSourceCopy, setPABDataSourceCopy] = useState<any[]>([]);
   const [classesInPAB, setClassesInPAB] = useState<IClassFilter[]>([]);
+  const classesChecked = useMemo(() => classesInPAB, [classesInPAB]);
   const [loading, setLoading] = useState(false);
 
   const [headers, setHeaders] = useState<string[]>([]);
@@ -236,8 +232,11 @@ function SchemaPage() {
         classList.add(item.domain);
         classList.add(item.range);
       }
+
+      const classListArray = [...classList].sort();
+
       setClassesInPAB(
-        [...classList].sort().map((item, index) => {
+        classListArray.map((item, index) => {
           return {
             id: index,
             class: item,
@@ -245,6 +244,15 @@ function SchemaPage() {
           };
         }),
       );
+      // setClassesChecked(
+      //   classListArray.map((item, index) => {
+      //     return {
+      //       id: index,
+      //       class: item,
+      //       checked: true,
+      //     };
+      //   }),
+      // );
 
       setHeaders(headers);
       setPABDataSource(data);
@@ -272,18 +280,18 @@ function SchemaPage() {
   // effect in filter state changes
   useEffect(() => {
     const newPABdataSource = PABdataSourceCopy.filter((chordItem: any) => {
-      const cd = classesInPAB.find(
+      const cd = classesChecked.find(
         (classItem) => classItem.class === chordItem.domain,
       );
-      const cr = classesInPAB.find(
+      const cr = classesChecked.find(
         (classItem) => classItem.class === chordItem.range,
       );
       return cd?.checked && cr?.checked;
     });
-
     setPABDataSource(newPABdataSource);
-  }, [classesInPAB]);
+  }, [classesChecked]);
 
+  const [filterChanged, setFilterChanged] = useState(false);
   function classFilterforChord() {
     return (
       <Box sx={{ display: 'flex' }}>
@@ -299,38 +307,56 @@ function SchemaPage() {
               {
                 field: 'class',
                 headerName: 'Class',
-                width: 200,
+                width: 150,
               },
               {
                 field: 'checked',
                 headerName: 'Include',
-                width: 100,
+                width: 200,
                 disableColumnMenu: true,
                 hideSortIcons: true,
+                renderHeader: () => {
+                  return (
+                    <Button
+                      size="small"
+                      variant="contained"
+                      color="success"
+                      sx={{ textTransform: 'none' }}
+                      onClick={() => {
+                        const newPABdataSource = PABdataSourceCopy.filter(
+                          (chordItem: any) => {
+                            const cd = classesChecked.find(
+                              (classItem) =>
+                                classItem.class === chordItem.domain,
+                            );
+                            const cr = classesChecked.find(
+                              (classItem) =>
+                                classItem.class === chordItem.range,
+                            );
+                            return cd?.checked && cr?.checked;
+                          },
+                        );
+                        setPABDataSource(newPABdataSource);
+                      }}
+                    >
+                      Apply Filter
+                    </Button>
+                  );
+                },
                 renderCell: (params) => {
                   const row = params.row;
-                  const checked = row.checked;
                   const class_id = row.id;
-                  return checked ? (
+                  const checked = classesChecked.find(
+                    (c) => c.id === class_id,
+                  )?.checked;
+                  return (
                     <Checkbox
-                      checked
+                      checked={checked}
                       onClick={() => {
-                        const item = classesInPAB.find(
-                          (item) => item.id === class_id,
-                        );
-                        item!.checked = false;
-                        setClassesInPAB([...classesInPAB]);
-                      }}
-                    />
-                  ) : (
-                    <Checkbox
-                      checked={false}
-                      onClick={() => {
-                        const item = classesInPAB.find(
-                          (item) => item.id === class_id,
-                        );
-                        item!.checked = true;
-                        setClassesInPAB([...classesInPAB]);
+                        const item = classesChecked.find(
+                          (c) => c.id === class_id,
+                        ) as IClassFilter;
+                        item.checked = !item.checked;
                       }}
                     />
                   );
@@ -342,56 +368,6 @@ function SchemaPage() {
             key={Date.now()}
           />
         </Paper>
-        <FormControl
-          style={{ display: 'none' }}
-          sx={{ m: 3 }}
-          component="fieldset"
-          variant="standard"
-        >
-          <FormLabel component="legend">Assign responsibility</FormLabel>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  // checked={a}
-                  onChange={(e, c) => {
-                    console.log(e.target.checked);
-                    console.log(c);
-                  }}
-                  name="a"
-                />
-              }
-              label="a"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  // checked={b}
-                  onChange={(e, c) => {
-                    console.log(e.target.checked);
-                    console.log(c);
-                  }}
-                  name="b"
-                />
-              }
-              label="b "
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  // checked={c}
-                  onChange={(e, c) => {
-                    console.log(e.target.checked);
-                    console.log(c);
-                  }}
-                  name="c"
-                />
-              }
-              label="c"
-            />
-          </FormGroup>
-          <FormHelperText>Be careful</FormHelperText>
-        </FormControl>
       </Box>
     );
   }

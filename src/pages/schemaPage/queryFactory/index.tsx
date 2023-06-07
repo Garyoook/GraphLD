@@ -10,8 +10,8 @@ import { useEffect, useState } from 'react';
 function QueryFactory(props: any) {
   const { classDPMapping, PABData } = props;
 
-  console.log('classDPMapping', classDPMapping);
-  console.log('PABData', PABData);
+  console.log('QueryFactory: classDPMapping', classDPMapping);
+  console.log('QueryFactory: PABData', PABData);
 
   const [selectedClass, setSelectedClass] = useState<string>('');
   const [classList, setClassList] = useState<string[]>([]);
