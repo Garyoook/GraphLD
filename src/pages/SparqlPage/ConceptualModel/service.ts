@@ -15,7 +15,7 @@ function queryResultToData(queryRes: any) {
   const data = results_bindings.map((data_binding: any, index: number) => {
     const obj: any = {};
     for (const key of colKeys) {
-      const value = data_binding[key].value;
+      const value = data_binding[key]?.value || 'unknown';
       const value_split = value.split('#');
       if (value_split.length > 1) {
         obj[key] = `${prefix_mapping[value_split[0]]}:${value_split[1]}`;
