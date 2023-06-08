@@ -53,11 +53,25 @@ const StackedColumnChart = (props: VisDataProps) => {
     // marginRatio: 0.1,
     label: {
       position: 'middle' as 'middle', // 'top', 'bottom', 'middle'
+      layout: [
+        {
+          type: 'interval-adjust-position' as 'interval-adjust-position',
+        },
+        {
+          type: 'interval-hide-overlap' as 'interval-hide-overlap',
+        },
+        {
+          type: 'adjust-color' as 'adjust-color',
+        },
+      ],
+      content: (item: any) => {
+        return `${item[seriesField]}`;
+      },
     },
     interactions: [
       {
         type: 'active-region' as 'active-region',
-        enable: false,
+        enable: true,
       },
     ],
     connectedArea: {
@@ -68,6 +82,11 @@ const StackedColumnChart = (props: VisDataProps) => {
           lineWidth: 0.5,
         };
       },
+    },
+    brush: {
+      enabled: true,
+      type: 'x-rect' as 'x-rect',
+      action: 'filter' as 'filter',
     },
   };
 

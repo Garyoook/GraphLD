@@ -480,6 +480,13 @@ WHERE {
         ratings.stackedColumn += 10;
         ratings.groupedColumn += 10;
       }
+
+      if (dataResults.length > 100) {
+        setShowTooManyDataWarning(true);
+        messages.push(
+          'The query result is too large, please consider applying a filter in your query.',
+        );
+      }
     }
 
     return ratings;

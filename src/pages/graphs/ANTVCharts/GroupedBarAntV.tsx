@@ -52,7 +52,7 @@ const GroupedColumnChart = (props: VisDataProps) => {
     //color: ['#1ca9e6', '#f88c24'],
     // marginRatio: 0.1,
     label: {
-      position: 'middle' as 'middle',
+      position: 'top' as 'top',
       // 'top', 'middle', 'bottom'
       layout: [
         {
@@ -65,6 +65,14 @@ const GroupedColumnChart = (props: VisDataProps) => {
           type: 'adjust-color' as 'adjust-color',
         },
       ],
+      content: (item: any) => {
+        return `${item[seriesField]}`;
+      },
+    },
+    brush: {
+      enabled: true,
+      type: 'x-rect' as 'x-rect',
+      action: 'filter' as 'filter',
     },
   };
 
