@@ -1,4 +1,4 @@
-# LD-Visualiser
+# GraphLD
 
 Deployed [Demo](http://146.169.43.78) on Imperial Private Cloud(Imperial VPN is needed out of campus);
 

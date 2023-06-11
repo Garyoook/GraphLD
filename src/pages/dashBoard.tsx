@@ -128,7 +128,7 @@ function DashboardContent() {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Graph LD (App name TBD)
+              GraphLD
             </Typography>
             {/* <IconButton color='inherit'>
                             <Badge badgeContent={4} color='secondary'>

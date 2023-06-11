@@ -63,7 +63,7 @@ function HomePage() {
                     alignSelf: 'flex-end',
                   }}
                 >
-                  Graph LD
+                  GraphLD
                 </div>
 
                 <div

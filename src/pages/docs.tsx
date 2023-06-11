@@ -1,7 +1,7 @@
 const DocsPage = () => {
   return (
     <div>
-      <p>This is LD Visualiser docs.</p>
+      <p>This is GraphLD docs.</p>
     </div>
   );
 };

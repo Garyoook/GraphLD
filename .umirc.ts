@@ -1,7 +1,7 @@
 import { defineConfig } from 'umi';
 
 export default defineConfig({
-  title: 'LD-Visualiser',
+  title: 'GraphLD',
   favicons: ['https://img.icons8.com/fluency/2x/blockchain-technology.png'],
   // routes: [
   //   {
