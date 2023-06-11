@@ -345,7 +345,6 @@ WHERE {
       ratings.scatter += allScalar ? 50 : 0;
       ratings.bubble += allScalar ? 100 : 0;
     }
-
     return ratings;
   }
 
@@ -355,6 +354,7 @@ WHERE {
     nonKey_var_count: number,
     nonKey_var_list: string[],
     var_to_range_mapping: any,
+    vars_head: string[],
     messages: string[],
   ) {
     const ratings: any = {
@@ -401,6 +401,8 @@ WHERE {
       }
     }
 
+    checkForManyManyRelationships(vars_head, var_to_range_mapping, dataResults);
+
     return ratings;
   }
 
@@ -411,6 +413,7 @@ WHERE {
     key_var_list: string[],
     nonKey_var_list: string[],
     var_to_range_mapping: any,
+    vars_head: string[],
     messages: string[],
   ) {
     const ratings: any = {
@@ -488,6 +491,8 @@ WHERE {
         );
       }
     }
+
+    checkForManyManyRelationships(vars_head, var_to_range_mapping, dataResults);
 
     return ratings;
   }
@@ -795,6 +800,7 @@ WHERE {
               nonKey_var_count,
               nonKey_var_list,
               var_to_range_mapping,
+              vars_head,
               messages,
             )
           : {};
@@ -808,6 +814,7 @@ WHERE {
               key_var_list,
               nonKey_var_list,
               var_to_range_mapping,
+              vars_head,
               messages,
             )
           : {};
@@ -872,6 +879,7 @@ WHERE {
               nonKey_var_count_l2,
               nonKey_var_list,
               var_to_range_mapping,
+              vars_head,
               messages,
             )
           : {};
@@ -886,38 +894,14 @@ WHERE {
         ...ratings_2_class_1PAB_l2,
       };
 
-      console.log('ratings_recommendation: ', ratings_recommendation);
-
-      // check for posibble many-many relations:
-      // by counting the number of unique values in the inferred key variables (lexical range)
-      const key_var_head: string[] = vars_head.filter((v) => {
-        const range = var_to_range_mapping[v];
-        return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.LEXICAL;
-      });
-      const instance_stats: any = {};
-      key_var_head.forEach((column: string) => {
-        instance_stats[column] = {};
-      });
-
-      dataResults.forEach((row: any, index) => {
-        key_var_head.forEach((column: string) => {
-          const data = row[column];
-          if (instance_stats[column][data]) {
-            instance_stats[column][data] += 1;
-          } else {
-            instance_stats[column][data] = 1;
-          }
-        });
-      });
-      const key_var_head_atleast2instances = key_var_head.filter((column) => {
-        const instances_counts_dict = instance_stats[column];
-        return Object.values(instances_counts_dict).some(
-          (count: any) => count > 1,
-        );
-      });
-      if (key_var_head_atleast2instances.length > 1) {
-        setShowManyManyRelationWarning(true);
+      // if rating valid in 3-class pattern, cancel the relation warning.
+      const valuesOf3C = Object.values(ratings_3_class) as number[];
+      const maxRating = Math.max(...(valuesOf3C || [0]));
+      if (maxRating > 0) {
+        setShowManyManyRelationWarning(false);
       }
+
+      console.log('ratings_recommendation: ', ratings_recommendation);
     }
 
     const recommendations: RecommendationProps[] = [];
@@ -940,6 +924,43 @@ WHERE {
 
     console.log('recommended vis: ', result);
     return result;
+  }
+
+  function checkForManyManyRelationships(
+    vars_head: string[],
+    var_to_range_mapping: any,
+    dataResults: any[],
+  ) {
+    // check for posibble many-many relations:
+    // by counting the number of unique values in the inferred key variables (lexical range)
+    const key_var_head: string[] = vars_head.filter((v) => {
+      const range = var_to_range_mapping[v];
+      return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.LEXICAL;
+    });
+    const instance_stats: any = {};
+    key_var_head.forEach((column: string) => {
+      instance_stats[column] = {};
+    });
+
+    dataResults.forEach((row: any, index) => {
+      key_var_head.forEach((column: string) => {
+        const data = row[column];
+        if (instance_stats[column][data]) {
+          instance_stats[column][data] += 1;
+        } else {
+          instance_stats[column][data] = 1;
+        }
+      });
+    });
+    const key_var_head_atleast2instances = key_var_head.filter((column) => {
+      const instances_counts_dict = instance_stats[column];
+      return Object.values(instances_counts_dict).some(
+        (count: any) => count > 1,
+      );
+    });
+    if (key_var_head_atleast2instances.length > 1) {
+      setShowManyManyRelationWarning(true);
+    }
   }
 
   function toggleInferredDataQuery() {
