@@ -650,7 +650,7 @@ WHERE {
             }
           }
 
-          // === STEP 3 analysis to the query body, to find the objectProperty,
+          // === STEP 3 analysis to the query body, to find the
           // dataProperty and ranges, and map them to the variables. ===
           // get DP and range
           let DP: string = '';
