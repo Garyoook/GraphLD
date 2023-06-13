@@ -262,315 +262,6 @@ WHERE {
     setOpenVisOption(false);
   };
 
-  function generateRatingsFor1C(
-    dataResults: any[],
-    key_var_count: number,
-    nonKey_var_count: number,
-    nonKey_var_list: string[],
-    var_to_range_mapping: any,
-    messages: string[],
-  ) {
-    const ratings = {
-      scatter: 0,
-      bubble: 0,
-      bar: 0,
-      column: 0,
-      line: 0,
-      wordClouds: 0,
-      calendar: 0,
-      pie: 0,
-    };
-
-    if (key_var_count >= 1 && nonKey_var_count === 1) {
-      const nonKey_var = nonKey_var_list[0];
-      const nonKey_var_range = var_to_range_mapping[nonKey_var];
-      if (
-        ranges_type_mapping(nonKey_var_range) === DATA_DIMENTION_TYPE.SCALAR
-      ) {
-        ratings.bar += 100;
-        ratings.column += 100;
-        ratings.pie += 100;
-        ratings.wordClouds = 100;
-      }
-      if (dataResults.length > 100) {
-        setShowTooManyDataWarning(true);
-        messages.push(
-          'The query result is too large, please consider applying a filter in your query.',
-        );
-      }
-    }
-
-    // for calendar chart, one of the variables must have a temporal range
-    if (nonKey_var_count >= 1 && key_var_count <= 1) {
-      if (
-        nonKey_var_list.some((v: any) => {
-          const range = var_to_range_mapping[v];
-          const range_type = ranges_type_mapping(range);
-          return range_type === DATA_DIMENTION_TYPE.TEMPORAL;
-        })
-      ) {
-        ratings.calendar += 80;
-      }
-    }
-
-    if (nonKey_var_count === 2) {
-      let allScalar = true;
-
-      if (
-        nonKey_var_list.some((v: string) => {
-          const range = var_to_range_mapping[v];
-          if (ranges_type_mapping(range) !== DATA_DIMENTION_TYPE.SCALAR) {
-            return true;
-          }
-        })
-      ) {
-        allScalar = false;
-      }
-      ratings.scatter += allScalar ? 100 : 0;
-    }
-
-    if (nonKey_var_count === 3) {
-      let allScalar = true;
-
-      if (
-        nonKey_var_list.some((v: string) => {
-          const range = var_to_range_mapping[v];
-          if (ranges_type_mapping(range) !== DATA_DIMENTION_TYPE.SCALAR) {
-            return true;
-          }
-        })
-      ) {
-        allScalar = false;
-      }
-      ratings.scatter += allScalar ? 50 : 0;
-      ratings.bubble += allScalar ? 100 : 0;
-    }
-    return ratings;
-  }
-
-  function generateRatingsFor2C1PAB(
-    dataResults: any[],
-    key_var_count: number,
-    nonKey_var_count: number,
-    nonKey_var_list: string[],
-    var_to_range_mapping: any,
-    vars_head: string[],
-    messages: string[],
-  ) {
-    const ratings: any = {
-      treeMap: 0,
-      hierarchyTree: 0,
-      sunburst: 0,
-      circlePacking: 0,
-    };
-    // if key var is explicitly specified as classes or lexical value
-    if (key_var_count === 2 && nonKey_var_count === 1) {
-      if (
-        nonKey_var_list.some((v: string) => {
-          const range = var_to_range_mapping[v];
-          return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR;
-        })
-      ) {
-        // in the paper it state that 100 is recommended upper limit for treemap, but it is actually too conservarive estimation, here we use 300.
-        if (dataResults.length >= 1 && dataResults.length <= 300) {
-          ratings.treeMap += 80;
-        }
-        if (dataResults.length >= 1 && dataResults.length <= 20) {
-          ratings.sunburst += 80;
-          ratings.circlePacking += 80;
-        }
-      }
-
-      if (dataResults.length > 100) {
-        ratings.treeMap += 30;
-        ratings.sunburst += 20;
-        ratings.circlePacking += 20;
-        setShowTooManyDataWarning(true);
-        messages.push(
-          'The query result is too large, please consider applying a filter in your query.',
-        );
-      }
-    }
-
-    if (key_var_count == 2) {
-      if (dataResults.length >= 1 && dataResults.length <= 100) {
-        ratings.hierarchyTree += 80;
-      } else {
-        // ratings.hierarchyTree += 30;
-        setShowTooManyDataWarning(true);
-      }
-    }
-
-    checkForManyManyRelationships(vars_head, var_to_range_mapping, dataResults);
-
-    return ratings;
-  }
-
-  function generateRatingsFor2C1DP(
-    dataResults: any[],
-    key_var_count: number,
-    nonKey_var_count: number,
-    key_var_list: string[],
-    nonKey_var_list: string[],
-    var_to_range_mapping: any,
-    vars_head: string[],
-    messages: string[],
-  ) {
-    const ratings: any = {
-      multiLine: 0,
-      spider: 0,
-      stackedBar: 0,
-      groupedBar: 0,
-      stackedColumn: 0,
-      groupedColumn: 0,
-    };
-    if (key_var_count == 2 && nonKey_var_count === 1) {
-      if (
-        // scalar exists in the key variables and non-key variables
-        nonKey_var_list.some((v: string) => {
-          const range = var_to_range_mapping[v];
-          return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR;
-        }) &&
-        key_var_list.some((v: string) => {
-          const range = var_to_range_mapping[v];
-          return (
-            ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR ||
-            ranges_type_mapping(range) === DATA_DIMENTION_TYPE.DISCRETE
-          );
-        })
-      ) {
-        // in the paper it state that 100 is recommended upper limit for treemap, but it is actually too conservarive estimation, here we use 300.
-        if (dataResults.length >= 1) {
-          ratings.multiLine += 100;
-        } else if (dataResults.length >= 1 && dataResults.length <= 20) {
-          // ratings.spider += 100; // spider should not appear when DPK has scalar range
-          ratings.stackedBar += 100;
-          ratings.groupedBar += 100;
-          ratings.stackedColumn += 100;
-          ratings.groupedColumn += 100;
-        } else {
-          setShowTooManyDataWarning(true);
-          ratings.multiLine += 10;
-          // ratings.spider += 10;
-          // ratings.stackedBar += 30;
-          // ratings.groupedBar += 30;
-          // ratings.stackedColumn += 30;
-          // ratings.groupedColumn += 30;
-        }
-      }
-
-      if (
-        // scalar exists in the key variables and non-key variables
-        nonKey_var_list.some((v: string) => {
-          const range = var_to_range_mapping[v];
-          return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR;
-        })
-      ) {
-        if (dataResults.length >= 1 && dataResults.length <= 20) {
-          ratings.spider += 100;
-          ratings.stackedBar += 100;
-          ratings.groupedBar += 100;
-          ratings.stackedColumn += 100;
-          ratings.groupedColumn += 100;
-        }
-      }
-
-      if (dataResults.length > 20) {
-        ratings.multiLine += 20;
-        // ratings.spider += 5;
-        ratings.stackedBar += 10;
-        ratings.groupedBar += 10;
-        ratings.stackedColumn += 10;
-        ratings.groupedColumn += 10;
-      }
-
-      if (dataResults.length > 100) {
-        setShowTooManyDataWarning(true);
-        messages.push(
-          'The query result is too large, please consider applying a filter in your query.',
-        );
-      }
-    }
-
-    checkForManyManyRelationships(vars_head, var_to_range_mapping, dataResults);
-
-    return ratings;
-  }
-
-  function generateRatingsFor3C(
-    dataResults: any[],
-    key_var_count: number,
-    nonKey_var_count: number,
-    key_var_list: string[],
-    nonKey_var_list: string[],
-    var_to_range_mapping: any,
-    messages: string[],
-  ) {
-    const ratings: any = {
-      chord: 0,
-      sankey: 0,
-      network: 0,
-      heatMap: 0,
-    };
-    if (key_var_count == 2 && nonKey_var_count === 1) {
-      if (
-        // scalar exists in the key variables and non-key variables
-        nonKey_var_list.some((v: string) => {
-          const range = var_to_range_mapping[v];
-          return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR;
-        })
-      ) {
-        if (dataResults.length >= 1 && dataResults.length <= 20) {
-          ratings.sankey += 100;
-          ratings.network += 100;
-        } else if (dataResults.length >= 1 && dataResults.length <= 100) {
-          ratings.chord += 100;
-          ratings.heatMap += 100;
-          ratings.network += 100;
-        } else {
-          setShowTooManyDataWarning(true);
-          ratings.sankey += 30;
-          ratings.chord += 30;
-          ratings.heatMap += 10;
-          ratings.network += 100;
-        }
-      }
-    }
-
-    if (key_var_count == 2 && nonKey_var_count === 0) {
-      if (
-        // scalar exists in the key variables and non-key variables
-        nonKey_var_list.some((v: string) => {
-          const range = var_to_range_mapping[v];
-          return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR;
-        })
-      ) {
-        if (dataResults.length >= 1 && dataResults.length <= 100) {
-          ratings.chord += 100;
-        } else if (dataResults.length >= 1 && dataResults.length <= 1000) {
-          ratings.network += 100;
-        } else {
-          setShowTooManyDataWarning(true);
-          ratings.chord += 10;
-          ratings.network += 30;
-        }
-      }
-    }
-
-    return ratings;
-  }
-
-  const [showMissingKeyWarning, setShowMissingKeyWarning] = useState(false);
-  const [showTooManyDataWarning, setShowTooManyDataWarning] = useState(false);
-  const [showManyManyRelationWarning, setShowManyManyRelationWarning] =
-    useState(false);
-
-  function closeAllWarnings() {
-    setShowMissingKeyWarning(false);
-    setShowTooManyDataWarning(false);
-    setShowManyManyRelationWarning(false);
-  }
-
   function generateVisRecommendation(
     user_query: string,
     dataResults: any[] = [],
@@ -961,6 +652,315 @@ WHERE {
     if (key_var_head_atleast2instances.length > 1) {
       setShowManyManyRelationWarning(true);
     }
+  }
+
+  function generateRatingsFor1C(
+    dataResults: any[],
+    key_var_count: number,
+    nonKey_var_count: number,
+    nonKey_var_list: string[],
+    var_to_range_mapping: any,
+    messages: string[],
+  ) {
+    const ratings = {
+      scatter: 0,
+      bubble: 0,
+      bar: 0,
+      column: 0,
+      line: 0,
+      wordClouds: 0,
+      calendar: 0,
+      pie: 0,
+    };
+
+    if (key_var_count >= 1 && nonKey_var_count === 1) {
+      const nonKey_var = nonKey_var_list[0];
+      const nonKey_var_range = var_to_range_mapping[nonKey_var];
+      if (
+        ranges_type_mapping(nonKey_var_range) === DATA_DIMENTION_TYPE.SCALAR
+      ) {
+        ratings.bar += 100;
+        ratings.column += 100;
+        ratings.pie += 100;
+        ratings.wordClouds = 100;
+      }
+      if (dataResults.length > 100) {
+        setShowTooManyDataWarning(true);
+        messages.push(
+          'The query result is too large, please consider applying a filter in your query.',
+        );
+      }
+    }
+
+    // for calendar chart, one of the variables must have a temporal range
+    if (nonKey_var_count >= 1 && key_var_count <= 1) {
+      if (
+        nonKey_var_list.some((v: any) => {
+          const range = var_to_range_mapping[v];
+          const range_type = ranges_type_mapping(range);
+          return range_type === DATA_DIMENTION_TYPE.TEMPORAL;
+        })
+      ) {
+        ratings.calendar += 80;
+      }
+    }
+
+    if (nonKey_var_count === 2) {
+      let allScalar = true;
+
+      if (
+        nonKey_var_list.some((v: string) => {
+          const range = var_to_range_mapping[v];
+          if (ranges_type_mapping(range) !== DATA_DIMENTION_TYPE.SCALAR) {
+            return true;
+          }
+        })
+      ) {
+        allScalar = false;
+      }
+      ratings.scatter += allScalar ? 100 : 0;
+    }
+
+    if (nonKey_var_count === 3) {
+      let allScalar = true;
+
+      if (
+        nonKey_var_list.some((v: string) => {
+          const range = var_to_range_mapping[v];
+          if (ranges_type_mapping(range) !== DATA_DIMENTION_TYPE.SCALAR) {
+            return true;
+          }
+        })
+      ) {
+        allScalar = false;
+      }
+      ratings.scatter += allScalar ? 50 : 0;
+      ratings.bubble += allScalar ? 100 : 0;
+    }
+    return ratings;
+  }
+
+  function generateRatingsFor2C1PAB(
+    dataResults: any[],
+    key_var_count: number,
+    nonKey_var_count: number,
+    nonKey_var_list: string[],
+    var_to_range_mapping: any,
+    vars_head: string[],
+    messages: string[],
+  ) {
+    const ratings: any = {
+      treeMap: 0,
+      hierarchyTree: 0,
+      sunburst: 0,
+      circlePacking: 0,
+    };
+    // if key var is explicitly specified as classes or lexical value
+    if (key_var_count === 2 && nonKey_var_count === 1) {
+      if (
+        nonKey_var_list.some((v: string) => {
+          const range = var_to_range_mapping[v];
+          return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR;
+        })
+      ) {
+        // in the paper it state that 100 is recommended upper limit for treemap, but it is actually too conservarive estimation, here we use 300.
+        if (dataResults.length >= 1 && dataResults.length <= 300) {
+          ratings.treeMap += 80;
+        }
+        if (dataResults.length >= 1 && dataResults.length <= 20) {
+          ratings.sunburst += 80;
+          ratings.circlePacking += 80;
+        }
+      }
+
+      if (dataResults.length > 100) {
+        ratings.treeMap += 30;
+        ratings.sunburst += 20;
+        ratings.circlePacking += 20;
+        setShowTooManyDataWarning(true);
+        messages.push(
+          'The query result is too large, please consider applying a filter in your query.',
+        );
+      }
+    }
+
+    if (key_var_count == 2) {
+      if (dataResults.length >= 1 && dataResults.length <= 100) {
+        ratings.hierarchyTree += 80;
+      } else {
+        // ratings.hierarchyTree += 30;
+        setShowTooManyDataWarning(true);
+      }
+    }
+
+    checkForManyManyRelationships(vars_head, var_to_range_mapping, dataResults);
+
+    return ratings;
+  }
+
+  function generateRatingsFor2C1DP(
+    dataResults: any[],
+    key_var_count: number,
+    nonKey_var_count: number,
+    key_var_list: string[],
+    nonKey_var_list: string[],
+    var_to_range_mapping: any,
+    vars_head: string[],
+    messages: string[],
+  ) {
+    const ratings: any = {
+      multiLine: 0,
+      spider: 0,
+      stackedBar: 0,
+      groupedBar: 0,
+      stackedColumn: 0,
+      groupedColumn: 0,
+    };
+    if (key_var_count == 2 && nonKey_var_count === 1) {
+      if (
+        // scalar exists in the key variables and non-key variables
+        nonKey_var_list.some((v: string) => {
+          const range = var_to_range_mapping[v];
+          return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR;
+        }) &&
+        key_var_list.some((v: string) => {
+          const range = var_to_range_mapping[v];
+          return (
+            ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR ||
+            ranges_type_mapping(range) === DATA_DIMENTION_TYPE.DISCRETE
+          );
+        })
+      ) {
+        // in the paper it state that 100 is recommended upper limit for treemap, but it is actually too conservarive estimation, here we use 300.
+        if (dataResults.length >= 1) {
+          ratings.multiLine += 100;
+        } else if (dataResults.length >= 1 && dataResults.length <= 20) {
+          // ratings.spider += 100; // spider should not appear when DPK has scalar range
+          ratings.stackedBar += 100;
+          ratings.groupedBar += 100;
+          ratings.stackedColumn += 100;
+          ratings.groupedColumn += 100;
+        } else {
+          setShowTooManyDataWarning(true);
+          ratings.multiLine += 10;
+          // ratings.spider += 10;
+          // ratings.stackedBar += 30;
+          // ratings.groupedBar += 30;
+          // ratings.stackedColumn += 30;
+          // ratings.groupedColumn += 30;
+        }
+      }
+
+      if (
+        // scalar exists in the key variables and non-key variables
+        nonKey_var_list.some((v: string) => {
+          const range = var_to_range_mapping[v];
+          return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR;
+        })
+      ) {
+        if (dataResults.length >= 1 && dataResults.length <= 20) {
+          ratings.spider += 100;
+          ratings.stackedBar += 100;
+          ratings.groupedBar += 100;
+          ratings.stackedColumn += 100;
+          ratings.groupedColumn += 100;
+        }
+      }
+
+      if (dataResults.length > 20) {
+        ratings.multiLine += 20;
+        // ratings.spider += 5;
+        ratings.stackedBar += 10;
+        ratings.groupedBar += 10;
+        ratings.stackedColumn += 10;
+        ratings.groupedColumn += 10;
+      }
+
+      if (dataResults.length > 100) {
+        setShowTooManyDataWarning(true);
+        messages.push(
+          'The query result is too large, please consider applying a filter in your query.',
+        );
+      }
+    }
+
+    checkForManyManyRelationships(vars_head, var_to_range_mapping, dataResults);
+
+    return ratings;
+  }
+
+  function generateRatingsFor3C(
+    dataResults: any[],
+    key_var_count: number,
+    nonKey_var_count: number,
+    key_var_list: string[],
+    nonKey_var_list: string[],
+    var_to_range_mapping: any,
+    messages: string[],
+  ) {
+    const ratings: any = {
+      chord: 0,
+      sankey: 0,
+      network: 0,
+      heatMap: 0,
+    };
+    if (key_var_count == 2 && nonKey_var_count === 1) {
+      if (
+        // scalar exists in the key variables and non-key variables
+        nonKey_var_list.some((v: string) => {
+          const range = var_to_range_mapping[v];
+          return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR;
+        })
+      ) {
+        if (dataResults.length >= 1 && dataResults.length <= 20) {
+          ratings.sankey += 100;
+          ratings.network += 100;
+        } else if (dataResults.length >= 1 && dataResults.length <= 100) {
+          ratings.chord += 100;
+          ratings.heatMap += 100;
+          ratings.network += 100;
+        } else {
+          setShowTooManyDataWarning(true);
+          ratings.sankey += 30;
+          ratings.chord += 30;
+          ratings.heatMap += 10;
+          ratings.network += 100;
+        }
+      }
+    }
+
+    if (key_var_count == 2 && nonKey_var_count === 0) {
+      if (
+        // scalar exists in the key variables and non-key variables
+        nonKey_var_list.some((v: string) => {
+          const range = var_to_range_mapping[v];
+          return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.SCALAR;
+        })
+      ) {
+        if (dataResults.length >= 1 && dataResults.length <= 100) {
+          ratings.chord += 100;
+        } else if (dataResults.length >= 1 && dataResults.length <= 1000) {
+          ratings.network += 100;
+        } else {
+          setShowTooManyDataWarning(true);
+          ratings.chord += 10;
+          ratings.network += 30;
+        }
+      }
+    }
+
+    return ratings;
+  }
+
+  const [showMissingKeyWarning, setShowMissingKeyWarning] = useState(false);
+  const [showTooManyDataWarning, setShowTooManyDataWarning] = useState(false);
+  const [showManyManyRelationWarning, setShowManyManyRelationWarning] =
+    useState(false);
+
+  function closeAllWarnings() {
+    setShowMissingKeyWarning(false);
+    setShowTooManyDataWarning(false);
+    setShowManyManyRelationWarning(false);
   }
 
   function toggleInferredDataQuery() {
