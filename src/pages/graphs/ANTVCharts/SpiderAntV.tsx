@@ -1,6 +1,14 @@
 import { VisDataProps } from '@/pages/SparqlPage';
 import { Radar } from '@ant-design/plots';
-import { FormControl, Grid, MenuItem, Select } from '@mui/material';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
+import {
+  Button,
+  FormControl,
+  Grid,
+  MenuItem,
+  Select,
+  Tooltip,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import {
   preprocessDataForVisualisation,
@@ -68,8 +76,66 @@ const SpiderChart = (props: VisDataProps) => {
       size: 2,
     },
   };
+
+  const [sortX, setSortX] = useState(false);
+  const [sortY, setSortY] = useState(false);
+
   return dataSource.length > 0 ? (
     <Grid>
+      <Tooltip
+        title="Some data can be sorted by certain values of its attributes, try it out!"
+        placement="bottom-start"
+        arrow
+      >
+        <Grid
+          container
+          spacing={2}
+          sx={{ alignItems: 'center', marginBottom: 2 }}
+        >
+          <Grid item>
+            <Button
+              variant="outlined"
+              color="success"
+              size="small"
+              sx={{
+                textTransform: 'none',
+              }}
+              endIcon={<CompareArrowsIcon />}
+              onClick={() => {
+                const orderedData = dataSource.sort((a, b) => {
+                  return sortX ? a[xField] - b[xField] : b[xField] - a[xField];
+                });
+                setDataSource(orderedData);
+
+                setSortX(!sortX);
+              }}
+            >
+              Sort by axis {xField}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              variant="outlined"
+              color="success"
+              size="small"
+              sx={{
+                textTransform: 'none',
+              }}
+              endIcon={<CompareArrowsIcon />}
+              onClick={() => {
+                const orderedData = dataSource.sort((a, b) => {
+                  return sortY ? a[yField] - b[yField] : b[yField] - a[yField];
+                });
+                setDataSource(orderedData);
+
+                setSortY(!sortY);
+              }}
+            >
+              Sort by axis {yField}
+            </Button>
+          </Grid>
+        </Grid>
+      </Tooltip>
       <Radar {...config} />
 
       <Grid container spacing={2}>
