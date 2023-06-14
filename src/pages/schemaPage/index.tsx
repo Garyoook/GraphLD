@@ -39,7 +39,6 @@ import {
 } from '../SparqlPage/ConceptualModel/service';
 import { DatabaseState } from '../reducer/databaseReducer';
 import { sendSPARQLquery } from '../services/api';
-import QueryFactory from './queryFactory';
 import ChordSchema from './schemaGraph/Chord';
 
 function SchemaPage() {
@@ -541,7 +540,7 @@ WHERE {
 
   const [expandRelationships, setExpandRelationships] = useState<boolean>(true);
   const [expandClassTable, setExpandClassTable] = useState<boolean>(false);
-  const [expandQueryFactory, setExpandQueryFactory] = useState<boolean>(true);
+  const [expandQueryFactory, setExpandQueryFactory] = useState<boolean>(false);
 
   function toggleExpandRelationships() {
     setExpandRelationships(!expandRelationships);
@@ -643,17 +642,17 @@ WHERE {
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography sx={{ width: '60%', flexShrink: 0 }}>
-                    Query Factory (Under development)
+                    Query Factory (Not deployed)
                   </Typography>
                   <Typography sx={{ color: 'text.secondary' }}>
                     build your query from schema
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <QueryFactory
+                  {/* <QueryFactory
                     classDPMapping={classDPMapping}
                     PABData={PABdataSourceCopy}
-                  />
+                  /> */}
                 </AccordionDetails>
               </Accordion>
             </Grid>
