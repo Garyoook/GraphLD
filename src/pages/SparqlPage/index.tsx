@@ -679,16 +679,23 @@ WHERE {
       if (
         ranges_type_mapping(nonKey_var_range) === DATA_DIMENTION_TYPE.SCALAR
       ) {
-        ratings.bar += 100;
-        ratings.column += 100;
-        ratings.pie += 100;
-        ratings.wordClouds = 100;
-      }
-      if (dataResults.length > 100) {
-        setShowTooManyDataWarning(true);
-        messages.push(
-          'The query result is too large, please consider applying a filter in your query.',
-        );
+        if (dataResults.length <= 100) {
+          ratings.bar += 100;
+          ratings.column += 110;
+          ratings.pie += 100;
+          ratings.wordClouds = 100;
+        }
+
+        if (dataResults.length > 100) {
+          ratings.wordClouds = 100;
+          ratings.bar += 30;
+          ratings.column += 40;
+          ratings.pie += 30;
+          setShowTooManyDataWarning(true);
+          messages.push(
+            'The query result is too large, please consider applying a filter in your query.',
+          );
+        }
       }
     }
 
