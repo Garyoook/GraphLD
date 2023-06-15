@@ -1507,7 +1507,7 @@ PREFIX : <${db_prefix_URL}>`;
               // endIcon={<SendIcon />}
               style={{ textTransform: 'none' }}
               sx={{
-                marginTop: 2,
+                margin: 2,
               }}
             >
               Run Accuracy Test
