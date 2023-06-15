@@ -28,6 +28,31 @@ function MultipleLineChart(props: VisDataProps) {
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
 
+  enum yAxisScaleTypesEnum {
+    LINEAR,
+    TIME_CAT,
+    LOG,
+    POW,
+    CATEGORY,
+    IDENTITY,
+    TIME,
+    QUANTIZE,
+    QUANTILE,
+  }
+  const yAxisScaleTypes = [
+    'linear',
+    'timeCat',
+    'log',
+    'pow',
+    'category',
+    'identity',
+    'time',
+    'quantize',
+    'quantile',
+  ];
+  const [yAxisScale, setYAxisScale] = useState(yAxisScaleTypesEnum.LINEAR);
+  // 'linear' | 'cat' | 'category' | 'identity' | 'log' | 'pow' | 'time' | 'timeCat' | 'quantize' | 'quantile'
+
   const emptyHeader = '-';
   useEffect(() => {
     setFieldsAll([emptyHeader, ...headers]);
@@ -52,7 +77,7 @@ function MultipleLineChart(props: VisDataProps) {
     //   type: 'time',
     // },
     yAxis: {
-      type: 'log',
+      type: yAxisScaleTypes[yAxisScale],
       label: {
         // reformat the y axis
         formatter: (v: string) =>
@@ -188,6 +213,30 @@ function MultipleLineChart(props: VisDataProps) {
               })}
             </Select>
           </FormControl>
+        </Grid>
+
+        {/* y axis scale options */}
+        <Grid item>
+          <Tooltip title="Select for y axis scale" arrow placement="right">
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              y-axis Scale Type
+              <Select
+                value={yAxisScale}
+                onChange={(e) => {
+                  setYAxisScale(Number(e.target.value));
+                }}
+              >
+                {yAxisScaleTypes.map((item, index) => {
+                  return (
+                    <MenuItem key={index} value={index}>
+                      {item}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+              {/* <FormHelperText>Select Render Mode</FormHelperText> */}
+            </FormControl>
+          </Tooltip>
         </Grid>
       </Grid>
     </Grid>
