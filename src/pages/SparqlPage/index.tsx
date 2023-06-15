@@ -992,7 +992,7 @@ WHERE {
     setInferredDataQuery(!inferredDataQuery);
   }
 
-  const handleQuery = async () => {
+  const handleQuery = async (query: string) => {
     const repositoryID = repo_graphDB || searchParams.get('repo_graphDB');
 
     closeAllWarnings();
@@ -1037,12 +1037,11 @@ WHERE {
       });
 
       // console.log('remapped data', data);
-
-      setRecommendations(
-        generateVisRecommendation(query, data).recommendations,
-      );
+      const recommendations = generateVisRecommendation(query, data);
+      setRecommendations(recommendations.recommendations);
       setDataSource(data);
       setShowAlert(false);
+      return recommendations;
     } catch (e: any) {
       console.error('Error', e.response?.data);
       setShowAlert(true);
@@ -1053,6 +1052,7 @@ WHERE {
     } finally {
       setLoading(false);
     }
+    return null;
   };
 
   function separateHeader_Data(dataSource: any[]): VisDataProps {
@@ -1387,6 +1387,74 @@ PREFIX : <${db_prefix_URL}>`;
     );
   }
 
+  async function accuracyTesting() {
+    const queryList = [initialString, f3a, f3b, f3c, f3d];
+    const expectedVisList = [
+      ['bar', 'column', 'wordClouds', 'pie', 'choroplethMap'],
+      ['scatter'],
+      ['treeMap', 'sunburst', 'circlePacking'],
+      [
+        'multiLine',
+        'stackedBar',
+        'stackedColumn',
+        'groupedBar',
+        'groupedColumn',
+      ],
+      ['network', 'chord', 'sankey', 'heatMap'],
+    ];
+
+    const results = [];
+    for (const q of queryList) {
+      results.push(await handleQuery(q));
+    }
+
+    const recommendations = results.map((r: any) => {
+      return r.recommendations;
+    });
+
+    const failedResults = [];
+
+    for (let i = 0; i < recommendations.length; i++) {
+      const expectedVis = expectedVisList[i].map((v) => {
+        // @ts-ignore
+        return ChartType_mapping[v];
+      });
+      const actualVis = recommendations[i].map((r: any) => {
+        return r.chart;
+      });
+
+      console.log(`Query ${i} expected vis`, expectedVis);
+      console.log(`Query ${i} actual vis`, actualVis);
+
+      const missingVis = expectedVis.filter((v) => {
+        return !actualVis.includes(v);
+      });
+
+      if (missingVis.length > 0) {
+        failedResults.push({
+          query: queryList[i],
+          expectedVisualisation: expectedVis,
+          actualVisualisation: actualVis,
+          missingVisualisation: missingVis,
+        });
+      }
+
+      if (missingVis.length === 0) {
+        console.log(`Query ${i} passed accuracy test`);
+      } else {
+        console.log(
+          `Query ${i} failed accuracy test, please check test report`,
+        );
+      }
+    }
+
+    if (failedResults.length === 0) {
+      console.log('All tests passed');
+    } else {
+      console.log('Failed tests', failedResults);
+    }
+  }
+
   const [showPrefixReference, setShowPrefixReference] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const canBeOpen = showPrefixReference && Boolean(anchorEl);
@@ -1416,7 +1484,9 @@ PREFIX : <${db_prefix_URL}>`;
         <Grid item xs={4}>
           <LoadingButton
             variant="contained"
-            onClick={handleQuery}
+            onClick={() => {
+              handleQuery(query);
+            }}
             loading={loading}
             loadingPosition="end"
             // disabled={loading}
@@ -1425,6 +1495,24 @@ PREFIX : <${db_prefix_URL}>`;
           >
             Execute Query
           </LoadingButton>
+
+          {process.env.NODE_ENV == 'development' && (
+            <LoadingButton
+              variant="outlined"
+              color="success"
+              onClick={accuracyTesting}
+              loading={loading}
+              loadingPosition="end"
+              // disabled={loading}
+              // endIcon={<SendIcon />}
+              style={{ textTransform: 'none' }}
+              sx={{
+                marginTop: 2,
+              }}
+            >
+              Run Accuracy Test
+            </LoadingButton>
+          )}
         </Grid>
 
         <Grid item xs={12}></Grid>
@@ -1438,7 +1526,7 @@ PREFIX : <${db_prefix_URL}>`;
                 value={inferredDataQuery}
                 onClick={() => {
                   toggleInferredDataQuery();
-                  handleQuery();
+                  handleQuery(query);
                 }}
               />
             }
