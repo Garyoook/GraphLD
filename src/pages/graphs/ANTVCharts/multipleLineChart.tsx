@@ -30,9 +30,9 @@ function MultipleLineChart(props: VisDataProps) {
 
   enum yAxisScaleTypesEnum {
     LINEAR,
-    TIME_CAT,
     LOG,
     POW,
+    TIME_CAT,
     CATEGORY,
     IDENTITY,
     TIME,
@@ -41,9 +41,9 @@ function MultipleLineChart(props: VisDataProps) {
   }
   const yAxisScaleTypes = [
     'linear',
-    'timeCat',
     'log',
     'pow',
+    'timeCat',
     'category',
     'identity',
     'time',
