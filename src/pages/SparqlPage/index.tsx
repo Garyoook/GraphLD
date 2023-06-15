@@ -33,6 +33,7 @@ import { forwardRef, useCallback, useEffect, useState } from 'react';
 import {
   ChartType_mapping,
   DATA_DIMENTION_TYPE,
+  countryListAlpha2,
   prefix_mapping,
   ranges_type_mapping,
 } from '../../utils';
@@ -671,7 +672,20 @@ WHERE {
       wordClouds: 0,
       calendar: 0,
       pie: 0,
+      choroplethMap: 0,
     };
+
+    let findCountryNames = false;
+    for (const row of dataResults) {
+      const values = Object.values(row);
+      if (
+        Object.keys(countryListAlpha2).some((code) => values.includes(code)) ||
+        Object.values(countryListAlpha2).some((code) => values.includes(code))
+      ) {
+        findCountryNames = true;
+        console.log('Found geograohical values in the data');
+      }
+    }
 
     if (key_var_count >= 1 && nonKey_var_count === 1) {
       const nonKey_var = nonKey_var_list[0];
@@ -679,6 +693,10 @@ WHERE {
       if (
         ranges_type_mapping(nonKey_var_range) === DATA_DIMENTION_TYPE.SCALAR
       ) {
+        if (findCountryNames) {
+          ratings.choroplethMap += 110;
+        }
+
         if (dataResults.length <= 100) {
           ratings.bar += 100;
           ratings.column += 110;

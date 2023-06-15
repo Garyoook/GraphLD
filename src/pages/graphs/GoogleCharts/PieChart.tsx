@@ -5,19 +5,13 @@ const options = {};
 
 function PieChart(props: VisDataProps) {
   const { headers, data } = props;
-  const data_dummy = [
-    ['Year', 'Sales'],
-    ['2014', 1000],
-    ['2015', 1170],
-    ['2016', 660],
-    ['2017', 1030],
-  ];
+
   return (
     <Chart
       chartType="PieChart"
       width="100%"
       height="400px"
-      data={data.length > 0 ? [headers, ...data] : data_dummy}
+      data={data.length > 0 ? [headers, ...data] : []}
       options={options}
     />
   );

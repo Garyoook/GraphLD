@@ -20,6 +20,7 @@ import TreeAntV from '@/pages/graphs/ANTVCharts/TreeAntV';
 import TreeMapAntV from '@/pages/graphs/ANTVCharts/TreeMapAntV';
 import WordCloudAntV from '@/pages/graphs/ANTVCharts/WordCloudAntV';
 import MultipleLineChart from '@/pages/graphs/ANTVCharts/multipleLineChart';
+import GeoMap from '@/pages/graphs/GoogleCharts/GeoMap';
 import LineChart from '@/pages/graphs/GoogleCharts/LineChart';
 import ScatterPlot from '@/pages/graphs/GoogleCharts/ScatterPlot';
 import TreeMap from '@/pages/graphs/GoogleCharts/TreeMap';
@@ -87,7 +88,8 @@ export enum ChartType {
   SANKEY_ANTV = 'Sankey Chart ',
   CALENDAR_ANTV = 'Calendar Chart ',
   NETWORK_ANTV = 'Network Chart ',
-  HEATMAP_ANTV = 'Heatmap',
+  HEATMAP_ANTV = 'Heatmap ',
+  CHOROPLETH_MAP = 'Choropleth Map',
 }
 
 function VisOptions(props: {
@@ -167,6 +169,8 @@ function VisOptions(props: {
         return <HeatmapAntV headers={headers} data={originalData} />;
       case ChartType.NETWORK_ANTV:
         return <NetworkChart headers={headers} data={originalData} />;
+      case ChartType.CHOROPLETH_MAP:
+        return <GeoMap headers={headers} data={data} />;
 
       default:
         return 'You specified an invalid chart type, please check the code';
@@ -180,6 +184,7 @@ function VisOptions(props: {
     ChartType.SCATTER_PLOT,
     ChartType.LINE_CHART,
     ChartType.TREE_MAP,
+    ChartType.CHOROPLETH_MAP,
   ];
 
   const VisOptions_ANTV = [
