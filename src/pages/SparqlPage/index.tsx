@@ -1266,7 +1266,7 @@ PREFIX : <${db_prefix_URL}>`;
         <Button
           variant="contained"
           color="success"
-          aria-describedby={id}
+          aria-describedby={id_prefixRef}
           onClick={(event) => {
             setAnchorEl(event.currentTarget);
             setShowPrefixReference(!showPrefixReference);
@@ -1280,7 +1280,7 @@ PREFIX : <${db_prefix_URL}>`;
             : 'Open Prefix Reference'}
         </Button>
         <Popover
-          id={id}
+          id={id_prefixRef}
           open={showPrefixReference}
           anchorEl={anchorEl}
           onClose={() => {
@@ -1332,6 +1332,107 @@ PREFIX : <${db_prefix_URL}>`;
             >
               Click to copy
             </Button>
+          </Paper>
+        </Popover>
+      </Grid>
+    );
+  }
+
+  const keyboardShortcutList = [
+    {
+      key: '[Ctrl|Cmd]-z',
+      description: 'Undo',
+    },
+    {
+      key: '[Ctrl|Cmd]-shift-z',
+      description: 'Redo',
+    },
+    {
+      key: '[Ctrl|Cmd]-u',
+      description: 'Undo',
+    },
+    {
+      key: '[Ctrl|Cmd]-f',
+      description: 'Find/Relpace',
+    },
+    {
+      key: '[Ctrl|Cmd]-d',
+      description: 'Delete current/selected line(s)',
+    },
+    {
+      key: '[Ctrl|Cmd]-x',
+      description: 'Cut current/selected line(s)',
+    },
+    {
+      key: '[Ctrl|Cmd]-c',
+      description: 'Copy current/selected line(s)',
+    },
+    {
+      key: '[Ctrl|Cmd]-v',
+      description: 'Paste',
+    },
+  ];
+
+  function KeyboardShortcut() {
+    return (
+      <Grid sx={{ marginBottom: 3, marginLeft: 3, maxWidth: 500 }}>
+        <Button
+          variant="outlined"
+          color="info"
+          aria-describedby={id_sc}
+          onClick={(event) => {
+            setAnchorElSc(event.currentTarget);
+            setShowShortcut(!showShortcut);
+          }}
+          style={{
+            textTransform: 'none',
+          }}
+        >
+          {showShortcut ? 'Close Keyboard Shortcut' : 'Open Keyboard Shortcut'}
+        </Button>
+        <Popover
+          id={id_sc}
+          open={showShortcut}
+          anchorEl={anchorElSc}
+          onClose={() => {
+            setAnchorElSc(null);
+            setShowShortcut(false);
+          }}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+        >
+          <Paper sx={{ padding: 2 }}>
+            <Typography variant="h6" component="div">
+              Keyboard Shortcut
+            </Typography>
+            <Grid
+              sx={{
+                padding: 1,
+              }}
+            >
+              {keyboardShortcutList.map((item) => {
+                return (
+                  <Grid container style={{ padding: 5 }}>
+                    <Grid
+                      style={{
+                        fontFamily: 'monospace',
+                        borderRadius: 4,
+                        color: '#fff',
+                        backgroundColor: '#333',
+                        padding: '0 6px 0 6px',
+                      }}
+                    >
+                      {item.key}
+                    </Grid>
+                    <Grid style={{ padding: '0 6px 0 6px' }}>
+                      {item.description}
+                    </Grid>
+                  </Grid>
+                );
+              })}
+            </Grid>
           </Paper>
         </Popover>
       </Grid>
@@ -1457,12 +1558,21 @@ PREFIX : <${db_prefix_URL}>`;
 
   const [showPrefixReference, setShowPrefixReference] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const canBeOpen = showPrefixReference && Boolean(anchorEl);
-  const id = canBeOpen ? 'simple-popover' : undefined;
+  const canBeOpen_prefixRef = showPrefixReference && Boolean(anchorEl);
+  const id_prefixRef = canBeOpen_prefixRef ? 'simple-popover' : undefined;
+
+  const [showShortcut, setShowShortcut] = useState(false);
+  const [anchorElSc, setAnchorElSc] = useState<null | HTMLElement>(null);
+  const canBeOpen_sc = showShortcut && Boolean(anchorElSc);
+  const id_sc = canBeOpen_sc ? 'simple-popover' : undefined;
 
   return (
     <Grid style={{ margin: 10 }}>
-      {PrefixReference()}
+      <Grid container>
+        {PrefixReference()}
+        {KeyboardShortcut()}
+      </Grid>
+
       {exampleQueries()}
       <CodeMirror
         value={query}
