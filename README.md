@@ -18,6 +18,8 @@ Important enginnering helper of this project:
 
 [React-Google-Charts](https://www.react-google-charts.com/)
 
+[GraphDB](https://graphdb.ontotext.com/) (RDF Graph Database, used as backend)
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -43,3 +45,5 @@ Your app is ready to be deployed!
 ### `npm run preview`
 
 After building the app, you can run this script to preview the production build locally, on [http://localhost:4172](http://localhost:4172)
+
+### Note that GraphDB workbench is required as backend, you can configure that in `src/config.ts`
