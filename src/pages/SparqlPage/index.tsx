@@ -699,7 +699,7 @@ WHERE {
 
         if (dataResults.length <= 100) {
           ratings.bar += 100;
-          ratings.column += 110;
+          ratings.column += 105;
           ratings.pie += 100;
           ratings.wordClouds = 100;
         }
