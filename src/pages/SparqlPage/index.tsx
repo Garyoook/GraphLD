@@ -1394,15 +1394,19 @@ PREFIX : <http://www.semwebtech.org/mondial/10/meta#>`;
     return (
       <Grid sx={{ marginBottom: 3, maxWidth: 500 }}>
         <Button
-          variant="contained"
+          variant="outlined"
           color="success"
           aria-describedby={id_prefixRef}
           onClick={(event) => {
             setAnchorEl(event.currentTarget);
             setShowPrefixReference(!showPrefixReference);
           }}
-          style={{
+          sx={{
             textTransform: 'none',
+            '&:hover': {
+              color: '#fff',
+              backgroundColor: '#2e7d32',
+            },
           }}
         >
           {showPrefixReference
@@ -1508,14 +1512,18 @@ PREFIX : <http://www.semwebtech.org/mondial/10/meta#>`;
       <Grid sx={{ marginBottom: 3, marginLeft: 3, maxWidth: 500 }}>
         <Button
           variant="outlined"
-          color="info"
+          color="success"
           aria-describedby={id_sc}
           onClick={(event) => {
             setAnchorElSc(event.currentTarget);
             setShowShortcut(!showShortcut);
           }}
-          style={{
+          sx={{
             textTransform: 'none',
+            '&:hover': {
+              color: '#fff',
+              backgroundColor: '#2e7d32',
+            },
           }}
         >
           {showShortcut ? 'Close Keyboard Shortcut' : 'Open Keyboard Shortcut'}
