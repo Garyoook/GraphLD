@@ -39,7 +39,7 @@ export const ChartType_mapping = {
   pie: ChartType.PIE_CHART_ANTV,
   choroplethMap: ChartType.CHOROPLETH_MAP,
   // 2-class vis:
-  treeMap: ChartType.TREE_MAP_ANTV,
+  treemap: ChartType.TREE_MAP_ANTV,
   hierarchyTree: ChartType.TREE_ANTV,
   sunburst: ChartType.SUNBURST_ANTV,
   circlePacking: ChartType.CIRCLE_PACKING_ANTV,
@@ -54,7 +54,7 @@ export const ChartType_mapping = {
   sankey: ChartType.SANKEY_ANTV,
   chord: ChartType.CHORD_DIAGRAM_ANTV,
   network: ChartType.NETWORK_ANTV,
-  heatMap: ChartType.HEATMAP_ANTV,
+  heatmap: ChartType.HEATMAP_ANTV,
 };
 
 export function convertPrefixToNamespace(jsonldItem: any) {
