@@ -32,6 +32,7 @@ import {
   DialogActions,
   DialogContent,
   Divider,
+  Grid,
   IconButton,
   List,
   ListItem,
@@ -96,9 +97,10 @@ function VisOptions(props: {
   data: VisDataProps;
   originalData: any[];
   recommendations: RecommendationProps[];
+  excludedRecommendations: RecommendationProps[];
 }) {
   const { data, headers } = props.data;
-  const { originalData, recommendations } = props;
+  const { originalData, recommendations, excludedRecommendations } = props;
 
   const [openVis, setOpenVis] = useState(false);
   const [chartType, setChartType] = useState(ChartType.UNSET);
@@ -223,9 +225,30 @@ function VisOptions(props: {
               onClick={() => handleVisOpen(option.chart)}
             >
               <ListItemText
-                primary={option.chart}
+                primary={
+                  option.threshold ? (
+                    <Grid sx={{ color: 'GrayText' }}>{option.chart}</Grid>
+                  ) : (
+                    option.chart
+                  )
+                }
                 secondary={
-                  isNaN(option.rating) ? undefined : `rating: ${option.rating}`
+                  option.threshold ? (
+                    <Grid container flexDirection="row" spacing={1}>
+                      <Grid item>data size:</Grid>
+                      <Grid
+                        item
+                        sx={{ color: 'red' }}
+                      >{`${option.actualSize}`}</Grid>
+                      <Grid item sx={{ fontWeight: 'bold' }}>{`>`}</Grid>
+                      <Grid item>{`threshold:`}</Grid>
+                      <Grid item sx={{ color: 'green' }}>
+                        {option.threshold}
+                      </Grid>
+                    </Grid>
+                  ) : (
+                    ''
+                  )
                 }
               />
             </ListItem>
@@ -241,6 +264,13 @@ function VisOptions(props: {
       Recommended Visulisations:
       <Divider />
       <List>{renderVisOptions(recommendations)}</List>
+      <br />
+      <Grid sx={{ color: 'GrayText' }}>
+        {' '}
+        Excluded Visualisations because data size exceeds the configured
+        threshould:{' '}
+      </Grid>
+      <List>{renderVisOptions(excludedRecommendations)}</List>
       <br />
       <br />
       <br />

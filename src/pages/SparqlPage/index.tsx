@@ -47,6 +47,7 @@ import { sendSPARQLquery } from '../services/api';
 import VisOptions, { ChartType } from './VisOptions';
 
 import LoadingButton from '@mui/lab/LoadingButton';
+import { deepClone } from '@mui/x-data-grid/utils/utils';
 import { useSearchParams } from 'umi';
 import { conceptualModelFunctions } from './ConceptualModel/function';
 import {
@@ -89,6 +90,8 @@ const Transition = forwardRef(function Transition(
 export interface RecommendationProps {
   chart: ChartType;
   rating: number;
+  threshold?: number;
+  actualSize?: number;
 }
 
 function isJson(str: string) {
@@ -218,6 +221,9 @@ WHERE {
   const [recommendations, setRecommendations] = useState<RecommendationProps[]>(
     [],
   );
+  const [excludedRecommendations, setExcludedRecommendations] = useState<
+    RecommendationProps[]
+  >([]);
 
   // states for recommendation configs
   const [recommendationConfig, setRecommendationConfig] = useState({
@@ -342,9 +348,7 @@ WHERE {
     dataResults: any[] = [],
   ): {
     recommendations: RecommendationProps[];
-    messages?: string;
-    missingKeyWarning?: boolean;
-    needFilteringWarning?: boolean;
+    excludedRecommendations: RecommendationProps[];
   } {
     const messages: string[] = [];
     let needFilteringWarning = false;
@@ -683,6 +687,8 @@ WHERE {
     }
     console.log('final ratings_recommendation: ', ratings_recommendation);
 
+    const excludedRatings: any = {};
+
     let exceedThreshold = false;
     for (const r of Object.keys(ratings_recommendation)) {
       // @ts-ignore
@@ -691,12 +697,14 @@ WHERE {
 
       if (threshold && actuallSize > threshold) {
         exceedThreshold = true;
+        excludedRatings[r] = deepClone(ratings_recommendation[r]);
         delete ratings_recommendation[r];
       }
     }
     setShowTooManyDataWarning(exceedThreshold);
 
     const recommendations: RecommendationProps[] = [];
+    const excludedRecommendations: RecommendationProps[] = [];
     // TODO: complete recommendations to all catogories
     for (const r of Object.keys(ratings_recommendation)) {
       const rating = ratings_recommendation[r];
@@ -705,13 +713,26 @@ WHERE {
         recommendations.push({ chart: ChartType_mapping[r], rating });
       }
     }
+    for (const r of Object.keys(excludedRatings)) {
+      const rating = excludedRatings[r];
+      if (rating > 0) {
+        excludedRecommendations.push({
+          // @ts-ignore
+          chart: ChartType_mapping[r],
+          rating,
+          // @ts-ignore
+          threshold: recommendationConfig[r],
+          actualSize: dataResults.length,
+        });
+      }
+    }
 
     // Final recommendation results:
     const result = {
       recommendations: recommendations.sort((a, b) => b.rating - a.rating),
-      messages: messages.join('\n'),
-      missingKeyWarning: showMissingKeyWarning,
-      needFilteringWarning,
+      excludedRecommendations: excludedRecommendations.sort(
+        (a, b) => b.rating - a.rating,
+      ),
     };
 
     console.log('recommended vis: ', result);
@@ -1064,6 +1085,7 @@ WHERE {
       // console.log('remapped data', data);
       const recommendations = generateVisRecommendation(query, data);
       setRecommendations(recommendations.recommendations);
+      setExcludedRecommendations(recommendations.excludedRecommendations);
       setDataSource(data);
       setShowAlert(false);
       return recommendations;
@@ -1292,6 +1314,7 @@ PREFIX : <${db_prefix_URL}>`;
                   setQuery(q);
                   setDataSource([]);
                   setRecommendations([]);
+                  setExcludedRecommendations([]);
                   closeAllWarnings();
                 }}
                 style={{
@@ -1674,6 +1697,7 @@ PREFIX : <http://www.semwebtech.org/mondial/10/meta#>`;
               data={separateHeader_Data(dataSource)}
               originalData={dataSource}
               recommendations={recommendations}
+              excludedRecommendations={excludedRecommendations}
             />
           </DialogContent>
         </Dialog>
