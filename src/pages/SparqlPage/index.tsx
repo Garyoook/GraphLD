@@ -1688,7 +1688,7 @@ PREFIX : <http://www.semwebtech.org/mondial/10/meta#>`;
           sx={{ textTransform: 'none' }}
           onClick={() => setShowConfigPanel(true)}
         >
-          Slide in alert dialog
+          Recommendation Config
         </Button>
         <Dialog
           open={showConfigPanel}
@@ -1697,9 +1697,7 @@ PREFIX : <http://www.semwebtech.org/mondial/10/meta#>`;
           maxWidth="sm"
           fullWidth
         >
-          <DialogTitle>
-            {'Configure the Visualisation Recommendation'}
-          </DialogTitle>
+          <DialogTitle>{'Configure the Threshold of Data Length'}</DialogTitle>
           <DialogContent>
             <Grid container flexDirection="column" spacing={2}>
               {Object.keys(recommendationConfig).map((config) => {
