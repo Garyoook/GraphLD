@@ -1,6 +1,7 @@
 import { CompletionContext, autocompletion } from '@codemirror/autocomplete';
 import { StreamLanguage } from '@codemirror/language';
 import { sparql } from '@codemirror/legacy-modes/mode/sparql';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -21,6 +22,8 @@ import {
   Popover,
   Snackbar,
   Switch,
+  Tab,
+  Tabs,
   Toolbar,
   Tooltip,
   Typography,
@@ -29,7 +32,7 @@ import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import CodeMirror from '@uiw/react-codemirror';
-import { forwardRef, useCallback, useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import {
   ChartType_mapping,
   DATA_DIMENTION_TYPE,
@@ -83,6 +86,15 @@ const Transition = forwardRef(function Transition(
 export interface RecommendationProps {
   chart: ChartType;
   rating: number;
+}
+
+function isJson(str: string) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
 }
 
 function SparqlPage(props: any) {
@@ -156,8 +168,37 @@ WHERE {
   const [ConceptualModelInfo, setConceptualModelInfo] =
     useState<ConceptialModelInfoProps>({});
   const [fullLoading, setFullLoading] = useState(false);
+  const tabListStorageKey = 'tabList_graphLD';
+  const tabListStore = localStorage.getItem(tabListStorageKey) || '';
+  const [tabList, setTabList] = useState<string[]>(() => {
+    if (isJson(tabListStore) && JSON.parse(tabListStore).length > 0) {
+      const tabListParsed = JSON.parse(tabListStore);
+      return tabListParsed;
+    } else {
+      return [initialString];
+    }
+  });
+  const [selectedTab, setSelectedTab] = useState(() => {
+    if (isJson(tabListStore) && JSON.parse(tabListStore).length > 0) {
+      const tabListParsed = JSON.parse(tabListStore);
+      return tabListParsed.length - 1;
+    } else {
+      return 0;
+    }
+  });
+  const userQueryStorageKey = 'user_query_latest_graphLD';
+  const user_query_latest = localStorage.getItem(userQueryStorageKey);
+  const [query, setQuery] = useState<string>(() => {
+    if (isJson(tabListStore) && JSON.parse(tabListStore).length > 0) {
+      const tabListParsed = JSON.parse(tabListStore);
+      return tabListParsed[tabListParsed.length - 1];
+    } else {
+      const toSet = JSON.stringify([initialString]);
+      localStorage.setItem(tabListStorageKey, toSet);
+      return initialString;
+    }
+  });
 
-  const [query, setQuery] = useState<string>(initialString);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -174,6 +215,17 @@ WHERE {
   const [recommendations, setRecommendations] = useState<RecommendationProps[]>(
     [],
   );
+
+  useEffect(() => {
+    // if (user_query_latest && user_query_latest.length > 0) {
+    //   setQuery(user_query_latest);
+    // }
+    const tabListStoreL = localStorage.getItem(tabListStorageKey) || '[]';
+
+    if (JSON.parse(tabListStoreL).length === 0) {
+      localStorage.setItem(tabListStorageKey, JSON.stringify([initialString]));
+    }
+  }, []);
 
   useEffect(() => {
     if (repo_graphDB && db_prefix_URL) {
@@ -1097,7 +1149,7 @@ WHERE {
     defaultAutocompletions,
   );
 
-  const onChangeCodeArea = useCallback((value: string, viewUpdate: any) => {
+  const onChangeCodeArea = (value: string, viewUpdate: any) => {
     const splitUpper = value.split('WHERE');
     const splitLower = value.split('where');
     if (splitUpper.length == 2 || splitLower.length == 2) {
@@ -1120,8 +1172,27 @@ WHERE {
         setCompletionsContent([...completionsContent, ...varsAutocompletion]);
       }
     }
+
+    const newTabList = localStorage.getItem(tabListStorageKey);
+    const tabListParsed = JSON.parse(newTabList || '[]');
+    tabListParsed[selectedTab] = value;
+
+    setTabList(tabListParsed);
     setQuery(value);
-  }, []);
+  };
+
+  useEffect(() => {
+    localStorage.setItem(tabListStorageKey, JSON.stringify(tabList));
+  }, [tabList, selectedTab]);
+
+  function closeTab(index: number) {
+    if (tabList.length > 1) {
+      const newTabList = tabList.filter((_, i) => i !== index);
+      setTabList(newTabList);
+      setSelectedTab(selectedTab - 1);
+      setQuery(newTabList[selectedTab - 1]);
+    }
+  }
 
   // side effects for generating autocompletions content
   useEffect(() => {
@@ -1241,6 +1312,10 @@ PREFIX : <${db_prefix_URL}>`;
                 size="small"
                 color={query == q ? 'success' : 'primary'}
                 onClick={() => {
+                  const newTabList = localStorage.getItem(tabListStorageKey);
+                  const tabListParsed = JSON.parse(newTabList || '[]');
+                  tabListParsed[selectedTab] = q;
+                  setTabList(tabListParsed);
                   setQuery(q);
                   setDataSource([]);
                   setRecommendations([]);
@@ -1256,6 +1331,87 @@ PREFIX : <${db_prefix_URL}>`;
             </Tooltip>
           );
         })}
+      </Grid>
+    );
+  }
+  function a11yProps(index: number) {
+    return {
+      id: `simple-tab-${index}`,
+      'aria-controls': `simple-tabpanel-${index}`,
+    };
+  }
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    const newQuery = tabList[newValue];
+    setQuery(newQuery);
+    setSelectedTab(newValue);
+  };
+
+  function editorTabs() {
+    return (
+      <Grid
+        container
+        flexDirection="row"
+        justifyContent="flex-end"
+        sx={{ borderBottom: 1, borderColor: 'divider' }}
+      >
+        <Grid xs={12}>
+          <Tabs
+            value={selectedTab}
+            onChange={handleTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{ backgroundColor: '#fff' }}
+          >
+            {tabList.length > 0 ? (
+              tabList.map((_: any, index: number) => {
+                return (
+                  <Tab
+                    sx={{ textTransform: 'none' }}
+                    value={index}
+                    label={`Tab ${index + 1}`}
+                    {...a11yProps(0)}
+                  />
+                );
+              })
+            ) : (
+              <Tab label={`Tab 1`} {...a11yProps(0)} />
+            )}
+            <IconButton
+              color="primary"
+              size="large"
+              onClick={() => {
+                const newQuery = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX : <http://www.semwebtech.org/mondial/10/meta#>`;
+                setTabList([...tabList, newQuery]);
+                setQuery(newQuery);
+                setSelectedTab(tabList.length);
+              }}
+            >
+              <AddCircleOutlineIcon />
+            </IconButton>
+          </Tabs>
+        </Grid>
+        <Grid id="closeTabButton">
+          <Button
+            variant="outlined"
+            color="error"
+            sx={{
+              textTransform: 'none',
+              backgroundColor: '#fff',
+              '&:hover': {
+                color: '#fff',
+                backgroundColor: '#d32f2f',
+              },
+            }}
+            size="small"
+            endIcon={<CloseIcon />}
+            onClick={() => closeTab(selectedTab)}
+          >
+            Close this Tab
+          </Button>
+        </Grid>
       </Grid>
     );
   }
@@ -1574,6 +1730,7 @@ PREFIX : <${db_prefix_URL}>`;
       </Grid>
 
       {exampleQueries()}
+      {editorTabs()}
       <CodeMirror
         value={query}
         minHeight="300px"
