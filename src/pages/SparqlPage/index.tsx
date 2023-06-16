@@ -1408,6 +1408,7 @@ PREFIX : <http://www.semwebtech.org/mondial/10/meta#>`;
             size="small"
             endIcon={<CloseIcon />}
             onClick={() => closeTab(selectedTab)}
+            disabled={tabList.length <= 1}
           >
             Close this Tab
           </Button>
