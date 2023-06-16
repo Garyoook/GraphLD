@@ -1675,8 +1675,9 @@ PREFIX : <http://www.semwebtech.org/mondial/10/meta#>`;
 
   const [showConfigPanel, setShowConfigPanel] = useState(false);
 
-  function toggleShowConfigPanel() {
-    setShowConfigPanel(!showConfigPanel);
+  function handleCloseConfigPanel() {
+    handleQuery(query);
+    setShowConfigPanel(false);
   }
 
   function RecommendatoinConfigPanel() {
@@ -1685,14 +1686,14 @@ PREFIX : <http://www.semwebtech.org/mondial/10/meta#>`;
         <Button
           variant="outlined"
           sx={{ textTransform: 'none' }}
-          onClick={toggleShowConfigPanel}
+          onClick={() => setShowConfigPanel(true)}
         >
           Slide in alert dialog
         </Button>
         <Dialog
           open={showConfigPanel}
           TransitionComponent={Transition}
-          onClose={toggleShowConfigPanel}
+          onClose={handleCloseConfigPanel}
           maxWidth="sm"
           fullWidth
         >
@@ -1746,7 +1747,7 @@ PREFIX : <http://www.semwebtech.org/mondial/10/meta#>`;
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button onClick={toggleShowConfigPanel}>Close</Button>
+            <Button onClick={handleCloseConfigPanel}>Close</Button>
           </DialogActions>
         </Dialog>
       </Grid>
