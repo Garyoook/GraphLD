@@ -113,7 +113,7 @@ WHERE {
   ?country rdf:type :Country ;
            :name ?name ;
            :population ?population .
-} ORDER BY DESC(?population) LIMIT 100`;
+} ORDER BY DESC(?population)`;
 
   const f3a = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX : <${db_prefix_URL}>
