@@ -1626,9 +1626,9 @@ PREFIX : <http://www.semwebtech.org/mondial/10/meta#>`;
         severity="warning"
         onClose={() => setShowTooManyDataWarning(false)}
       >
-        Your query result contains too many data items, this may be toublesome
-        when visualisation applied. Please consider applying a filter in your
-        query.
+        Your query result contains too many data items, some affected
+        visualisation have been removed from recommendation. Please consider
+        applying a filter in your query.
       </Alert>
     );
   }
