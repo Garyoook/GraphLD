@@ -238,7 +238,7 @@ WHERE {
     // line: 100,
     spider: 20,
     stackedColumn: 100,
-    stackedArea: 100,
+    groupedColumn: 100,
     stackedBar: 100,
     groupedBar: 100,
     sankey: 100,
