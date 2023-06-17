@@ -1765,7 +1765,9 @@ PREFIX : <${db_prefix_URL}>`;
           maxWidth="sm"
           fullWidth
         >
-          <DialogTitle>{'Configure the Threshold of Data Length'}</DialogTitle>
+          <DialogTitle>
+            {'Configure the Threshold of instance cardinalities'}
+          </DialogTitle>
           <DialogContent>
             <Grid container flexDirection="column" spacing={2}>
               {Object.keys(recommendationConfig).map((config) => {

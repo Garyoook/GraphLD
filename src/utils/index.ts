@@ -23,6 +23,7 @@ export const ranges_type_mapping = (range: string) => {
     'xsd:decimal': DATA_DIMENTION_TYPE.SCALAR,
     'xsd:string': DATA_DIMENTION_TYPE.LEXICAL,
     'xsd:date': DATA_DIMENTION_TYPE.TEMPORAL,
+    'xsd:integer': DATA_DIMENTION_TYPE.DISCRETE,
   };
 
   return mapping[range];
