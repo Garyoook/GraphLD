@@ -736,7 +736,7 @@ WHERE {
         delete ratings_recommendation[r];
       }
     }
-    setShowTooManyDataWarning(exceedThreshold);
+    setShowTooMuchDataWarning(exceedThreshold);
 
     const recommendations: RecommendationProps[] = [];
     const excludedRecommendations: RecommendationProps[] = [];
@@ -1060,13 +1060,13 @@ WHERE {
   }
 
   const [showMissingKeyWarning, setShowMissingKeyWarning] = useState(false);
-  const [showTooManyDataWarning, setShowTooManyDataWarning] = useState(false);
+  const [showTooMuchDataWarning, setShowTooMuchDataWarning] = useState(false);
   const [showManyManyRelationWarning, setShowManyManyRelationWarning] =
     useState(false);
 
   function closeAllWarnings() {
     setShowMissingKeyWarning(false);
-    setShowTooManyDataWarning(false);
+    setShowTooMuchDataWarning(false);
     setShowManyManyRelationWarning(false);
   }
 
@@ -1652,19 +1652,19 @@ PREFIX : <${db_prefix_URL}>`;
     );
   }
 
-  function tooManyDataForVisWarning() {
+  function tooMuchDataForVisWarning() {
     return (
       <Alert
         sx={{
-          display: showTooManyDataWarning ? 'flex' : 'none',
+          display: showTooMuchDataWarning ? 'flex' : 'none',
           width: '100%',
         }}
         severity="warning"
-        onClose={() => setShowTooManyDataWarning(false)}
+        onClose={() => setShowTooMuchDataWarning(false)}
       >
-        Your query result contains too many data items, some affected
-        visualisation have been removed from recommendation. Please consider
-        applying a filter in your query.
+        The cardinality of your result seems to exceed the configured threshold,
+        some affected visualisation have been removed from recommendation.
+        Please consider applying a FILTER after your query.
       </Alert>
     );
   }
@@ -1984,7 +1984,7 @@ PREFIX : <${db_prefix_URL}>`;
       <Grid container spacing={2}>
         <Grid item xs={12}>
           {missingKeyWarning()}
-          {tooManyDataForVisWarning()}
+          {tooMuchDataForVisWarning()}
           {manyManyRelationshipWarning()}
         </Grid>
         <Grid
