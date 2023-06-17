@@ -91,7 +91,8 @@ export interface RecommendationProps {
   chart: ChartType;
   rating: number;
   threshold?: number;
-  actualSize?: number;
+  keyToCardinalityMapping?: any;
+  thresholdKey?: string;
 }
 
 function isJson(str: string) {
@@ -235,12 +236,12 @@ WHERE {
     hierarchyTree: 100,
     sunburst: 40,
     circlePacking: 40,
-    // line: 100,
+    // multiLine: 20,
     spider: 20,
-    stackedColumn: 100,
-    groupedColumn: 100,
-    stackedBar: 100,
-    groupedBar: 100,
+    stackedColumn: 20,
+    groupedColumn: 20,
+    stackedBar: 20,
+    groupedBar: 20,
     sankey: 100,
     chord: 100,
     network: 1000,
@@ -351,11 +352,12 @@ WHERE {
     excludedRecommendations: RecommendationProps[];
   } {
     const messages: string[] = [];
-    let needFilteringWarning = false;
     const CLASSES: string[] = [];
     const DP_RANGE_LOCAL: any = {};
     const var_to_class: any = {};
     const var_to_range_mapping: any = {};
+    const keyVar_cardinality_mapping: any = {};
+    const potential_key_var_DP_map: any = {};
 
     // ratings dictionary:
     let ratings_recommendation: any = {};
@@ -400,7 +402,6 @@ WHERE {
       const PAB_LIST: any = {};
       const CA_DPA_mapping: any = {};
       const CA_PAB_mapping: any = {};
-      const potential_key_var_DP_map: any = {};
       for (const stmt of parent_statements) {
         const children_stmt = stmt.split(';');
         let class_type = '';
@@ -675,6 +676,27 @@ WHERE {
       if (maxRating > 0) {
         setShowManyManyRelationWarning(false);
       }
+
+      if (dataResults.length > 0) {
+        const row = dataResults[0];
+        const keyColumns = Object.keys(potential_key_var_DP_map);
+
+        const counts_instances = {};
+        for (const key of keyColumns) {
+          const subcounts = {};
+          dataResults.forEach(function (row) {
+            const value = row[key];
+            // @ts-ignore
+            subcounts[value] = (subcounts[value] || 0) + 1;
+            // @ts-ignore
+            counts_instances[key] = subcounts;
+          });
+          // @ts-ignore
+          const cardinalityKey = Object.keys(counts_instances[key]).length;
+
+          keyVar_cardinality_mapping[key] = cardinalityKey;
+        }
+      }
     }
 
     // Start to filter out the recommendations with threshold in
@@ -690,10 +712,23 @@ WHERE {
     const excludedRatings: any = {};
 
     let exceedThreshold = false;
+
+    console.log('keyVar_cardinality_mapping: ', keyVar_cardinality_mapping);
+    let thresholdKey = 'unknown';
     for (const r of Object.keys(ratings_recommendation)) {
       // @ts-ignore
       const threshold = recommendationConfig[r];
-      const actuallSize = dataResults.length;
+      const actuallSize = Math.max(
+        // @ts-ignore
+        ...Object.values(keyVar_cardinality_mapping),
+      );
+
+      for (const key of Object.keys(keyVar_cardinality_mapping)) {
+        if (keyVar_cardinality_mapping[key] === actuallSize) {
+          thresholdKey = key;
+          break;
+        }
+      }
 
       if (threshold && actuallSize > threshold) {
         exceedThreshold = true;
@@ -722,7 +757,8 @@ WHERE {
           rating,
           // @ts-ignore
           threshold: recommendationConfig[r],
-          actualSize: dataResults.length,
+          keyToCardinalityMapping: keyVar_cardinality_mapping,
+          thresholdKey,
         });
       }
     }

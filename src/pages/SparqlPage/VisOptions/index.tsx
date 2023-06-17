@@ -217,6 +217,17 @@ function VisOptions(props: {
   function renderVisOptions(options: RecommendationProps[]) {
     if (options.length > 0) {
       return options.map((option, index) => {
+        const stringfyCardinalities = [];
+        let cardinalities = '';
+        if (option.keyToCardinalityMapping) {
+          for (const [key, value] of Object.entries(
+            option.keyToCardinalityMapping,
+          )) {
+            stringfyCardinalities.push(`${key}: ${value}`);
+          }
+        }
+        cardinalities = stringfyCardinalities.join(', ');
+
         return (
           <div key={index}>
             <ListItem
@@ -226,20 +237,19 @@ function VisOptions(props: {
             >
               <ListItemText
                 primary={
-                  option.threshold ? (
-                    <Grid sx={{ color: 'GrayText' }}>{option.chart}</Grid>
-                  ) : (
-                    option.chart
-                  )
+                  option.threshold ? <Grid>{option.chart}</Grid> : option.chart
                 }
                 secondary={
-                  option.threshold ? (
+                  option.threshold && option.thresholdKey ? (
                     <Grid container flexDirection="row" spacing={1}>
-                      <Grid item>data size:</Grid>
                       <Grid
                         item
-                        sx={{ color: 'red' }}
-                      >{`${option.actualSize}`}</Grid>
+                      >{`Cardinalities of belonged class of variable ${option.thresholdKey}:`}</Grid>
+                      <Grid item sx={{ color: 'red' }}>
+                        {`${
+                          option.keyToCardinalityMapping[option.thresholdKey]
+                        }`}
+                      </Grid>
                       <Grid item sx={{ fontWeight: 'bold' }}>{`>`}</Grid>
                       <Grid item>{`threshold:`}</Grid>
                       <Grid item sx={{ color: 'green' }}>
@@ -261,17 +271,20 @@ function VisOptions(props: {
 
   return (
     <div>
-      Recommended Visulisations:
+      <Grid sx={{ fontWeight: 'bold' }}>Recommended Visulisations:</Grid>
       <Divider />
       <List>{renderVisOptions(recommendations)}</List>
       <br />
-      <Grid sx={{ color: 'GrayText' }}>
-        {' '}
-        Excluded Visualisations because data size exceeds the configured
-        threshould:{' '}
-      </Grid>
+      {excludedRecommendations.length > 0 && (
+        <Grid>
+          <Grid
+            sx={{ fontWeight: 'bold', color: '#d32f2f' }}
+          >{`Excluded Visualisations:`}</Grid>
+          <Grid>{`Exceeds the configured cardinality threshould`}</Grid>
+          <Grid>{`You can still use these visualisations but their effect might be compremised`}</Grid>
+        </Grid>
+      )}
       <List>{renderVisOptions(excludedRecommendations)}</List>
-      <br />
       <br />
       <br />
       All Visualisations:
