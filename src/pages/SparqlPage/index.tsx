@@ -1379,7 +1379,7 @@ PREFIX : <${db_prefix_URL}>`;
                 const newQuery = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
-PREFIX : <http://www.semwebtech.org/mondial/10/meta#>`;
+PREFIX : <${db_prefix_URL}>`;
                 setTabList([...tabList, newQuery]);
                 setQuery(newQuery);
                 setSelectedTab(tabList.length);
