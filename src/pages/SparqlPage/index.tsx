@@ -146,14 +146,17 @@ WHERE {
 PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
 SELECT  ?year  ?population ?country
 WHERE {
-    ?c rdf:type :Country ; 
-       :name ?country ;
-       :encompassedByInfo ?en .
-    ?py rdf:type :PopulationCount ;
-        :year ?year;
-        :value ?population .
-    ?c 	:hadPopulation ?py .
-}`;
+     ?c rdf:type :Country ;
+        :name ?country ;
+        :encompassed ?conclass .
+     ?conclass :name ?continent .
+     ?py rdf:type :PopulationCount ;
+         :year ?year;
+         :value ?population .
+     ?c :hadPopulation ?py .
+    FILTER REGEX(?continent, "Europe") 
+    FILTER (?population > 10000000)
+}  ORDER BY DESC (?year)`;
 
   const f3d = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX : <${db_prefix_URL}>
