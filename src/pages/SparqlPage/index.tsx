@@ -1693,7 +1693,11 @@ PREFIX : <${db_prefix_URL}>`;
       <Grid item>
         <LoadingButton
           variant="contained"
-          color={recommendations.length > 0 ? 'success' : 'primary'}
+          color={
+            recommendations.length > 0 || excludedRecommendations.length > 0
+              ? 'success'
+              : 'primary'
+          }
           disabled={dataSource.length == 0}
           loading={loading}
           loadingPosition="end"
@@ -1703,8 +1707,10 @@ PREFIX : <${db_prefix_URL}>`;
             textTransform: 'none',
           }}
         >
-          {recommendations.length > 0
-            ? `Visualisation Options (${recommendations.length} Recommendations)`
+          {recommendations.length > 0 || excludedRecommendations.length > 0
+            ? `Visualisation Options (${
+                recommendations.length + excludedRecommendations.length
+              } Recommendations)`
             : `Visualisation Options`}
         </LoadingButton>
         <Dialog

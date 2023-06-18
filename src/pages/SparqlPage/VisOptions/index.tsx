@@ -279,7 +279,7 @@ function VisOptions(props: {
         <Grid>
           <Grid
             sx={{ fontWeight: 'bold', color: '#d32f2f' }}
-          >{`Excluded Visualisations:`}</Grid>
+          >{`Recommended BUT Excluded Visualisations:`}</Grid>
           <Grid>{`Exceeds the configured cardinality threshould`}</Grid>
           <Grid>{`You can still use these visualisations but their effect might be compremised`}</Grid>
         </Grid>
