@@ -25,7 +25,11 @@ import LineChart from '@/pages/graphs/GoogleCharts/LineChart';
 import ScatterPlot from '@/pages/graphs/GoogleCharts/ScatterPlot';
 import TreeMap from '@/pages/graphs/GoogleCharts/TreeMap';
 import CloseIcon from '@mui/icons-material/Close';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   AppBar,
   Button,
   Dialog,
@@ -269,6 +273,12 @@ function VisOptions(props: {
     }
   }
 
+  const [expandAllVis, setExpandAllVis] = useState(false);
+
+  function toggleExpandAllVis() {
+    setExpandAllVis(!expandAllVis);
+  }
+
   return (
     <div>
       <Grid sx={{ fontWeight: 'bold' }}>Recommended Visulisations:</Grid>
@@ -287,25 +297,44 @@ function VisOptions(props: {
       <List>{renderVisOptions(excludedRecommendations)}</List>
       <br />
       <br />
-      All Visualisations:
-      <br />
-      AntV
-      <Divider />
-      <List>
-        {renderVisOptions(
-          VisOptions_ANTV.map((o) => {
-            return { chart: o, rating: NaN };
-          }),
-        )}
-      </List>
-      Google Charts
-      <List>
-        {renderVisOptions(
-          VisOptions_GoogleCharts.map((o) => {
-            return { chart: o, rating: NaN };
-          }),
-        )}
-      </List>
+      <Accordion
+        expanded={expandAllVis}
+        onChange={toggleExpandAllVis}
+        style={{
+          border: '1px solid rgba(0, 0, 0, .125)',
+        }}
+      >
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography sx={{ width: '60%', flexShrink: 0 }}>
+            All Visualisations (Not necessarily match your query, use with
+            care):
+          </Typography>
+          <Typography sx={{ color: 'text.secondary' }}>
+            Visualisations supported by GraphLD
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Grid>
+            <br />
+            AntV
+            <List>
+              {renderVisOptions(
+                VisOptions_ANTV.map((o) => {
+                  return { chart: o, rating: NaN };
+                }),
+              )}
+            </List>
+            Google Charts
+            <List>
+              {renderVisOptions(
+                VisOptions_GoogleCharts.map((o) => {
+                  return { chart: o, rating: NaN };
+                }),
+              )}
+            </List>
+          </Grid>
+        </AccordionDetails>
+      </Accordion>
       <Dialog
         open={openVis}
         onClose={handleVisClose}
