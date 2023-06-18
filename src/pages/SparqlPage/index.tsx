@@ -156,7 +156,7 @@ WHERE {
      ?c :hadPopulation ?py .
     FILTER REGEX(?continent, "Europe") 
     FILTER (?population > 10000000)
-}  ORDER BY DESC (?year)`;
+}  ORDER BY ASC (?year)`;
 
   const f3d = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX : <${db_prefix_URL}>
