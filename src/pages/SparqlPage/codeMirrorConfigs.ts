@@ -9,7 +9,10 @@ const SPARQLSyntax_basics = [
   'DESCRIBE',
   'WHERE',
   // solution sequence & modifiers:
-  'ORDER BY',
+  'ORDER BY DESC ()',
+  'ORDER BY ASC ()',
+  'DESC ()',
+  'ASC ()',
   'DISTINCT',
   'REDUCED',
   'OFFSET',
