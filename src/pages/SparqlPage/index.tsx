@@ -855,7 +855,7 @@ WHERE {
         }
 
         ratings.bar += 100;
-        ratings.column += 100;
+        ratings.column += 110;
         ratings.pie += 100;
         ratings.wordClouds = 100;
       }
@@ -983,8 +983,8 @@ WHERE {
         ratings.multiLine += 100;
         ratings.stackedBar += 100;
         ratings.groupedBar += 100;
-        ratings.stackedColumn += 100;
-        ratings.groupedColumn += 100;
+        ratings.stackedColumn += 110;
+        ratings.groupedColumn += 110;
       }
 
       if (
@@ -997,15 +997,15 @@ WHERE {
         ratings.spider += 100;
         ratings.stackedBar += 100;
         ratings.groupedBar += 100;
-        ratings.stackedColumn += 100;
-        ratings.groupedColumn += 100;
+        ratings.stackedColumn += 110;
+        ratings.groupedColumn += 110;
       }
 
       ratings.multiLine += 20;
       ratings.stackedBar += 10;
       ratings.groupedBar += 10;
-      ratings.stackedColumn += 10;
-      ratings.groupedColumn += 10;
+      ratings.stackedColumn += 15;
+      ratings.groupedColumn += 15;
     }
 
     checkForManyManyRelationships(vars_head, var_to_range_mapping, dataResults);
