@@ -34,6 +34,7 @@ const BubbleChartAntV = (props: VisDataProps) => {
 
     const typedData = preprocessDataForVisualisation(data);
 
+    // setting the axis based on the data type
     if (typedData.length > 0) {
       const firstRow = data[0];
 

@@ -28,6 +28,27 @@ const TreeAntV = (props: VisDataProps) => {
     setCatogoryCol(headers[0]);
     setIdCol(headers[1]);
     setValueCol(headers[2]);
+
+    const typedData = preprocessDataForVisualisation(data);
+    // setting the axis based on the data type
+    if (typedData && typedData.length > 0) {
+      const firstRow = data[0];
+      const keyHeader = headers.filter((item: any) => {
+        return typeof firstRow[item] == 'string';
+      });
+      const scalarHeaders = headers.filter((item: any) => {
+        return typeof firstRow[item] == 'number';
+      });
+      // console.log('keyHeader', keyHeader);
+      // console.log('scalarHeaders', scalarHeaders);
+      if (keyHeader.length >= 2) {
+        setCatogoryCol(keyHeader[0]);
+        setIdCol(keyHeader[1]);
+      }
+      if (scalarHeaders.length >= 1) {
+        setValueCol(scalarHeaders[0]);
+      }
+    }
   }, [headers]);
 
   useEffect(() => {

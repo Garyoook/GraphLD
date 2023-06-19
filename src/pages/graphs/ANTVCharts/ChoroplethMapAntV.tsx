@@ -2,7 +2,8 @@ import { ChoroplethMap } from '@ant-design/maps';
 import { Grid } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-// ! warning: this is experimental map and not connected to query.
+// ! warning: this is experimental map and not connected to query, see GooglrCharts/ChoroplethMap that one is used in GraphLD.
+// ! warning: this is experimental map and not connected to query, see GooglrCharts/ChoroplethMap that one is used in GraphLD.
 
 function ChoroplethMapAntV(props: any) {
   //   const { headers, data } = props;
@@ -12,6 +13,8 @@ function ChoroplethMapAntV(props: any) {
   useEffect(() => {
     asyncFetch();
   }, []);
+  // ! warning: this is experimental map and not connected to query, see GooglrCharts/ChoroplethMap that one is used in GraphLD.
+  // ! warning: this is experimental map and not connected to query, see GooglrCharts/ChoroplethMap that one is used in GraphLD.
 
   const asyncFetch = () => {
     fetch(
@@ -82,6 +85,8 @@ function ChoroplethMapAntV(props: any) {
     legend: {
       position: 'bottomleft',
     },
+    // ! warning: this is experimental map and not connected to query, see GooglrCharts/ChoroplethMap that one is used in GraphLD.
+    // ! warning: this is experimental map and not connected to query, see GooglrCharts/ChoroplethMap that one is used in GraphLD.
   };
 
   return (
@@ -90,5 +95,7 @@ function ChoroplethMapAntV(props: any) {
     </Grid>
   );
 }
+// ! warning: this is experimental map and not connected to query, see GooglrCharts/ChoroplethMap that one is used in GraphLD.
+// ! warning: this is experimental map and not connected to query, see GooglrCharts/ChoroplethMap that one is used in GraphLD.
 
 export default ChoroplethMapAntV;

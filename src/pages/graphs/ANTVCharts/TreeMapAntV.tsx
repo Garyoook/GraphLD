@@ -37,6 +37,27 @@ const TreeMapAntV = (props: VisDataProps) => {
     setCatogoryCol(headers[0]);
     setIdCol(headers[1]);
     setValueCol(headers[2]);
+
+    const typedData = preprocessDataForVisualisation(data);
+    // setting the axis based on the data type
+    if (typedData && typedData.length > 0) {
+      const firstRow = data[0];
+      const keyHeader = headers.filter((item: any) => {
+        return typeof firstRow[item] == 'string';
+      });
+      const scalarHeaders = headers.filter((item: any) => {
+        return typeof firstRow[item] == 'number';
+      });
+      // console.log('keyHeader', keyHeader);
+      // console.log('scalarHeaders', scalarHeaders);
+      if (keyHeader.length >= 2) {
+        setCatogoryCol(keyHeader[0]);
+        setIdCol(keyHeader[1]);
+      }
+      if (scalarHeaders.length >= 1) {
+        setValueCol(scalarHeaders[0]);
+      }
+    }
   }, [headers]);
 
   const swapColumns = () => {
@@ -99,22 +120,6 @@ const TreeMapAntV = (props: VisDataProps) => {
       follow: true,
       enterable: true,
       offset: 5,
-      // customContent: (value, items) => {
-      //   if (!items || items.length <= 0) return;
-      //   const { data: itemData } = items[0];
-      //   const parent = itemData.path[1];
-      //   const root = itemData.path[itemData.path.length - 1];
-      //   return (
-      // 	`<div class='container'>` +
-      // 	`<div class='title'>${itemData.name}</div>` +
-      // 	`<div class='tooltip-item'><span>Value</span><span>${itemData.value}</span></div>` +
-      // 	`<div class='tooltip-item'><span>Name</span><span>${itemData.name}</span></div>` +
-      // 	`<div class='tooltip-item'><span>Ratio</span><span>${((itemData.value / parent.value) * 100).toFixed(
-      // 	  2,
-      // 	)}%</span></div>` +
-      // 	`</div>`
-      //   );
-      // },
     },
   };
 

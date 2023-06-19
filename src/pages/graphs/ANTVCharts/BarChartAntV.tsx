@@ -38,6 +38,29 @@ const BarChartAntV = (props: VisDataProps) => {
 
     const typedData = preprocessDataForVisualisation(data);
 
+    // setting the axis based on the data type
+    if (typedData.length > 0) {
+      const firstRow = data[0];
+      const keyHeader = headers.filter((item: any) => {
+        return typeof firstRow[item] == 'string';
+      });
+      const scalarHeaders = headers.filter((item: any) => {
+        return typeof firstRow[item] == 'number';
+      });
+      // console.log('keyHeader', keyHeader);
+      // console.log('scalarHeaders', scalarHeaders);
+      if (keyHeader.length >= 1) {
+        setYField(keyHeader[0]);
+      }
+      if (scalarHeaders.length === 1) {
+        setXField(scalarHeaders[0]);
+      }
+      if (scalarHeaders.length === 2) {
+        setYField(scalarHeaders[0]);
+        setXField(scalarHeaders[1]);
+      }
+    }
+
     setDataSource(typedData);
   }, [headers, data]);
 

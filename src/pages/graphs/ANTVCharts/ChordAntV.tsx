@@ -32,6 +32,26 @@ const ChordAntV = (props: VisDataProps) => {
 
     const typedData = preprocessDataForVisualisation(data);
 
+    // setting the axis based on the data type
+    if (typedData.length > 0) {
+      const firstRow = data[0];
+      const keyHeader = headers.filter((item: any) => {
+        return typeof firstRow[item] == 'string';
+      });
+      const scalarHeaders = headers.filter((item: any) => {
+        return typeof firstRow[item] == 'number';
+      });
+      // console.log('keyHeader', keyHeader);
+      // console.log('scalarHeaders', scalarHeaders);
+      if (keyHeader.length >= 2) {
+        setSourceField(keyHeader[0]);
+        setTargetField(keyHeader[1]);
+      }
+      if (scalarHeaders.length >= 1) {
+        setWeightField(scalarHeaders[0]);
+      }
+    }
+
     setDataSource(typedData);
   }, [data, headers]);
 

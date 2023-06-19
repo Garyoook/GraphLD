@@ -38,6 +38,29 @@ const PieChartAntV = (props: VisDataProps) => {
 
     const typedData = preprocessDataForVisualisation(data);
 
+    // setting the axis based on the data type
+    if (typedData.length > 0) {
+      const firstRow = data[0];
+      const keyHeader = headers.filter((item: any) => {
+        return typeof firstRow[item] == 'string';
+      });
+      const scalarHeaders = headers.filter((item: any) => {
+        return typeof firstRow[item] == 'number';
+      });
+      // console.log('keyHeader', keyHeader);
+      // console.log('scalarHeaders', scalarHeaders);
+      if (keyHeader.length >= 1) {
+        setColorField(keyHeader[0]);
+      }
+      if (scalarHeaders.length === 1) {
+        setAngleField(scalarHeaders[0]);
+      }
+      if (scalarHeaders.length === 2) {
+        setColorField(scalarHeaders[0]);
+        setAngleField(scalarHeaders[1]);
+      }
+    }
+
     setDataSource(typedData);
   }, [headers, data]);
 
