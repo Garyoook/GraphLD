@@ -1051,11 +1051,12 @@ WHERE {
         ratings.circlePacking += 80;
         ratings.hierarchyTree += 20;
 
-        checkForManyManyRelationships(
-          vars_head,
-          var_to_range_mapping,
-          dataResults,
-        );
+        // this should be turned off because multiple countries are shown for their cities
+        // checkForManyManyRelationships(
+        //   vars_head,
+        //   var_to_range_mapping,
+        //   dataResults,
+        // );
       }
     }
     return ratings;
