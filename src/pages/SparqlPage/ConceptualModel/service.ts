@@ -193,16 +193,16 @@ export async function getObjectPropertyMapping(
   const repositoryID = repo_graphDB;
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
-  PREFIX : <${db_prefix_URL}>
+  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
   SELECT ?PAB ?domain ?range
   WHERE {
       {
           ?PAB rdf:type owl:ObjectProperty ;
-              rdfs:range ?range ;
-            rdfs:domain ?domain .
+          OPTIONAL {?PAB rdfs:range ?range ;}
+          OPTIONAL {?PAB rdfs:domain ?domain ;}
       }
-      FILTER (!isBlank(?PAB) && !isBlank(?domain) && !isBlank(?range))
+      FILTER (!isBlank(?PAB))
       FILTER(STRSTARTS(STR(?PAB), STR(:)))
   }`;
 
