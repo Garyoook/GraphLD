@@ -59,6 +59,7 @@ import {
   getObjectPropertiesList,
   getObjectPropertyMapping,
   getRangeMapping,
+  queryResultToData,
 } from './ConceptualModel/service';
 import { customIconsTheme, defaultAutocompletions } from './codeMirrorConfigs';
 
@@ -347,13 +348,13 @@ WHERE {
     setOpenVisOption(false);
   };
 
-  function generateVisRecommendation(
+  async function generateVisRecommendation(
     user_query: string,
     dataResults: any[] = [],
-  ): {
+  ): Promise<{
     recommendations: RecommendationProps[];
     excludedRecommendations: RecommendationProps[];
-  } {
+  }> {
     const messages: string[] = [];
     const CLASSES: string[] = [];
     const DP_RANGE_LOCAL: any = {};
@@ -582,6 +583,23 @@ WHERE {
               messages,
             )
           : {};
+      const ratings_multi_class_layer_relation =
+        total_class_num > 2 && total_PAB_num >= 1
+          ? await generateRatingsForMCMPAB(
+              dataResults,
+              key_var_count,
+              nonKey_var_count,
+              var_to_range_mapping,
+              vars_head,
+              CLASSES,
+              PAB_LIST,
+              messages,
+            )
+          : {};
+      console.log(
+        'ratings_multi_class_layer_relation: ',
+        ratings_multi_class_layer_relation,
+      );
 
       const ratings_2_class_1DP =
         total_class_num === 2 && hasKeyFunctionalProperty
@@ -667,6 +685,7 @@ WHERE {
         ...ratings_recommendation,
         ...ratings_1_class,
         ...ratings_2_class_1PAB,
+        ...ratings_multi_class_layer_relation,
         ...ratings_2_class_1DP,
         ...ratings_3_class,
         ...ratings_1_class_l2,
@@ -950,6 +969,98 @@ WHERE {
     return ratings;
   }
 
+  const sparql_find_linking_PAB = (class1: string, class2: string) => {
+    return `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  SELECT DISTINCT ?PAB
+  WHERE {
+      ?c1 rdf:type ${class1} .
+      ?c2 rdf:type ${class2} .
+      ?c1 ?PAB ?c2 . 
+  }`;
+  };
+
+  async function generateRatingsForMCMPAB(
+    dataResults: any[],
+    key_var_count: number,
+    nonKey_var_count: number,
+    var_to_range_mapping: any,
+    vars_head: string[],
+    CLASSES: string[],
+    PAB_list: any,
+    messages: string[],
+  ) {
+    const ratings: any = {
+      treemap: 0,
+      hierarchyTree: 0,
+      sunburst: 0,
+      circlePacking: 0,
+    };
+
+    const PABs = Object.keys(PAB_list);
+    const PABs_classes = Object.values(PAB_list)
+      .map((v: any) => [v.domain, v.range])
+      .flat()
+      .filter((v: any) => v !== 'unknown');
+
+    const classes_involved = [...new Set([...PABs_classes, ...CLASSES])];
+    if (key_var_count >= 3 && nonKey_var_count === 1) {
+      // permute all possible 1-1 combinations of classes
+      const allPABsFound = [];
+      for (let i = 0; i < classes_involved.length - 1; i++) {
+        for (let j = i + 1; j < classes_involved.length; j++) {
+          const class1 = classes_involved[i];
+          const class2 = classes_involved[j];
+          const query = sparql_find_linking_PAB(class1, class2);
+          const querySwapped = sparql_find_linking_PAB(class2, class1);
+          try {
+            const queryRes = await sendSPARQLquery(repo_graphDB, query, true);
+            const queryResSwapped = await sendSPARQLquery(
+              repo_graphDB,
+              querySwapped,
+              true,
+            );
+            const data = queryResultToData(queryRes);
+            // console.log(`Permute class ${class1} and ${class2}`, data);
+            const dataswapped = queryResultToData(queryResSwapped);
+            // console.log(`Permute class ${class2} and ${class1}`, dataswapped);
+
+            const PABsFound = data
+              .map((v: any) => v.PAB)
+              .concat(dataswapped.map((v: any) => v.PAB));
+            allPABsFound.push(...PABsFound);
+          } catch (e) {
+            console.log('Error', e);
+            break;
+          }
+        }
+      }
+      // console.log('allPABsFound', allPABsFound);
+
+      let PABLinked = true;
+      for (const pab of PABs) {
+        if (!allPABsFound.includes(pab)) {
+          PABLinked = false;
+          break;
+        }
+      }
+
+      if (PABLinked) {
+        ratings.treemap += 100;
+        ratings.sunburst += 90;
+        ratings.circlePacking += 80;
+        ratings.hierarchyTree += 20;
+
+        checkForManyManyRelationships(
+          vars_head,
+          var_to_range_mapping,
+          dataResults,
+        );
+      }
+    }
+    return ratings;
+  }
+
   function generateRatingsFor2C1DP(
     dataResults: any[],
     key_var_count: number,
@@ -1122,7 +1233,7 @@ WHERE {
       });
 
       // console.log('remapped data', data);
-      const recommendations = generateVisRecommendation(query, data);
+      const recommendations = await generateVisRecommendation(query, data);
       setRecommendations(recommendations.recommendations);
       setExcludedRecommendations(recommendations.excludedRecommendations);
       setDataSource(data);
@@ -1902,10 +2013,10 @@ PREFIX : <${db_prefix_URL}>`;
       ['treemap', 'sunburst', 'circlePacking'],
       [
         'multiLine',
-        'stackedBar',
-        'stackedColumn',
-        'groupedBar',
-        'groupedColumn',
+        // 'stackedBar',
+        // 'stackedColumn',
+        // 'groupedBar',
+        // 'groupedColumn',
       ],
       ['network', 'chord', 'sankey', 'heatmap'],
     ];

@@ -93,7 +93,7 @@ const CirclePackingAntV = (props: VisDataProps) => {
       });
       return treeData;
     }
-    console.log('treeData', treeData);
+    // console.log('treeData', treeData);
     setTreeData({
       name: 'root',
       children: treeData,

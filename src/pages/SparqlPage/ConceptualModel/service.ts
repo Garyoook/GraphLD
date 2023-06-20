@@ -1,7 +1,7 @@
 import { sendSPARQLquery } from '@/pages/services/api';
 import { prefix_mapping } from '@/utils';
 
-function queryResultToData(queryRes: any) {
+export function queryResultToData(queryRes: any) {
   const head = queryRes.head.vars;
   const results_bindings = queryRes.results.bindings;
 

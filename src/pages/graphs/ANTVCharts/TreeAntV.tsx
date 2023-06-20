@@ -93,7 +93,7 @@ const TreeAntV = (props: VisDataProps) => {
       });
       return treeData;
     }
-    console.log('treeData', treeData);
+    // console.log('treeData', treeData);
     setDataSource(treeData);
   }, [layerHeaders, valueCol, data]);
 
