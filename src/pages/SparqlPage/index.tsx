@@ -843,7 +843,7 @@ WHERE {
         Object.values(countryListAlpha2).some((code) => values.includes(code))
       ) {
         findCountryNames = true;
-        console.log('Found geograohical values in the data');
+        console.log('Found geographical values in the data');
       }
     }
 
