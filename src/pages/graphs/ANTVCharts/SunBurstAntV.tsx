@@ -14,12 +14,10 @@ const SunBurst = (props: VisDataProps) => {
 
   const [dataSource, setDataSource] = useState<any[]>([]);
 
-  const [categoryCol, setCatogoryCol] = useState<string>('');
-  const [idCol, setIdCol] = useState<string>('');
+  const [categoryCol, setCategoryCol] = useState<string>('');
   const [valueCol, setValueCol] = useState<string>('');
 
-  const [renderMode, setRenderMode] = useState(0);
-  const [drillDownOpen, setDrillDownOpen] = useState(false);
+  const [layerHeaders, setLayerHeaders] = useState(headers);
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
 
@@ -34,10 +32,8 @@ const SunBurst = (props: VisDataProps) => {
   ];
 
   useEffect(() => {
-    setCatogoryCol(headers[0]);
-    setIdCol(headers[1]);
-    setValueCol(headers[2]);
-
+    setCategoryCol(headers[0]);
+    setValueCol(headers[1]);
     const typedData = preprocessDataForVisualisation(data);
     // setting the axis based on the data type
     if (typedData && typedData.length > 0) {
@@ -48,11 +44,12 @@ const SunBurst = (props: VisDataProps) => {
       const scalarHeaders = headers.filter((item: any) => {
         return typeof firstRow[item] == 'number';
       });
-      // console.log('keyHeader', keyHeader);
-      // console.log('scalarHeaders', scalarHeaders);
+      console.log('keyHeader', keyHeader);
+      console.log('scalarHeaders', scalarHeaders);
       if (keyHeader.length >= 2) {
-        setCatogoryCol(keyHeader[0]);
-        setIdCol(keyHeader[1]);
+        setCategoryCol(keyHeader[0]);
+        setCategoryCol(keyHeader[0]);
+        setLayerHeaders([...keyHeader, ...scalarHeaders]);
       }
       if (scalarHeaders.length >= 1) {
         setValueCol(scalarHeaders[0]);
@@ -60,39 +57,47 @@ const SunBurst = (props: VisDataProps) => {
     }
   }, [headers]);
 
-  const swapColumns = () => {
-    setCatogoryCol(idCol);
-    setIdCol(categoryCol);
-    // setValueCol(headers[2]);
-  };
-
   useEffect(() => {
     const typedData = preprocessDataForVisualisation(data);
 
-    const catogories = Array.from(
-      new Set(typedData.map((item: any) => item[categoryCol])),
-    );
+    // the first layer is the category criteria
+    setCategoryCol(layerHeaders[0]);
 
-    const treeData: any[] = [];
+    const treeData = DFS([layerHeaders[0]], typedData);
+    function DFS(hds: any[], layerData: any[]): any[] {
+      if (hds.length === layerHeaders.length) {
+        return [];
+      }
+      const layer = hds[hds.length - 1];
+      const nextLayer = layerHeaders[layerHeaders.indexOf(layer) + 1];
 
-    catogories.forEach((catogory: string[]) => {
-      const branchObj: any = {};
-      branchObj.name = catogory;
-      branchObj[categoryCol] = catogory;
-      const leafData = typedData.filter(
-        (item: any) => item[categoryCol] === catogory,
+      const categories = Array.from(
+        new Set(layerData.map((item: any) => item[layer])),
       );
 
-      branchObj['children'] = leafData.map((item: any) => {
-        const leafObj: any = {};
-        leafObj.name = item[idCol] || 'unknown';
-        leafObj.value = item[valueCol] || 0;
-        return leafObj.name ? leafObj : item;
+      const treeData: any[] = [];
+      categories.forEach((category: string[]) => {
+        const categoriesData = layerData.filter((item: any) => {
+          return item[layer] === category;
+        });
+
+        const branchObj: any = {};
+        branchObj.name = category;
+        branchObj[layer] = category;
+        const children = DFS([...hds, nextLayer], categoriesData);
+        if (children.length > 0) {
+          branchObj['children'] = children;
+        } else {
+          branchObj['value'] = categoriesData[0][valueCol];
+          branchObj[valueCol] = categoriesData[0][valueCol];
+        }
+        treeData.push(branchObj);
       });
-      treeData.push(branchObj);
-    });
+      return treeData;
+    }
+    console.log('treeData', treeData);
     setDataSource(treeData);
-  }, [idCol, categoryCol, valueCol, data]);
+  }, [layerHeaders, valueCol, data]);
 
   const config = {
     data: {
@@ -123,50 +128,55 @@ const SunBurst = (props: VisDataProps) => {
       <Sunburst {...config} />
 
       <Grid container spacing={2}>
-        <Grid item>
-          <Tooltip
-            title="For catogorise data by different colors"
-            arrow
-            placement="top"
-          >
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
-              source for catogories field
-              <Select
-                value={safeGetFieldIndex(fieldsAll, categoryCol)}
-                onChange={(e) => {
-                  setCatogoryCol(
-                    safeGetField(
-                      fieldsAll,
-                      Number(e.target.value),
-                      emptyHeader,
-                    ),
-                  );
-                }}
-              >
-                {fieldsAll.map((item, index) => {
-                  return (
-                    <MenuItem key={index} value={index}>
-                      {item}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          </Tooltip>
-        </Grid>
+        {layerHeaders.length > 1 &&
+          layerHeaders.slice(0, -1).map((layer, index) => {
+            return (
+              <Grid item>
+                <Tooltip
+                  title="Adjust the parent-chilren relationship between layers"
+                  arrow
+                  placement="top"
+                >
+                  <FormControl sx={{ m: 1, minWidth: 120 }}>
+                    {`${index + 1}th Layer`}
+                    <Select
+                      value={fieldsAll.indexOf(layer)}
+                      onChange={(e) => {
+                        const newLayerHeaders = [...layerHeaders];
+                        newLayerHeaders[index] = safeGetField(
+                          fieldsAll,
+                          Number(e.target.value),
+                          emptyHeader,
+                        );
+                        setLayerHeaders(newLayerHeaders);
+                      }}
+                    >
+                      {fieldsAll.map((item, index) => {
+                        return (
+                          <MenuItem key={index} value={index}>
+                            {item}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                </Tooltip>
+              </Grid>
+            );
+          })}
 
         <Grid item>
           <Tooltip
-            title="For the displayed id of the visualised data"
+            title="Magnitude field for sizes of the rectangles"
             arrow
             placement="top"
           >
             <FormControl sx={{ m: 1, minWidth: 120 }}>
-              source for identification field
+              source for size field
               <Select
-                value={safeGetFieldIndex(fieldsAll, idCol)}
+                value={safeGetFieldIndex(fieldsAll, valueCol)}
                 onChange={(e) => {
-                  setIdCol(
+                  setValueCol(
                     safeGetField(
                       fieldsAll,
                       Number(e.target.value),

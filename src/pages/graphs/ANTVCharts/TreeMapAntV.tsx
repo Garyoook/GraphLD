@@ -74,25 +74,25 @@ const TreeMapAntV = (props: VisDataProps) => {
       const layer = hds[hds.length - 1];
       const nextLayer = layerHeaders[layerHeaders.indexOf(layer) + 1];
 
-      const catogories = Array.from(
+      const categories = Array.from(
         new Set(layerData.map((item: any) => item[layer])),
       );
 
       const treeData: any[] = [];
-      catogories.forEach((catogory: string[]) => {
-        const catogoriesData = layerData.filter((item: any) => {
-          return item[layer] === catogory;
+      categories.forEach((category: string[]) => {
+        const categoriesData = layerData.filter((item: any) => {
+          return item[layer] === category;
         });
 
         const branchObj: any = {};
-        branchObj.name = catogory;
-        branchObj[layer] = catogory;
-        const children = DFS([...hds, nextLayer], catogoriesData);
+        branchObj.name = category;
+        branchObj[layer] = category;
+        const children = DFS([...hds, nextLayer], categoriesData);
         if (children.length > 0) {
           branchObj['children'] = children;
         } else {
-          branchObj['value'] = catogoriesData[0][valueCol];
-          branchObj[valueCol] = catogoriesData[0][valueCol];
+          branchObj['value'] = categoriesData[0][valueCol];
+          branchObj[valueCol] = categoriesData[0][valueCol];
         }
         treeData.push(branchObj);
       });
@@ -167,38 +167,6 @@ const TreeMapAntV = (props: VisDataProps) => {
       <Treemap {...config} />
 
       <Grid container spacing={2}>
-        {/* <Grid item>
-          <Tooltip
-            title="For catogorise data by different colors"
-            arrow
-            placement="top"
-          >
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
-              source for catogories field
-              <Select
-                value={safeGetFieldIndex(fieldsAll, categoryCol)}
-                onChange={(e) => {
-                  setCategoryCol(
-                    safeGetField(
-                      fieldsAll,
-                      Number(e.target.value),
-                      emptyHeader,
-                    ),
-                  );
-                }}
-              >
-                {fieldsAll.map((item, index) => {
-                  return (
-                    <MenuItem key={index} value={index}>
-                      {item}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          </Tooltip>
-        </Grid> */}
-
         {layerHeaders.length > 1 &&
           layerHeaders.slice(0, -1).map((layer, index) => {
             return (
