@@ -1,3 +1,4 @@
+import { GRAPHDB_HOST } from '@/config';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -5,9 +6,17 @@ import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import MenuIcon from '@mui/icons-material/Menu';
 import SchemaIcon from '@mui/icons-material/Schema';
 import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  MenuItem,
+  Select,
   Tooltip,
 } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -19,8 +28,8 @@ import List from '@mui/material/List';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Repositories from './Repositories';
 import SparqlPage from './SparqlPage';
 import {
@@ -31,6 +40,7 @@ import {
 import GraphsPage from './graphs';
 import { DatabaseState } from './reducer/databaseReducer';
 import SchemaPage from './schemaPage';
+import { getRepoList } from './service';
 
 interface IRepository {
   id: number;
@@ -57,8 +67,131 @@ function DashboardContent() {
     (state: DatabaseState) => state.database.db_prefix_URL,
   );
 
+  const dispatch = useDispatch();
+
   const [siderOpen, setSiderOpen] = useState(true);
   const [tab, setTab] = useState(TABS_DASHBOARD.REPOSITORIES);
+
+  const [repoList, setRepoList] = useState<string[]>([]);
+  const [selectRepoReminder, setSelectRepoReminder] = useState<boolean>(false);
+
+  useEffect(() => {
+    setSelectRepoReminder(
+      repo_graphDB === undefined || repo_graphDB === 'None',
+    );
+  }, [repo_graphDB]);
+
+  useEffect(() => {
+    fetchRepos();
+  }, []);
+
+  async function fetchRepos() {
+    try {
+      const response = await getRepoList();
+
+      if (response.status === 200) {
+        const data = response.data;
+        const data_bindings = data.results.bindings;
+
+        const repoList = data_bindings.map(
+          (data_binding: any, index: number) => {
+            return data_binding.id.value;
+          },
+        );
+
+        setRepoList(['None', ...repoList]);
+        // set default repo to the first of the list.
+        if (repoList.length > 0 && repo_graphDB === undefined) {
+          dispatch({ type: 'database/setRepo', payload: repoList[0] });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const selectRepo = () => {
+    return (
+      <Grid
+        sx={{
+          backgroundColor: '#fff',
+          color: '#000',
+          borderRadius: 2,
+          pl: 2,
+          pr: 2,
+        }}
+      >
+        Select a data repository:
+        <Select
+          size="small"
+          value={repo_graphDB ? repoList.indexOf(repo_graphDB) : 0}
+          displayEmpty
+          inputProps={{ 'aria-label': 'Without label' }}
+          style={{
+            margin: 5,
+            color:
+              repo_graphDB && repo_graphDB !== 'None' ? '#22cc22' : '#cc2222',
+            fontWeight: 'bold',
+            backgroundColor: '#fff',
+          }}
+        >
+          {repoList.map((repo: any) => {
+            return (
+              <MenuItem
+                key={repoList.indexOf(repo)}
+                value={repoList.indexOf(repo)}
+                onClick={() => {
+                  dispatch({ type: 'database/setRepo', payload: repo });
+                }}
+                style={{
+                  color: repo !== 'None' ? '#22cc22' : '#cc2222',
+                  fontWeight: 'bold',
+                  borderRadius: 5,
+                  border: '1px solid #aaa',
+                  margin: 3,
+                }}
+              >
+                {repo}
+              </MenuItem>
+            );
+          })}
+        </Select>
+      </Grid>
+    );
+  };
+
+  function EmptyRepoReminder() {
+    return (
+      <Dialog
+        open={selectRepoReminder}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        fullWidth
+        maxWidth="sm"
+        style={{ padding: 30 }}
+      >
+        <DialogTitle id="alert-dialog-title">
+          {'Data Repository not specified'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            You can create repositories in{' '}
+            <Button
+              variant="text"
+              size="small"
+              href={`${GRAPHDB_HOST}/repository`}
+              target="_blank"
+              rel="noreferrer"
+              style={{ textTransform: 'none' }}
+            >
+              GraphDB Workbench
+            </Button>
+          </DialogContentText>
+          {selectRepo()}
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   const toggleDrawer = () => {
     setSiderOpen(!siderOpen);
@@ -100,6 +233,7 @@ function DashboardContent() {
 
   return (
     <ThemeProvider theme={mdTheme}>
+      {EmptyRepoReminder()}
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="absolute" open={siderOpen}>
@@ -130,11 +264,7 @@ function DashboardContent() {
             >
               GraphLD
             </Typography>
-            {/* <IconButton color='inherit'>
-                            <Badge badgeContent={4} color='secondary'>
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton> */}
+            {selectRepo()}
           </Toolbar>
         </AppBar>
         <Drawer id={'DashBoardDrawer'} variant="permanent" open={siderOpen}>

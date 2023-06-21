@@ -1,16 +1,4 @@
-import { GRAPHDB_HOST } from '@/config';
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Grid,
-  MenuItem,
-  Paper,
-  Select,
-  TextField,
-} from '@mui/material';
+import { Grid, MenuItem, Paper, Select, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,16 +15,9 @@ function Repositories() {
 
   const dispatch = useDispatch();
 
-  const [selectRepoReminder, setSelectRepoReminder] = useState<boolean>(false);
+  const [repoList, setRepoList] = useState<string[]>([]);
   const [columnsRepoTable, setColumnsRepoTable] = useState<any>([]);
   const [dataRepoTable, setDataRepoTable] = useState<any>([]);
-  const [repoList, setRepoList] = useState<string[]>([]);
-
-  useEffect(() => {
-    setSelectRepoReminder(
-      repo_graphDB === undefined || repo_graphDB === 'None',
-    );
-  }, [repo_graphDB]);
 
   useEffect(() => {
     fetchRepos();
@@ -152,34 +133,6 @@ function Repositories() {
           <Grid container spacing={3}>
             <Grid item xs={12}>
               {selectRepo()}
-              <Dialog
-                open={selectRepoReminder}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                fullWidth
-                maxWidth="sm"
-                style={{ padding: 30 }}
-              >
-                <DialogTitle id="alert-dialog-title">
-                  {'Data Repository not specified'}
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                    You can create repositories in{' '}
-                    <Button
-                      variant="text"
-                      size="small"
-                      href={`${GRAPHDB_HOST}/repository`}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{ textTransform: 'none' }}
-                    >
-                      GraphDB Workbench
-                    </Button>
-                  </DialogContentText>
-                  {selectRepo()}
-                </DialogContent>
-              </Dialog>
             </Grid>
 
             <Grid item xs={12}>
@@ -216,10 +169,7 @@ function Repositories() {
           <DataGrid
             rows={dataRepoTable}
             columns={columnsRepoTable}
-            onRowClick={(params) => {
-              const title = params.row.title;
-              title && dispatch({ type: 'database/setRepo', payload: title });
-            }}
+            disableSelectionOnClick
           />
         </Paper>
       </Grid>
