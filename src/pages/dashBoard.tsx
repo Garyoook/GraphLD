@@ -70,7 +70,7 @@ function DashboardContent() {
   const dispatch = useDispatch();
 
   const [siderOpen, setSiderOpen] = useState(true);
-  const [tab, setTab] = useState(TABS_DASHBOARD.REPOSITORIES);
+  const [tab, setTab] = useState(TABS_DASHBOARD.SPARQL_QUERY);
 
   const [repoList, setRepoList] = useState<string[]>([]);
   const [selectRepoReminder, setSelectRepoReminder] = useState<boolean>(false);
