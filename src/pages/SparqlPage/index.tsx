@@ -22,6 +22,7 @@ import {
   IconButton,
   Paper,
   Popover,
+  Skeleton,
   Snackbar,
   Switch,
   Tab,
@@ -1330,6 +1331,7 @@ WHERE {
   const [oneManyRInfo, setOneManyRInfo] = useState('');
 
   function closeAllWarnings() {
+    setShowAlert(false);
     setShowMissingKeyWarning(false);
     setShowTooMuchDataWarning(false);
     setShowManyManyRelationWarning(false);
@@ -1490,6 +1492,8 @@ WHERE {
       setSelectedTab(selectedTab - 1);
       setQuery(newTabList[selectedTab - 1]);
       closeAllWarnings();
+      setDataSource([]);
+      setRecommendations([]);
     }
   }
 
@@ -1644,6 +1648,8 @@ PREFIX : <${db_prefix_URL}>`;
     const newQuery = tabList[newValue];
     setQuery(newQuery);
     setSelectedTab(newValue);
+    setDataSource([]);
+    setRecommendations([]);
     closeAllWarnings();
   };
 
@@ -1689,6 +1695,8 @@ PREFIX : <${db_prefix_URL}>`;
                 setQuery(newQuery);
                 setSelectedTab(tabList.length);
                 closeAllWarnings();
+                setDataSource([]);
+                setRecommendations([]);
               }}
             >
               <AddCircleOutlineIcon />
@@ -2386,10 +2394,12 @@ PREFIX : <${db_prefix_URL}>`;
                 <Alert severity="error" style={{ height: '100%' }}>
                   {alertText}
                 </Alert>
+              ) : loading ? (
+                <Skeleton variant="rounded" width="100%" height="100%" />
               ) : dataSource.length === 0 ? (
                 <Alert
                   severity="info"
-                  style={{ height: '100%', textAlign: 'center' }}
+                  style={{ height: '100%', justifyContent: 'center' }}
                 >
                   {`Empty result`}
                 </Alert>
