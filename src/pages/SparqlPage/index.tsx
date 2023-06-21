@@ -266,7 +266,7 @@ WHERE {
       setFullLoading(true);
       initConceptualModelInfo(repo_graphDB, db_prefix_URL);
     }
-  }, []);
+  }, [repo_graphDB, db_prefix_URL]);
 
   useEffect(() => {
     if (searchParams.get('query')) {
