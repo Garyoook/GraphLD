@@ -1489,6 +1489,7 @@ WHERE {
       setTabList(newTabList);
       setSelectedTab(selectedTab - 1);
       setQuery(newTabList[selectedTab - 1]);
+      closeAllWarnings();
     }
   }
 
@@ -1643,6 +1644,7 @@ PREFIX : <${db_prefix_URL}>`;
     const newQuery = tabList[newValue];
     setQuery(newQuery);
     setSelectedTab(newValue);
+    closeAllWarnings();
   };
 
   function editorTabs() {
@@ -1686,6 +1688,7 @@ PREFIX : <${db_prefix_URL}>`;
                 setTabList([...tabList, newQuery]);
                 setQuery(newQuery);
                 setSelectedTab(tabList.length);
+                closeAllWarnings();
               }}
             >
               <AddCircleOutlineIcon />
