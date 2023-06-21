@@ -573,13 +573,14 @@ WHERE {
         total_class_num === 2 &&
         total_PAB_num === 1 &&
         !hasKeyFunctionalProperty
-          ? generateRatingsFor2C1PAB(
+          ? await generateRatingsFor2C1PAB(
               dataResults,
               key_var_count,
               nonKey_var_count,
               nonKey_var_list,
               var_to_range_mapping,
               vars_head,
+              CLASSES,
               messages,
             )
           : {};
@@ -624,6 +625,7 @@ WHERE {
               key_var_list,
               nonKey_var_list,
               var_to_range_mapping,
+              CLASSES,
               messages,
             )
           : {};
@@ -670,13 +672,14 @@ WHERE {
         total_class_num_l2 === 2 &&
         total_PAB_num === 1 &&
         !hasKeyFunctionalProperty
-          ? generateRatingsFor2C1PAB(
+          ? await generateRatingsFor2C1PAB(
               dataResults,
               key_var_count_l2,
               nonKey_var_count_l2,
               nonKey_var_list,
               var_to_range_mapping,
               vars_head,
+              CLASSES,
               messages,
             )
           : {};
@@ -931,13 +934,14 @@ WHERE {
     return ratings;
   }
 
-  function generateRatingsFor2C1PAB(
+  async function generateRatingsFor2C1PAB(
     dataResults: any[],
     key_var_count: number,
     nonKey_var_count: number,
     nonKey_var_list: string[],
     var_to_range_mapping: any,
     vars_head: string[],
+    CLASSES: string[],
     messages: string[],
   ) {
     const ratings: any = {
@@ -966,18 +970,139 @@ WHERE {
 
     checkForManyManyRelationships(vars_head, var_to_range_mapping, dataResults);
 
+    const relationshipCheck = await checkRelationships(CLASSES);
+    if (relationshipCheck.manyManyRelationships.length > 0) {
+      let message = 'Many-Many Relationships detected: \n';
+      for (const r of relationshipCheck.manyManyRelationships) {
+        message += `[${r.class1} - ${r.class2}] \n`;
+      }
+
+      setManyManyRInfo(message);
+      setShowManyManyRelationInfo(true);
+    }
+    if (relationshipCheck.oneManyRelationships.length > 0) {
+      let message = 'One-Many Relationships detected: \n';
+      for (const r of relationshipCheck.oneManyRelationships) {
+        message += `[${r.class1} - ${r.class2}] \n`;
+      }
+
+      setOneManyRInfo(message);
+      setShowOneManyRelationInfo(true);
+    }
+
     return ratings;
+  }
+
+  async function checkRelationships(CLASSES: string[]) {
+    const classes_involved = CLASSES;
+    console.log('Classes involved', classes_involved);
+
+    const oneManyRelationships: any[] = [];
+    const manyManyRelationships: any[] = [];
+
+    let count_one_many_R = 0;
+    let count_many_many_R = 0;
+    for (let i = 0; i < classes_involved.length - 1; i++) {
+      for (let j = i + 1; j < classes_involved.length; j++) {
+        const class1 = classes_involved[i];
+        const class2 = classes_involved[j];
+
+        const query = sparql_find_relationships_2C(class1, class2);
+        const querySwapped = sparql_find_relationships_2C(class2, class1);
+        try {
+          const queryRes = await sendSPARQLquery(repo_graphDB, query, true);
+          const queryResSwapped = await sendSPARQLquery(
+            repo_graphDB,
+            querySwapped,
+            true,
+          );
+          const data = queryResultToData(queryRes);
+          // console.log(`Permute class ${class1} and ${class2}`, data);
+          const dataswapped = queryResultToData(queryResSwapped);
+          // console.log(`Permute class ${class2} and ${class1}`, dataswapped);
+
+          const instance_mapping: any = {};
+          let foundOneMany = false;
+          if (data.length > 0) {
+            for (const row of data) {
+              const instance1 = row['c1'];
+              const instance2 = row['c2'];
+              if (instance_mapping[instance1]) {
+                instance_mapping[instance1].push(instance2);
+                foundOneMany = true;
+              } else {
+                instance_mapping[instance1] = [instance2];
+              }
+            }
+            // console.log('instance mapping for data', instance_mapping);
+            count_one_many_R += foundOneMany ? 1 : 0;
+          }
+
+          const instance_mapping_swapped: any = {};
+          let foundOneManySwapped = false;
+          if (dataswapped.length > 0) {
+            for (const row of dataswapped) {
+              const instance1 = row['c1'];
+              const instance2 = row['c2'];
+              if (instance_mapping_swapped[instance1]) {
+                instance_mapping_swapped[instance1].push(instance2);
+                foundOneManySwapped = true;
+              } else {
+                instance_mapping_swapped[instance1] = [instance2];
+              }
+            }
+            count_one_many_R += foundOneManySwapped ? 1 : 0;
+            // console.log(
+            //   'instance mapping for dataswapped',
+            //   instance_mapping_swapped,
+            // );
+          }
+          if (foundOneMany && foundOneManySwapped) {
+            manyManyRelationships.push({
+              class1,
+              class2,
+            });
+            count_many_many_R++;
+          } else if (foundOneMany) {
+            oneManyRelationships.push({
+              class1,
+              class2,
+            });
+          } else if (foundOneManySwapped) {
+            oneManyRelationships.push({
+              class2,
+              class1,
+            });
+          }
+        } catch (e) {
+          console.log('Error', e);
+        }
+      }
+    }
+
+    return { oneManyRelationships, manyManyRelationships };
   }
 
   const sparql_find_linking_PAB = (class1: string, class2: string) => {
     return `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  PREFIX : <${db_prefix_URL}>
   SELECT DISTINCT ?PAB
   WHERE {
       ?c1 rdf:type ${class1} .
       ?c2 rdf:type ${class2} .
       ?c1 ?PAB ?c2 . 
   }`;
+  };
+
+  const sparql_find_relationships_2C = (class1: string, class2: string) => {
+    return `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX : <${db_prefix_URL}>
+    SELECT  ?c1 ?interProp ?c2
+    WHERE {
+        ?c1 rdf:type ${class1} ;
+               ?interProp ?c2 .
+        ?c2 rdf:type ${class2} ;
+    }`;
   };
 
   async function generateRatingsForMCMPAB(
@@ -1059,6 +1184,26 @@ WHERE {
         // );
       }
     }
+
+    const relationshipCheck = await checkRelationships(CLASSES);
+    if (relationshipCheck.manyManyRelationships.length > 0) {
+      let message = 'Many-Many Relationships detected: \n';
+      for (const r of relationshipCheck.manyManyRelationships) {
+        message += `[${r.class1} - ${r.class2}] \n`;
+      }
+
+      setManyManyRInfo(message);
+      setShowManyManyRelationInfo(true);
+    }
+    if (relationshipCheck.oneManyRelationships.length > 0) {
+      let message = 'One-Many Relationships detected: \n';
+      for (const r of relationshipCheck.oneManyRelationships) {
+        message += `[${r.class1} - ${r.class2}] \n`;
+      }
+
+      setOneManyRInfo(message);
+      setShowOneManyRelationInfo(true);
+    }
     return ratings;
   }
 
@@ -1135,6 +1280,7 @@ WHERE {
     key_var_list: string[],
     nonKey_var_list: string[],
     var_to_range_mapping: any,
+    CLASSES: string[],
     messages: string[],
   ) {
     const ratings: any = {
@@ -1170,7 +1316,6 @@ WHERE {
         ratings.network += 100;
       }
     }
-
     return ratings;
   }
 
@@ -1178,11 +1323,18 @@ WHERE {
   const [showTooMuchDataWarning, setShowTooMuchDataWarning] = useState(false);
   const [showManyManyRelationWarning, setShowManyManyRelationWarning] =
     useState(false);
+  const [showManyManyRelationInfo, setShowManyManyRelationInfo] =
+    useState(false);
+  const [manyManyRInfo, setManyManyRInfo] = useState('');
+  const [showOneManyRelationInfo, setShowOneManyRelationInfo] = useState(false);
+  const [oneManyRInfo, setOneManyRInfo] = useState('');
 
   function closeAllWarnings() {
     setShowMissingKeyWarning(false);
     setShowTooMuchDataWarning(false);
     setShowManyManyRelationWarning(false);
+    setShowManyManyRelationInfo(false);
+    setShowOneManyRelationInfo(false);
   }
 
   function toggleInferredDataQuery() {
@@ -1800,6 +1952,36 @@ PREFIX : <${db_prefix_URL}>`;
     );
   }
 
+  function manyManyRelationshipInfo() {
+    return (
+      <Alert
+        sx={{
+          display: showManyManyRelationInfo ? 'flex' : 'none',
+          width: '100%',
+        }}
+        severity="info"
+        onClose={() => setShowManyManyRelationInfo(false)}
+      >
+        {manyManyRInfo}
+      </Alert>
+    );
+  }
+
+  function oneManyRelationshipInfo() {
+    return (
+      <Alert
+        sx={{
+          display: showOneManyRelationInfo ? 'flex' : 'none',
+          width: '100%',
+        }}
+        severity="info"
+        onClose={() => setShowOneManyRelationInfo(false)}
+      >
+        {manyManyRInfo}
+      </Alert>
+    );
+  }
+
   function visOptionPanel() {
     return (
       <Grid item>
@@ -2106,6 +2288,8 @@ PREFIX : <${db_prefix_URL}>`;
       />
       <Grid container spacing={2}>
         <Grid item xs={12}>
+          {oneManyRelationshipInfo()}
+          {manyManyRelationshipInfo()}
           {missingKeyWarning()}
           {tooMuchDataForVisWarning()}
           {manyManyRelationshipWarning()}
