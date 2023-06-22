@@ -114,10 +114,10 @@ const NetworkChart = (props: VisDataProps) => {
     autoFit: true,
     layout: {
       unitRadius: 80,
-      /** 节点直径 */
       nodeSize: 20,
-      /** 节点间距 */
       nodeSpacing: 10,
+      preventOverlap: true,
+      strictRadial: true,
     },
     nodeCfg: {
       size: 20,
@@ -140,6 +140,9 @@ const NetworkChart = (props: VisDataProps) => {
         d: 10,
         size: 2,
       },
+    },
+    minimapCfg: {
+      show: true,
     },
     behaviors: ['drag-canvas', 'zoom-canvas', 'drag-node'],
     onReady: (graph: any) => {

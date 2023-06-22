@@ -599,10 +599,10 @@ WHERE {
               messages,
             )
           : {};
-      console.log(
-        'ratings_multi_class_layer_relation: ',
-        ratings_multi_class_layer_relation,
-      );
+      // console.log(
+      //   'ratings_multi_class_layer_relation: ',
+      //   ratings_multi_class_layer_relation,
+      // );
 
       const ratings_2_class_1DP =
         total_class_num === 2 && hasKeyFunctionalProperty
@@ -686,17 +686,26 @@ WHERE {
               messages,
             )
           : {};
-
       ratings_recommendation = {
         ...ratings_recommendation,
         ...ratings_1_class,
         ...ratings_2_class_1PAB,
-        ...ratings_multi_class_layer_relation,
         ...ratings_2_class_1DP,
         ...ratings_3_class,
         ...ratings_1_class_l2,
         ...ratings_2_class_1PAB_l2,
       };
+
+      // when recommendation dict has intersected keys with ratings_recommendation:
+      for (const [key, value] of Object.entries(
+        ratings_multi_class_layer_relation,
+      )) {
+        if (Object.keys(ratings_recommendation).includes(key)) {
+          ratings_recommendation[key] += value;
+        } else {
+          ratings_recommendation[key] = value;
+        }
+      }
 
       // if rating valid in 3-class pattern, cancel the relation warning.
       const valuesOf3C = Object.values(ratings_3_class) as number[];
@@ -837,7 +846,9 @@ WHERE {
     });
     if (key_var_head_atleast2instances.length > 1) {
       setShowManyManyRelationWarning(true);
+      return true;
     }
+    return false;
   }
 
   function generateRatingsFor1C(
@@ -971,6 +982,12 @@ WHERE {
       hierarchyTree: 0,
       sunburst: 0,
       circlePacking: 0,
+
+      // many-many relationships
+      chord: 0,
+      sankey: 0,
+      network: 0,
+      heatmap: 0,
     };
     // if key var is explicitly specified as classes or lexical value
     if (key_var_count === 2 && nonKey_var_count === 1) {
@@ -1010,6 +1027,25 @@ WHERE {
 
       setOneManyRInfo(message);
       setShowOneManyRelationInfo(true);
+    }
+
+    const manyManyRInDataResult = checkForManyManyRelationships(
+      vars_head,
+      var_to_range_mapping,
+      dataResults,
+    );
+    if (manyManyRInDataResult) {
+      // one-many R vis
+      // ratings.treemap = 0;
+      // ratings.sunburst = 0;
+      // ratings.circlePacking = 0;
+      // ratings.hierarchyTree = 0;
+
+      // many-many R vis
+      ratings.chord += 190;
+      ratings.sankey += 200;
+      ratings.heatmap += 190;
+      ratings.network += 150;
     }
 
     return ratings;
@@ -1138,10 +1174,17 @@ WHERE {
     messages: string[],
   ) {
     const ratings: any = {
+      // one-many R vis:
       treemap: 0,
       hierarchyTree: 0,
       sunburst: 0,
       circlePacking: 0,
+
+      // many-many R vis:
+      chord: 0,
+      sankey: 0,
+      heatmap: 0,
+      network: 0,
     };
 
     const PABs = Object.keys(PAB_list);
@@ -1205,6 +1248,25 @@ WHERE {
         //   dataResults,
         // );
       }
+
+      const manyManyRInDataResult = checkForManyManyRelationships(
+        vars_head,
+        var_to_range_mapping,
+        dataResults,
+      );
+      if (manyManyRInDataResult) {
+        // one-many R vis:
+        // ratings.treemap = 0;
+        // ratings.sunburst = 0;
+        // ratings.circlePacking = 0;
+        // ratings.hierarchyTree = 0;
+
+        // many-many R vis:
+        ratings.chord += 190;
+        ratings.sankey += 200;
+        ratings.heatmap += 190;
+        ratings.network += 150;
+      }
     }
 
     const relationshipCheck = await checkRelationships(CLASSES);
@@ -1226,6 +1288,7 @@ WHERE {
       setOneManyRInfo(message);
       setShowOneManyRelationInfo(true);
     }
+
     return ratings;
   }
 
