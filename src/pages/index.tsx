@@ -37,7 +37,7 @@ function HomePage() {
           fontSize: 60,
           fontWeight: 'bold',
           backgroundColor: '#1976d2',
-          zIndex: (theme) => theme.zIndex.drawer + 1,
+          zIndex: (theme) => theme.zIndex.drawer + 2,
           fontFamily: '"Gill Sans", sans-serif',
           display: 'flex',
           flexDirection: 'column',

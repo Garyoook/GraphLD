@@ -168,7 +168,10 @@ function DashboardContent() {
         aria-describedby="alert-dialog-description"
         fullWidth
         maxWidth="sm"
-        style={{ padding: 30 }}
+        sx={{
+          padding: 30,
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
       >
         <DialogTitle id="alert-dialog-title">
           {'Data Repository not specified'}
