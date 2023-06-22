@@ -560,6 +560,7 @@ WHERE {
               nonKey_var_count,
               nonKey_var_list,
               var_to_range_mapping,
+              key_var_list,
               messages,
             )
           : {};
@@ -652,6 +653,7 @@ WHERE {
           nonKey_var_count,
           nonKey_var_list,
           var_to_range_mapping,
+          key_var_list,
           messages,
         );
       }
@@ -844,6 +846,7 @@ WHERE {
     nonKey_var_count: number,
     nonKey_var_list: string[],
     var_to_range_mapping: any,
+    key_var_list: string[],
     messages: string[],
   ) {
     const ratings = {
@@ -881,7 +884,25 @@ WHERE {
         }
 
         ratings.bar += 100;
-        ratings.column += 110;
+        ratings.column += 100;
+        ratings.pie += 100;
+        ratings.wordClouds = 100;
+      }
+
+      if (
+        ranges_type_mapping(nonKey_var_range) === DATA_DIMENTION_TYPE.SCALAR &&
+        key_var_list.some(
+          (v: string) =>
+            ranges_type_mapping(var_to_range_mapping[v]) ===
+            DATA_DIMENTION_TYPE.LEXICAL,
+        )
+      ) {
+        if (findCountryNames) {
+          ratings.choroplethMap += 110;
+        }
+
+        ratings.bar += 200;
+        ratings.column += 100;
         ratings.pie += 100;
         ratings.wordClouds = 100;
       }
