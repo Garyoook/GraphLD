@@ -1,6 +1,15 @@
 import { VisDataProps } from '@/pages/SparqlPage';
 import { Scatter } from '@ant-design/plots';
-import { FormControl, Grid, MenuItem, Select, Tooltip } from '@mui/material';
+import {
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  Grid,
+  MenuItem,
+  Select,
+  Switch,
+  Tooltip,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import {
   preprocessDataForVisualisation,
@@ -40,6 +49,7 @@ const ScatterPlotAntV = (props: VisDataProps) => {
   const [xField, setXField] = useState<string>('');
   const [yField, setYField] = useState<string>('');
   const [keyField, setKeyField] = useState<string>('');
+  const [turnOffColour, setTurnOffColour] = useState(false);
   const [regressionType, setRegressionType] = useState(Regression_Type.NONE);
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
@@ -90,6 +100,9 @@ const ScatterPlotAntV = (props: VisDataProps) => {
     xField,
     yField,
     colorField: keyField,
+    color: turnOffColour
+      ? ['#1976d2']
+      : ['#ffd500', '#82cab2', '#193442', '#d18768', '#7e827a'],
     shape: 'circle',
     // colorField: '',
     size: 4,
@@ -133,7 +146,7 @@ const ScatterPlotAntV = (props: VisDataProps) => {
     <Grid>
       <Scatter {...config} />
 
-      <Grid container spacing={2}>
+      <Grid container spacing={2} alignItems="center">
         <Grid item>
           <Tooltip title="Select input source for x axis" arrow placement="top">
             <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -215,6 +228,28 @@ const ScatterPlotAntV = (props: VisDataProps) => {
                 })}
               </Select>
             </FormControl>
+          </Tooltip>
+        </Grid>
+
+        <Grid item>
+          <Tooltip
+            title="Remove the color but keep the identification of the data points"
+            arrow
+            placement="top"
+          >
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={turnOffColour}
+                    onChange={(checked) =>
+                      setTurnOffColour(checked.target.checked)
+                    }
+                  />
+                }
+                label="Trun off colour?"
+              />
+            </FormGroup>
           </Tooltip>
         </Grid>
 

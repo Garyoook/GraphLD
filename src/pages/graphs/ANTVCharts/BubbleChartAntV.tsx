@@ -1,6 +1,15 @@
 import { VisDataProps } from '@/pages/SparqlPage';
 import { Scatter } from '@ant-design/plots';
-import { FormControl, Grid, MenuItem, Select, Tooltip } from '@mui/material';
+import {
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  Grid,
+  MenuItem,
+  Select,
+  Switch,
+  Tooltip,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import {
   preprocessDataForVisualisation,
@@ -18,6 +27,7 @@ const BubbleChartAntV = (props: VisDataProps) => {
   const [yField, setYField] = useState<string>('');
   const [sizeField, setSizeField] = useState('');
   const [colorField, setColorField] = useState('');
+  const [turnOffColour, setTurnOffColour] = useState(false);
 
   const [fieldsAll, setFieldsAll] = useState<string[]>([]);
 
@@ -70,7 +80,9 @@ const BubbleChartAntV = (props: VisDataProps) => {
     yField,
     sizeField,
     colorField,
-    color: ['#ffd500', '#82cab2', '#193442', '#d18768', '#7e827a'],
+    color: turnOffColour
+      ? ['#1976d2']
+      : ['#ffd500', '#82cab2', '#193442', '#d18768', '#7e827a'],
     size: [4, 40] as any,
     shape: 'circle',
     pointStyle: {
@@ -114,7 +126,7 @@ const BubbleChartAntV = (props: VisDataProps) => {
     <Grid>
       <Scatter {...config} />
 
-      <Grid container spacing={2}>
+      <Grid container spacing={2} alignItems="center">
         <Grid item>
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             source for x axis
@@ -197,7 +209,7 @@ const BubbleChartAntV = (props: VisDataProps) => {
             placement="top"
           >
             <FormControl sx={{ m: 1, minWidth: 120 }}>
-              source for color field
+              source for colour/identity field
               <Select
                 value={safeGetFieldIndex(fieldsAll, colorField)}
                 onChange={(e) => {
@@ -218,6 +230,28 @@ const BubbleChartAntV = (props: VisDataProps) => {
                 })}
               </Select>
             </FormControl>
+          </Tooltip>
+        </Grid>
+
+        <Grid item>
+          <Tooltip
+            title="Remove the color but keep the identification of the data points"
+            arrow
+            placement="top"
+          >
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={turnOffColour}
+                    onChange={(checked) =>
+                      setTurnOffColour(checked.target.checked)
+                    }
+                  />
+                }
+                label="Trun off colour?"
+              />
+            </FormGroup>
           </Tooltip>
         </Grid>
       </Grid>
