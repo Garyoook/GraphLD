@@ -1053,7 +1053,7 @@ WHERE {
 
   async function checkRelationships(CLASSES: string[]) {
     const classes_involved = CLASSES;
-    console.log('Classes involved', classes_involved);
+    console.log('Classes involved in relation checks', classes_involved);
 
     const oneManyRelationships: any[] = [];
     const manyManyRelationships: any[] = [];
@@ -1079,42 +1079,66 @@ WHERE {
           const dataswapped = queryResultToData(queryResSwapped);
           // console.log(`Permute class ${class2} and ${class1}`, dataswapped);
 
-          const instance_mapping: any = {};
+          const prop_instance_mapping: any = {};
           let foundOneMany = false;
           if (data.length > 0) {
             for (const row of data) {
               const instance1 = row['c1'];
               const instance2 = row['c2'];
-              if (instance_mapping[instance1]) {
-                instance_mapping[instance1].push(instance2);
-                foundOneMany = true;
+              const prop = row['interProp'];
+              if (prop_instance_mapping[prop]) {
+                if (prop_instance_mapping[prop][instance1]) {
+                  prop_instance_mapping[prop][instance1].push(instance2);
+                  foundOneMany = true;
+                } else {
+                  prop_instance_mapping[prop][instance1] = [instance2];
+                }
               } else {
-                instance_mapping[instance1] = [instance2];
+                prop_instance_mapping[prop] = {};
+                prop_instance_mapping[prop][instance1] = [instance2];
               }
             }
             // console.log('instance mapping for data', instance_mapping);
             count_one_many_R += foundOneMany ? 1 : 0;
           }
+          console.log(`props ${class1} - ${class2}  `, prop_instance_mapping);
 
-          const instance_mapping_swapped: any = {};
+          const prop_instance_mapping_swapped: any = {};
           let foundOneManySwapped = false;
           if (dataswapped.length > 0) {
             for (const row of dataswapped) {
               const instance1 = row['c1'];
               const instance2 = row['c2'];
-              if (instance_mapping_swapped[instance1]) {
-                instance_mapping_swapped[instance1].push(instance2);
-                foundOneManySwapped = true;
+              const prop = row['interProp'];
+              if (prop_instance_mapping_swapped[prop]) {
+                if (prop_instance_mapping_swapped[prop][instance1]) {
+                  prop_instance_mapping_swapped[prop][instance1].push(
+                    instance2,
+                  );
+                  foundOneManySwapped = true;
+                } else {
+                  prop_instance_mapping_swapped[prop][instance1] = [instance2];
+                }
               } else {
-                instance_mapping_swapped[instance1] = [instance2];
+                prop_instance_mapping_swapped[prop] = {};
+                prop_instance_mapping_swapped[prop][instance1] = [instance2];
               }
             }
             count_one_many_R += foundOneManySwapped ? 1 : 0;
-            // console.log(
-            //   'instance mapping for dataswapped',
-            //   instance_mapping_swapped,
-            // );
+            console.log(
+              `props ${class2} - ${class1}  `,
+              prop_instance_mapping_swapped,
+            );
           }
+          console.log(
+            `found one-many bwtween ${class1} - ${class2}?`,
+            foundOneMany,
+          );
+          console.log(
+            `found one-many bwtween ${class2} - ${class1}?`,
+            foundOneManySwapped,
+          );
+
           if (foundOneMany && foundOneManySwapped) {
             manyManyRelationships.push({
               class1,
@@ -2072,7 +2096,7 @@ PREFIX : <${db_prefix_URL}>`;
         severity="info"
         onClose={() => setShowOneManyRelationInfo(false)}
       >
-        {manyManyRInfo}
+        {oneManyRInfo}
       </Alert>
     );
   }
