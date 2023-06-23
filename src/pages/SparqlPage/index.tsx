@@ -2043,10 +2043,12 @@ PREFIX : <${db_prefix_URL}>`;
         sx={{
           display: showMissingKeyWarning ? 'flex' : 'none',
           width: '100%',
+          border: '1px solid #ff9800',
         }}
         severity="warning"
         onClose={() => setShowMissingKeyWarning(false)}
       >
+        <Grid style={{ fontWeight: 'bold' }}>{`[Query Analysis] `}</Grid>
         Key is missing in your query, this may affect your data visualisation
         please consider adding one
       </Alert>
@@ -2059,13 +2061,15 @@ PREFIX : <${db_prefix_URL}>`;
         sx={{
           display: showTooMuchDataWarning ? 'flex' : 'none',
           width: '100%',
+          border: '1px solid #ff9800',
         }}
         severity="warning"
         onClose={() => setShowTooMuchDataWarning(false)}
       >
+        <Grid style={{ fontWeight: 'bold' }}>{`[Data Analysis] `}</Grid>
         The cardinality of your result seems to exceed the configured threshold,
         some affected visualisation have been removed from recommendation.
-        Please consider applying a FILTER after your query.
+        Please consider applying a FILTER or LIMIT after your query.
       </Alert>
     );
   }
@@ -2075,12 +2079,14 @@ PREFIX : <${db_prefix_URL}>`;
         sx={{
           display: showManyManyRelationWarning ? 'flex' : 'none',
           width: '100%',
+          border: '1px solid #ff9800',
         }}
         severity="warning"
         onClose={() => setShowManyManyRelationWarning(false)}
       >
+        <Grid style={{ fontWeight: 'bold' }}>{`[Data Analysis] `}</Grid>
         Your query result contains many-many relationships, this may result in
-        incorrect visualisation. Please consider applying a filter in your query
+        incorrect visualisation. Please consider applying a FILTER in your query
         to remove possible overlaps in datasets.
       </Alert>
     );
@@ -2092,10 +2098,12 @@ PREFIX : <${db_prefix_URL}>`;
         sx={{
           display: showManyManyRelationInfo ? 'flex' : 'none',
           width: '100%',
+          border: '1px solid #2196f3',
         }}
         severity="info"
         onClose={() => setShowManyManyRelationInfo(false)}
       >
+        <Grid style={{ fontWeight: 'bold' }}>{`[Schema Analysis] `}</Grid>
         {manyManyRInfo}
       </Alert>
     );
@@ -2111,6 +2119,7 @@ PREFIX : <${db_prefix_URL}>`;
         severity="info"
         onClose={() => setShowOneManyRelationInfo(false)}
       >
+        <Grid style={{ fontWeight: 'bold' }}>{`[Schema Analysis] `}</Grid>
         {oneManyRInfo}
       </Alert>
     );
