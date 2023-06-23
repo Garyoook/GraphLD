@@ -359,7 +359,8 @@ WHERE {
     const messages: string[] = [];
     const CLASSES: string[] = [];
     const DP_RANGE_LOCAL: any = {};
-    const var_to_class: any = {};
+    const var_to_class: any = {}; // for variables in the query SELECT header
+    const all_var_to_class: any = {}; // for all variables including the ones in the query body
     const var_to_range_mapping: any = {};
     const keyVar_cardinality_mapping: any = {};
     const potential_key_var_DP_map: any = {};
@@ -421,6 +422,7 @@ WHERE {
             if (variable && variable.length > 0) {
               class_type = type_split[1].trim();
               var_to_class[variable] = class_type;
+              all_var_to_class[variable] = class_type;
               CLASSES.push(class_type);
               CA_DPA_mapping[class_type] = [];
               CA_PAB_mapping[class_type] = [];
@@ -452,6 +454,7 @@ WHERE {
               const range = ConceptualModelInfo.DP_Range_mapping[DP];
               var_to_range_mapping[var_in_stmt] = range;
               DP_RANGE_LOCAL[DP] = range;
+              all_var_to_class[var_in_stmt] = class_type;
               CA_DPA_mapping[class_type]?.push(DP);
               if (
                 ranges_type_mapping(range) === DATA_DIMENTION_TYPE.LEXICAL ||
@@ -583,6 +586,7 @@ WHERE {
               var_to_range_mapping,
               vars_head,
               CLASSES,
+              all_var_to_class,
               messages,
             )
           : {};
@@ -596,6 +600,7 @@ WHERE {
               vars_head,
               CLASSES,
               PAB_LIST,
+              all_var_to_class,
               messages,
             )
           : {};
@@ -683,6 +688,7 @@ WHERE {
               var_to_range_mapping,
               vars_head,
               CLASSES,
+              all_var_to_class,
               messages,
             )
           : {};
@@ -812,45 +818,58 @@ WHERE {
     return result;
   }
 
-  function checkForManyManyRelationships(
+  function checkForManyManyRDataAnalysis(
     vars_head: string[],
     var_to_range_mapping: any,
     dataResults: any[],
-    sparedColumns: string[] = [],
+    all_var_to_class: any,
+    classPairsToBeChecked: any[],
   ) {
     // check for posibble many-many relations:
     // by counting the number of unique values in the inferred key variables (lexical range)
-    const key_var_head: string[] = vars_head
-      .filter((v) => {
-        const range = var_to_range_mapping[v];
-        return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.LEXICAL;
-      })
-      .filter((v) => !sparedColumns.includes(v));
-    const instance_stats: any = {};
-    key_var_head.forEach((column: string) => {
-      instance_stats[column] = {};
-    });
+    let key_var_head_atleast2instances = [];
+    for (const ClassPair of classPairsToBeChecked) {
+      const { class1, class2 } = ClassPair;
+      console.log('class1: ', class1);
+      console.log('class2: ', class2);
 
-    dataResults.forEach((row: any, index) => {
+      const key_var_head: string[] = vars_head
+        .filter((v) => {
+          const range = var_to_range_mapping[v];
+          return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.LEXICAL;
+        })
+        .filter((v) => {
+          return (
+            all_var_to_class[v] === class1 || all_var_to_class[v] === class2
+          );
+        });
+
+      const instance_stats: any = {};
       key_var_head.forEach((column: string) => {
-        const data = row[column];
-        if (instance_stats[column][data]) {
-          instance_stats[column][data] += 1;
-        } else {
-          instance_stats[column][data] = 1;
-        }
+        instance_stats[column] = {};
       });
-    });
-    const key_var_head_atleast2instances = key_var_head.filter((column) => {
-      const instances_counts_dict = instance_stats[column];
-      return Object.values(instances_counts_dict).some(
-        (count: any) => count > 1,
+
+      dataResults.forEach((row: any, index) => {
+        key_var_head.forEach((column: string) => {
+          const data = row[column];
+          if (instance_stats[column][data]) {
+            instance_stats[column][data] += 1;
+          } else {
+            instance_stats[column][data] = 1;
+          }
+        });
+      });
+      key_var_head_atleast2instances = key_var_head.filter((column) => {
+        const instances_counts_dict = instance_stats[column];
+        return Object.values(instances_counts_dict).some(
+          (count: any) => count > 1,
+        );
+      });
+      console.log(
+        '[Data Analysis] checking for many-many relations:',
+        instance_stats,
       );
-    });
-    console.log(
-      '[Data Analysis] checking for many-many relations:',
-      instance_stats,
-    );
+    }
 
     if (key_var_head_atleast2instances.length > 1) {
       setShowManyManyRelationWarning(true);
@@ -983,6 +1002,7 @@ WHERE {
     var_to_range_mapping: any,
     vars_head: string[],
     CLASSES: string[],
+    all_var_to_class: any,
     messages: string[],
   ) {
     const ratings: any = {
@@ -1015,15 +1035,12 @@ WHERE {
       ratings.hierarchyTree += 100;
     }
 
-    checkForManyManyRelationships(vars_head, var_to_range_mapping, dataResults);
-
-    const relationshipCheck = await checkRelationships(CLASSES);
+    const relationshipCheck = await checkRelationshipsSchemaAnalysis(CLASSES);
     if (relationshipCheck.manyManyRelationships.length > 0) {
       let message = 'Many-Many Relationships detected: \n';
       for (const r of relationshipCheck.manyManyRelationships) {
         message += `[${r.class1} - ${r.class2}] \n`;
       }
-
       setManyManyRInfo(message);
       setShowManyManyRelationInfo(true);
     }
@@ -1032,22 +1049,26 @@ WHERE {
       for (const r of relationshipCheck.oneManyRelationships) {
         message += `[${r.class1} - ${r.class2}] \n`;
       }
-
       setOneManyRInfo(message);
       setShowOneManyRelationInfo(true);
     }
 
-    const manyManyRInDataResult = checkForManyManyRelationships(
+    const MMClasses = relationshipCheck.manyManyRelationships;
+    console.log('MMClasses', MMClasses);
+
+    const manyManyRInDataResult = checkForManyManyRDataAnalysis(
       vars_head,
       var_to_range_mapping,
       dataResults,
+      all_var_to_class,
+      MMClasses,
     );
     if (manyManyRInDataResult) {
       // one-many R vis
-      // ratings.treemap = 0;
-      // ratings.sunburst = 0;
-      // ratings.circlePacking = 0;
-      // ratings.hierarchyTree = 0;
+      ratings.treemap = 0;
+      ratings.sunburst = 0;
+      ratings.circlePacking = 0;
+      ratings.hierarchyTree = 0;
 
       // many-many R vis
       ratings.chord += 190;
@@ -1059,7 +1080,7 @@ WHERE {
     return ratings;
   }
 
-  async function checkRelationships(CLASSES: string[]) {
+  async function checkRelationshipsSchemaAnalysis(CLASSES: string[]) {
     const classes_involved = CLASSES;
     console.log(
       '[Class Analysis] Classes involved in relation checks',
@@ -1069,8 +1090,6 @@ WHERE {
     const oneManyRelationships: any[] = [];
     const manyManyRelationships: any[] = [];
 
-    let count_one_many_R = 0;
-    let count_many_many_R = 0;
     for (let i = 0; i < classes_involved.length - 1; i++) {
       for (let j = i + 1; j < classes_involved.length; j++) {
         const class1 = classes_involved[i];
@@ -1109,8 +1128,6 @@ WHERE {
                 prop_instance_mapping[prop][instance1] = [instance2];
               }
             }
-            // console.log('instance mapping for data', instance_mapping);
-            count_one_many_R += foundOneMany ? 1 : 0;
           }
           console.log(
             `[Class Analysis] props ${class1} - ${class2}  `,
@@ -1138,7 +1155,6 @@ WHERE {
                 prop_instance_mapping_swapped[prop][instance1] = [instance2];
               }
             }
-            count_one_many_R += foundOneManySwapped ? 1 : 0;
             console.log(
               `[Class Analysis] props ${class2} - ${class1}  `,
               prop_instance_mapping_swapped,
@@ -1158,7 +1174,6 @@ WHERE {
               class1,
               class2,
             });
-            count_many_many_R++;
           } else if (foundOneMany) {
             oneManyRelationships.push({
               class1,
@@ -1209,6 +1224,7 @@ WHERE {
     vars_head: string[],
     CLASSES: string[],
     PAB_list: any,
+    all_var_to_class: any,
     messages: string[],
   ) {
     const ratings: any = {
@@ -1278,37 +1294,10 @@ WHERE {
         ratings.sunburst += 90;
         ratings.circlePacking += 80;
         ratings.hierarchyTree += 20;
-
-        // this should be turned off because multiple countries are shown for their cities
-        // checkForManyManyRelationships(
-        //   vars_head,
-        //   var_to_range_mapping,
-        //   dataResults,
-        // );
-      }
-
-      const manyManyRInDataResult = checkForManyManyRelationships(
-        vars_head,
-        var_to_range_mapping,
-        dataResults,
-        // [vars_head[0]],
-      );
-      if (manyManyRInDataResult) {
-        // one-many R vis:
-        // ratings.treemap = 0;
-        // ratings.sunburst = 0;
-        // ratings.circlePacking = 0;
-        // ratings.hierarchyTree = 0;
-
-        // many-many R vis:
-        ratings.chord += 190;
-        ratings.sankey += 200;
-        ratings.heatmap += 190;
-        ratings.network += 150;
       }
     }
 
-    const relationshipCheck = await checkRelationships(CLASSES);
+    const relationshipCheck = await checkRelationshipsSchemaAnalysis(CLASSES);
     if (relationshipCheck.manyManyRelationships.length > 0) {
       let message = 'Many-Many Relationships detected: \n';
       for (const r of relationshipCheck.manyManyRelationships) {
@@ -1326,6 +1315,29 @@ WHERE {
 
       setOneManyRInfo(message);
       setShowOneManyRelationInfo(true);
+    }
+
+    const MMClasses = relationshipCheck.oneManyRelationships;
+    console.log('MMClasses', MMClasses);
+    const manyManyRInDataResult = checkForManyManyRDataAnalysis(
+      vars_head,
+      var_to_range_mapping,
+      dataResults,
+      all_var_to_class,
+      MMClasses,
+    );
+    if (manyManyRInDataResult) {
+      // one-many R vis:
+      ratings.treemap = 0;
+      ratings.sunburst = 0;
+      ratings.circlePacking = 0;
+      ratings.hierarchyTree = 0;
+
+      // many-many R vis:
+      ratings.chord += 190;
+      ratings.sankey += 200;
+      ratings.heatmap += 190;
+      ratings.network += 150;
     }
 
     return ratings;
@@ -1391,8 +1403,6 @@ WHERE {
       ratings.stackedColumn += 15;
       ratings.groupedColumn += 15;
     }
-
-    checkForManyManyRelationships(vars_head, var_to_range_mapping, dataResults);
 
     return ratings;
   }
