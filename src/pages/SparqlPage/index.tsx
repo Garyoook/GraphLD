@@ -2115,6 +2115,7 @@ PREFIX : <${db_prefix_URL}>`;
         sx={{
           display: showOneManyRelationInfo ? 'flex' : 'none',
           width: '100%',
+          border: '1px solid #2196f3',
         }}
         severity="info"
         onClose={() => setShowOneManyRelationInfo(false)}
