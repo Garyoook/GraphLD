@@ -830,8 +830,8 @@ WHERE {
     let key_var_head_atleast2instances = [];
     for (const ClassPair of classPairsToBeChecked) {
       const { class1, class2 } = ClassPair;
-      console.log('class1: ', class1);
-      console.log('class2: ', class2);
+      // console.log('class1: ', class1);
+      // console.log('class2: ', class2);
 
       const key_var_head: string[] = vars_head
         .filter((v) => {
@@ -1054,7 +1054,6 @@ WHERE {
     }
 
     const MMClasses = relationshipCheck.manyManyRelationships;
-    console.log('MMClasses', MMClasses);
 
     const manyManyRInDataResult = checkForManyManyRDataAnalysis(
       vars_head,
@@ -1318,7 +1317,6 @@ WHERE {
     }
 
     const MMClasses = relationshipCheck.oneManyRelationships;
-    console.log('MMClasses', MMClasses);
     const manyManyRInDataResult = checkForManyManyRDataAnalysis(
       vars_head,
       var_to_range_mapping,
