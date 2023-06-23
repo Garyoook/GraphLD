@@ -816,13 +816,16 @@ WHERE {
     vars_head: string[],
     var_to_range_mapping: any,
     dataResults: any[],
+    sparedColumns: string[] = [],
   ) {
     // check for posibble many-many relations:
     // by counting the number of unique values in the inferred key variables (lexical range)
-    const key_var_head: string[] = vars_head.filter((v) => {
-      const range = var_to_range_mapping[v];
-      return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.LEXICAL;
-    });
+    const key_var_head: string[] = vars_head
+      .filter((v) => {
+        const range = var_to_range_mapping[v];
+        return ranges_type_mapping(range) === DATA_DIMENTION_TYPE.LEXICAL;
+      })
+      .filter((v) => !sparedColumns.includes(v));
     const instance_stats: any = {};
     key_var_head.forEach((column: string) => {
       instance_stats[column] = {};
@@ -844,6 +847,11 @@ WHERE {
         (count: any) => count > 1,
       );
     });
+    console.log(
+      '[Data Analysis] checking for many-many relations:',
+      instance_stats,
+    );
+
     if (key_var_head_atleast2instances.length > 1) {
       setShowManyManyRelationWarning(true);
       return true;
@@ -1053,7 +1061,10 @@ WHERE {
 
   async function checkRelationships(CLASSES: string[]) {
     const classes_involved = CLASSES;
-    console.log('Classes involved in relation checks', classes_involved);
+    console.log(
+      '[Class Analysis] Classes involved in relation checks',
+      classes_involved,
+    );
 
     const oneManyRelationships: any[] = [];
     const manyManyRelationships: any[] = [];
@@ -1101,7 +1112,10 @@ WHERE {
             // console.log('instance mapping for data', instance_mapping);
             count_one_many_R += foundOneMany ? 1 : 0;
           }
-          console.log(`props ${class1} - ${class2}  `, prop_instance_mapping);
+          console.log(
+            `[Class Analysis] props ${class1} - ${class2}  `,
+            prop_instance_mapping,
+          );
 
           const prop_instance_mapping_swapped: any = {};
           let foundOneManySwapped = false;
@@ -1126,16 +1140,16 @@ WHERE {
             }
             count_one_many_R += foundOneManySwapped ? 1 : 0;
             console.log(
-              `props ${class2} - ${class1}  `,
+              `[Class Analysis] props ${class2} - ${class1}  `,
               prop_instance_mapping_swapped,
             );
           }
           console.log(
-            `found one-many bwtween ${class1} - ${class2}?`,
+            `[Class Analysis] found one-many bwtween ${class1} - ${class2}?`,
             foundOneMany,
           );
           console.log(
-            `found one-many bwtween ${class2} - ${class1}?`,
+            `[Class Analysis] found one-many bwtween ${class2} - ${class1}?`,
             foundOneManySwapped,
           );
 
@@ -1277,6 +1291,7 @@ WHERE {
         vars_head,
         var_to_range_mapping,
         dataResults,
+        // [vars_head[0]],
       );
       if (manyManyRInDataResult) {
         // one-many R vis:
