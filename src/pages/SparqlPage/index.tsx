@@ -930,7 +930,15 @@ WHERE {
 
     if (key_var_head_atleast2instances.length > 1) {
       setShowManyManyRelationWarning(true);
+      setRelationshipInfoDataAnalysis(
+        `Many-Many Relationships detected in the Data Results`,
+      );
       return true;
+    } else if (key_var_head_atleast2instances.length === 1) {
+      setShowManyManyRelationWarning(true);
+      setRelationshipInfoDataAnalysis(
+        'One-Many Relationships detected in the Data Results',
+      );
     }
     return false;
   }
@@ -1094,7 +1102,7 @@ WHERE {
 
     const relationshipCheck = await checkRelationshipsSchemaAnalysis(CLASSES);
     if (relationshipCheck.manyManyRelationships.length > 0) {
-      let message = 'Many-Many Relationships detected: \n';
+      let message = 'Many-Many Relationships detected between Classes: \n';
       for (const r of relationshipCheck.manyManyRelationships) {
         message += `[${r.class1} - ${r.class2}] \n`;
       }
@@ -1102,7 +1110,7 @@ WHERE {
       setShowManyManyRelationInfo(true);
     }
     if (relationshipCheck.oneManyRelationships.length > 0) {
-      let message = 'One-Many Relationships detected: \n';
+      let message = 'One-Many Relationships detected between Classes: \n';
       for (const r of relationshipCheck.oneManyRelationships) {
         message += `[${r.class1} - ${r.class2}] \n`;
       }
@@ -1524,6 +1532,8 @@ WHERE {
   const [manyManyRInfo, setManyManyRInfo] = useState('');
   const [showOneManyRelationInfo, setShowOneManyRelationInfo] = useState(false);
   const [oneManyRInfo, setOneManyRInfo] = useState('');
+  const [relationshipInfoDataAnalysis, setRelationshipInfoDataAnalysis] =
+    useState('');
 
   function closeAllWarnings() {
     setShowAlert(false);
@@ -2165,7 +2175,7 @@ PREFIX : <${db_prefix_URL}>`;
       </Alert>
     );
   }
-  function manyManyRelationshipWarning() {
+  function manyManyRelationshipWarningDataAnalysis() {
     return (
       <Alert
         sx={{
@@ -2173,13 +2183,11 @@ PREFIX : <${db_prefix_URL}>`;
           width: '100%',
           border: '1px solid #ff9800',
         }}
-        severity="warning"
+        severity="info"
         onClose={() => setShowManyManyRelationWarning(false)}
       >
         <Grid style={{ fontWeight: 'bold' }}>{`[Data Analysis] `}</Grid>
-        Your query result contains many-many relationships, this may result in
-        incorrect visualisation. Please consider applying a FILTER in your query
-        to remove possible overlaps in datasets.
+        {relationshipInfoDataAnalysis}
       </Alert>
     );
   }
@@ -2526,9 +2534,9 @@ PREFIX : <${db_prefix_URL}>`;
         <Grid item xs={12}>
           {oneManyRelationshipInfo()}
           {manyManyRelationshipInfo()}
+          {manyManyRelationshipWarningDataAnalysis()}
           {missingKeyWarning()}
           {tooMuchDataForVisWarning()}
-          {manyManyRelationshipWarning()}
         </Grid>
         <Grid
           item
