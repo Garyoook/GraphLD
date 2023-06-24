@@ -1785,13 +1785,32 @@ PREFIX : <${db_prefix_URL}>`;
     }
   };
 
-  const exampleQueryList = [initialString, f3a, f3b, year_pop, border_length];
+  const exampleQueryList = [
+    initialString,
+    f3a,
+    f3b,
+    year_pop,
+    border_length,
+    country_city_pop,
+    conti_country_city_pop,
+  ];
   const exampleQueryFeatures = [
     'Countries with their population count',
     'Countries with their inflation rate and unemployment rate, key missing in query header',
     'Countries with their continent and population count',
     'Historical population statictics through time',
     'Countries with neighbouring countries and border length',
+    'Countries with their cities and population count',
+    'Continents with their countries and cities and population count',
+  ];
+  const exampleQueriesTitle = [
+    'Patten1',
+    'Pattern2',
+    'Pattern3',
+    'Pattern4',
+    'Pattern5',
+    'One-Many',
+    'Many-Many',
   ];
 
   function exampleQueries() {
@@ -1825,7 +1844,8 @@ PREFIX : <${db_prefix_URL}>`;
                   marginLeft: 4,
                 }}
               >
-                query {index + 1}
+                {/* query {index + 1} */}
+                {exampleQueriesTitle[index]}
               </Button>
             </Tooltip>
           );
