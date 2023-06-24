@@ -1169,10 +1169,17 @@ WHERE {
           );
 
           if (foundOneMany && foundOneManySwapped) {
-            manyManyRelationships.push({
-              class1,
-              class2,
+            // remove repeated class pairs
+            const found = manyManyRelationships.find((r) => {
+              return r.class1 === class1 && r.class2 === class2;
             });
+
+            if (!found) {
+              manyManyRelationships.push({
+                class1,
+                class2,
+              });
+            }
           } else if (foundOneMany) {
             oneManyRelationships.push({
               class1,
