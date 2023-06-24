@@ -114,13 +114,13 @@ const NetworkChart = (props: VisDataProps) => {
     autoFit: true,
     layout: {
       unitRadius: 80,
-      nodeSize: 20,
-      nodeSpacing: 10,
+      nodeSize: 30,
+      nodeSpacing: 60,
       preventOverlap: true,
       strictRadial: true,
     },
     nodeCfg: {
-      size: 20,
+      size: 30,
       style: {
         fill: '#6CE8DC',
         stroke: '#6CE8DC',
@@ -137,8 +137,13 @@ const NetworkChart = (props: VisDataProps) => {
         lineWidth: 1,
       },
       endArrow: {
-        d: 10,
-        size: 2,
+        d: 15,
+        size: 5,
+      },
+      label: {
+        style: {
+          fontSize: 5,
+        },
       },
     },
     minimapCfg: {
