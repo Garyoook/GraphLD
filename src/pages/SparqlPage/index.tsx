@@ -131,10 +131,10 @@ SELECT ?inflation ?unemployment WHERE {
 
   const f3b = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
-SELECT ?continent ?name ?population 
+SELECT ?continent ?country ?population 
 WHERE {
     ?c rdf:type :Country ;
-        :name ?name ;
+        :name ?country ;
         :population ?population ;
         :encompassedByInfo ?en .
     ?en :encompassedBy ?con ;
