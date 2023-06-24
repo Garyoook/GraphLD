@@ -1082,7 +1082,7 @@ WHERE {
   async function checkRelationshipsSchemaAnalysis(CLASSES: string[]) {
     const classes_involved = CLASSES;
     console.log(
-      '[Class Analysis] Classes involved in relation checks',
+      '[Schema Analysis] Classes involved in relation checks',
       classes_involved,
     );
 
@@ -1129,7 +1129,7 @@ WHERE {
             }
           }
           console.log(
-            `[Class Analysis] props ${class1} - ${class2}  `,
+            `[Schema Analysis] props ${class1} - ${class2}  `,
             prop_instance_mapping,
           );
 
@@ -1155,16 +1155,16 @@ WHERE {
               }
             }
             console.log(
-              `[Class Analysis] props ${class2} - ${class1}  `,
+              `[Schema Analysis] props ${class2} - ${class1}  `,
               prop_instance_mapping_swapped,
             );
           }
           console.log(
-            `[Class Analysis] found one-many bwtween ${class1} - ${class2}?`,
+            `[Schema Analysis] found one-many bwtween ${class1} - ${class2}?`,
             foundOneMany,
           );
           console.log(
-            `[Class Analysis] found one-many bwtween ${class2} - ${class1}?`,
+            `[Schema Analysis] found one-many bwtween ${class2} - ${class1}?`,
             foundOneManySwapped,
           );
 
