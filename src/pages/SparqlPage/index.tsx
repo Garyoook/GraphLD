@@ -130,18 +130,18 @@ SELECT ?inflation ?unemployment WHERE {
 }`;
 
   const f3b = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <${db_prefix_URL}>
-SELECT ?continent ?carcode ?population 
+PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+SELECT ?continent ?name ?population 
 WHERE {
     ?c rdf:type :Country ;
-       :carCode ?carcode ;
-       :population ?population ;
-       :encompassedByInfo ?en .
+        :name ?name ;
+        :population ?population ;
+        :encompassedByInfo ?en .
     ?en :encompassedBy ?con ;
-		:percent ?percent .
+    :percent ?percent .
     ?con rdf:type :Continent ;
-         :name ?continent .
-    FILTER ( ?percent > 50)
+          :name ?continent .
+    # FILTER ( ?percent > 50)
 }`;
 
   const year_pop = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
