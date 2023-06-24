@@ -144,37 +144,94 @@ WHERE {
     FILTER ( ?percent > 50)
 }`;
 
-  const f3c = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
-SELECT  ?year  ?population ?country
-WHERE {
-     ?c rdf:type :Country ;
-        :name ?country ;
-        :encompassed ?conclass .
-     ?conclass :name ?continent .
-     ?py rdf:type :PopulationCount ;
-         :year ?year;
-         :value ?population .
-     ?c :hadPopulation ?py .
-    FILTER REGEX(?continent, "Europe") 
-    FILTER (?population > 10000000)
-}  ORDER BY ASC (?year)`;
+  const year_pop = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+  
+  SELECT  ?year ?population ?country
+  WHERE {
+       ?c rdf:type :Country ;
+          :name ?country ;
+          :encompassed ?conclass ;
+          :hadPopulation ?py .
+       ?conclass :name ?continent .
+       ?py rdf:type :PopulationCount ;
+           :year ?year;
+           :value ?population .
+       FILTER (?continent = "Europe") .
+       FILTER EXISTS {?c :hadPopulation ?hp .
+                      ?hp :value ?hpv .
+                      FILTER (?hpv > 20000000)
+                    } .
+  }
+  ORDER BY ?year`;
 
-  const f3d = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX : <${db_prefix_URL}>
+  const border_length = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+
 SELECT ?country1 ?country2 ?length
 WHERE {
-    ?b rdf:type :Border ;
-       :isBorderOf ?c1 ;
-       :isBorderOf ?c2 ;
-       :length ?length .
-  ?c1 rdf:type :Country ;
-      :carCode ?country1 .
-  ?c2 rdf:type :Country ;
-      :carCode ?country2 .
-  # Filter conditions
-  FILTER (?country1<?country2)
+      ?b rdf:type :Border ;
+        :isBorderOf ?c1 ;
+        :isBorderOf ?c2 ;
+        :length ?length .
+    ?c1 rdf:type :Country ;
+        :carCode ?cc1 ;
+        :name ?country1 .
+    ?c2 rdf:type :Country ;
+        :carCode ?cc2 ;
+        :name ?country2 ;
+        :encompassed ?conclass .
+    ?conclass :name ?continent .
+    # Filter conditions
+    FILTER (?country1<?country2)
+    FILTER (?continent = 'South America')
 }`;
+
+  const country_city_pop = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+
+SELECT ?country ?city ?cityPop
+WHERE {
+  ?ct rdf:type :City ;
+        :name ?city ;
+        :cityIn ?c ;
+        :population ?cityPop .
+  ?c rdf:type :Country ;
+    :name ?country ;
+    :population ?countryPop .
+  FILTER (?countryPop > 20000000) .
+  FILTER (?cityPop > 5000000)
+}`;
+
+  const conti_country_city_pop = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX : <http://www.semwebtech.org/mondial/10/meta#>
+
+SELECT ?continent ?country ?city ?cityPop
+WHERE {
+  ?ct rdf:type :City ;
+        :name ?city ;
+        :cityIn ?c ;
+        :population ?cityPop .
+  ?c rdf:type :Country ;
+    :name ?country ;
+    :population ?countryPop ;
+    :encompassedByInfo ?en .
+  ?en :encompassedBy ?con ;
+      :percent ?percent .
+  ?con rdf:type :Continent ;
+       :name ?continent .
+  #FILTER (?continent="Europe")  .
+  #FILTER (?population > 20000000) .
+  FILTER (?percent >= 50 ) .
+  FILTER (?cityPop > 5000000)
+}
+`;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [ConceptualModelInfo, setConceptualModelInfo] =
@@ -243,10 +300,10 @@ WHERE {
     circlePacking: 40,
     // multiLine: 20,
     spider: 20,
-    stackedColumn: 20,
-    groupedColumn: 20,
-    stackedBar: 20,
-    groupedBar: 20,
+    stackedColumn: 100,
+    groupedColumn: 100,
+    stackedBar: 40,
+    groupedBar: 40,
     sankey: 100,
     chord: 100,
     network: 1000,
@@ -1381,7 +1438,7 @@ WHERE {
           );
         })
       ) {
-        ratings.multiLine += 100;
+        ratings.multiLine += 200;
         ratings.stackedBar += 100;
         ratings.groupedBar += 100;
         ratings.stackedColumn += 110;
@@ -1396,10 +1453,10 @@ WHERE {
         })
       ) {
         ratings.spider += 100;
-        ratings.stackedBar += 100;
-        ratings.groupedBar += 100;
-        ratings.stackedColumn += 110;
-        ratings.groupedColumn += 110;
+        ratings.stackedBar += 50;
+        ratings.groupedBar += 50;
+        ratings.stackedColumn += 50;
+        ratings.groupedColumn += 50;
       }
 
       ratings.multiLine += 20;
@@ -1728,7 +1785,7 @@ PREFIX : <${db_prefix_URL}>`;
     }
   };
 
-  const exampleQueryList = [initialString, f3a, f3b, f3c, f3d];
+  const exampleQueryList = [initialString, f3a, f3b, year_pop, border_length];
   const exampleQueryFeatures = [
     'Countries with their population count',
     'Countries with their inflation rate and unemployment rate, key missing in query header',
