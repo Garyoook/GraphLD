@@ -668,7 +668,7 @@ WHERE {
 
       const ratings_2_class_1DP =
         total_class_num === 2 && hasKeyFunctionalProperty
-          ? generateRatingsFor2C1DP(
+          ? await generateRatingsFor2C1DP(
               dataResults,
               key_var_count,
               nonKey_var_count,
@@ -676,6 +676,8 @@ WHERE {
               nonKey_var_list,
               var_to_range_mapping,
               vars_head,
+              CLASSES,
+              all_var_to_class,
               messages,
             )
           : {};
@@ -1413,7 +1415,7 @@ WHERE {
     return ratings;
   }
 
-  function generateRatingsFor2C1DP(
+  async function generateRatingsFor2C1DP(
     dataResults: any[],
     key_var_count: number,
     nonKey_var_count: number,
@@ -1421,6 +1423,8 @@ WHERE {
     nonKey_var_list: string[],
     var_to_range_mapping: any,
     vars_head: string[],
+    CLASSES: string[],
+    all_var_to_class: any,
     messages: string[],
   ) {
     const ratings: any = {
@@ -1473,6 +1477,34 @@ WHERE {
       ratings.stackedColumn += 15;
       ratings.groupedColumn += 15;
     }
+
+    // const relationshipCheck = await checkRelationshipsSchemaAnalysis(CLASSES);
+    // if (relationshipCheck.manyManyRelationships.length > 0) {
+    //   let message = 'Many-Many Relationships detected between Classes: \n';
+    //   for (const r of relationshipCheck.manyManyRelationships) {
+    //     message += `[${r.class1} - ${r.class2}] \n`;
+    //   }
+    //   setManyManyRInfo(message);
+    //   setShowManyManyRelationInfo(true);
+    // }
+    // if (relationshipCheck.oneManyRelationships.length > 0) {
+    //   let message = 'One-Many Relationships detected between Classes: \n';
+    //   for (const r of relationshipCheck.oneManyRelationships) {
+    //     message += `[${r.class1} - ${r.class2}] \n`;
+    //   }
+    //   setOneManyRInfo(message);
+    //   setShowOneManyRelationInfo(true);
+    // }
+
+    // const MMClasses = relationshipCheck.manyManyRelationships;
+
+    // const manyManyRInDataResult = checkForManyManyRDataAnalysis(
+    //   vars_head,
+    //   var_to_range_mapping,
+    //   dataResults,
+    //   all_var_to_class,
+    //   MMClasses,
+    // );
 
     return ratings;
   }
