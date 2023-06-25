@@ -294,7 +294,7 @@ WHERE {
     bar: 100,
     pie: 100,
     wordClouds: 1000,
-    treemap: 100,
+    treemap: 300,
     hierarchyTree: 100,
     sunburst: 40,
     circlePacking: 40,
