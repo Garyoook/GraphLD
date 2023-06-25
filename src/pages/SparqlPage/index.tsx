@@ -2213,7 +2213,7 @@ PREFIX : <${db_prefix_URL}>`;
         sx={{
           display: showManyManyRelationWarning ? 'flex' : 'none',
           width: '100%',
-          border: '1px solid #ff9800',
+          border: '1px solid #2196f3',
         }}
         severity="info"
         onClose={() => setShowManyManyRelationWarning(false)}
