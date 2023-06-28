@@ -261,7 +261,7 @@ function DashboardContent() {
             </IconButton>
             <Typography
               component="h1"
-              variant="h6"
+              variant="h4"
               color="inherit"
               noWrap
               sx={{ flexGrow: 1 }}
@@ -276,6 +276,16 @@ function DashboardContent() {
                 <GitHubIcon sx={{ color: 'white' }} />
               </IconButton>
             </Typography>
+            <Button
+              variant="text"
+              color="inherit"
+              sx={{ marginRight: 3, textTransform: 'none' }}
+              href={`https://github.com/Garyoook/`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              GaryGao @ Imperial College London
+            </Button>
             {selectRepo()}
           </Toolbar>
         </AppBar>
