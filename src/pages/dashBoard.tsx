@@ -278,6 +278,7 @@ function DashboardContent() {
             </Typography>
             <Button
               variant="text"
+              size="large"
               color="inherit"
               sx={{ marginRight: 3, textTransform: 'none' }}
               href={`https://github.com/Garyoook/`}
