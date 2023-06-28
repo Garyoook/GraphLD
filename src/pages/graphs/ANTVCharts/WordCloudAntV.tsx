@@ -64,7 +64,7 @@ const BarChartAntV = (props: VisDataProps) => {
     colorField: wordField,
     wordStyle: {
       fontFamily: 'Verdana',
-      fontSize: [24, 80] as any,
+      fontSize: [12, 100] as any,
     },
     // 设置交互类型
     interactions: [
