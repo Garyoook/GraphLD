@@ -2,6 +2,7 @@ import { GRAPHDB_HOST } from '@/config';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import GitHubIcon from '@mui/icons-material/GitHub';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import MenuIcon from '@mui/icons-material/Menu';
 import SchemaIcon from '@mui/icons-material/Schema';
@@ -266,6 +267,14 @@ function DashboardContent() {
               sx={{ flexGrow: 1 }}
             >
               GraphLD
+              <IconButton
+                sx={{ marginLeft: 2 }}
+                href={`https://github.com/Garyoook/GraphLD/`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <GitHubIcon sx={{ color: 'white' }} />
+              </IconButton>
             </Typography>
             {selectRepo()}
           </Toolbar>
