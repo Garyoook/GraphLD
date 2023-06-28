@@ -1,6 +1,6 @@
 # GraphLD
 
-Deployed [Demo](http://146.169.43.78) on Imperial Private Cloud(Imperial VPN is needed out of campus);
+Deployed [Demo](http://graphld.doc.ic.ac.uk/) on Imperial College's cloud service;
 
 This project was initialy bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
