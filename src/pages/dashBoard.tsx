@@ -94,11 +94,11 @@ function DashboardContent() {
         const data = response.data;
         const data_bindings = data.results.bindings;
 
-        const repoList = data_bindings.map(
-          (data_binding: any, index: number) => {
+        const repoList = data_bindings
+          .map((data_binding: any, index: number) => {
             return data_binding.id.value;
-          },
-        );
+          })
+          .sort();
 
         setRepoList(['None', ...repoList]);
         // set default repo to the first of the list.
